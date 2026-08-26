@@ -1,0 +1,6 @@
+fn main() {
+    let greeting = "hello
+    let n = 123abc
+    let bad = "escape \q here"
+    let x = 5 × 3
+}
