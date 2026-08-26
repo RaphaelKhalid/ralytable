@@ -1,0 +1,18 @@
+// A tour of everything the Raly lexer currently recognises.
+// The grammar is not designed yet, so this file is not a valid program --
+// it exists to exercise the tokeniser.
+
+import std::space
+
+space Concepts = 1024
+
+fn describe(subject: Symbol, mut depth: Int) -> Str where depth >= 0 {
+    let role = bind(subject, ROLE)
+    let scene = bundle(role, permute(subject, 1))
+    let recovered = unbind(scene, ROLE) |> cleanup
+    let ratio = 0.75
+    let mask = 0xFF ^ 0b1010
+    match recovered {
+        _ => "unknown	subject"
+    }
+}

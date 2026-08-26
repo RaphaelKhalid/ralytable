@@ -1,0 +1,15 @@
+[package]
+name = "raly"
+description = "The Raly compiler driver."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "raly"
+path = "src/main.rs"
+
+[dependencies]
+raly-diag.workspace = true
+raly-lexer.workspace = true
+raly-ast.workspace = true
