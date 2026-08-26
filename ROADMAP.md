@@ -26,7 +26,7 @@ VSA capacity at D=1000 is about 31 items, not the 10 a literature summary sugges
 
 Averaging embedded chunks costs real retrieval accuracy, not just recoverability in an artificial task. On BEIR scifact recall drops 0.877 to 0.619 with realistic grouping, and 70 to 76 percent of that loss is the averaging itself rather than coarser granularity (`experiments/07_retrieval_cost`). mpnet has twice MiniLM's nominal dimension, the same effective dimension, and the same cost, so nominal dimension predicts nothing.
 
-A discrete bottleneck costs about 3 points of top-1 accuracy at matched parameters and buys role legibility 8.3 points above a chance baseline, and bigger codebooks got more capable and more legible together (`experiments/06_discrete_core`). One datapoint at toy scale, but it points the opposite way to the tradeoff I feared.
+A discrete bottleneck costs about 3 points of top-1 accuracy at matched parameters and buys role legibility 3.3 points above what the raw character already predicts, and bigger codebooks got more capable and more legible together (`experiments/06_discrete_core`). One datapoint at toy scale, but it points the opposite way to the tradeoff I feared.
 
 ## What nobody has done
 

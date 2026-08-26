@@ -1,4 +1,4 @@
-# A discrete bottleneck costs about 3 points of accuracy and buys measurable legibility
+# A discrete bottleneck costs about 3 points of accuracy and buys a little legibility
 
 First real datapoint on the legibility-versus-capability question, at toy scale.
 Cost: about $0.05 of teacher generation and 25 minutes on one laptop GPU.
@@ -54,6 +54,36 @@ the numbers are not inflated by having more codes.
 
 Small, but real, and monotone in codebook size. Larger alphabets carry more role
 structure rather than less.
+
+### Correction: most of that excess is format leakage
+
+The shuffle null was the wrong control. It asks "could a codebook carrying no
+information score this?", when the question is "could you score this WITHOUT the
+codebook?" You can, largely, because the corpus format gives the role away: `A`
+appears only in `ANSWER:`, `]` only inside `from [1],[2]:`. A code firing on `]`
+scores 100% on `derived` while understanding nothing.
+
+Predicting the role from the raw CHARACTER alone, no model involved:
+
+| predictor | role purity | over chance |
+|---|---|---|
+| majority class | 0.5801 | - |
+| the character alone (140 of them) | 0.6314 | +0.051 |
+| the 1024 codes | 0.6640 | +0.084 |
+
+**So 61% of the reported excess was the character, not the code.** The codes beat
+the character by **+0.033**, which is the honest number, and it is real: codes see
+context, so they can separate the same character in a premise from one in a derived
+step. But it is a third of what this file first claimed.
+
+Inspecting the codebook directly (see `site/interpretability.html`) says the same
+thing from the other side: the median code puts 63% of its firings on one character,
+and 326 of 1015 live codes are a single character outright.
+
+**The methodological lesson matters more than the number.** Role purity is a leaky
+metric because surface form predicts the label. Phase 2's cross-family legibility
+metric has to control for what is recoverable from the surface, or it will measure
+format recognition and call it interpretability.
 
 ## Codebook collapse, and how it was fixed
 
