@@ -13,3 +13,4 @@ results/*.jsonl
 data/math-rollouts/
 data/hf_cache/
 experiments/05_real_embeddings/cache/
+compiler/target/

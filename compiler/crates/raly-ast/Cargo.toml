@@ -1,0 +1,9 @@
+[package]
+name = "raly-ast"
+description = "Provisional arena-based syntax tree for the Raly language."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+raly-diag.workspace = true

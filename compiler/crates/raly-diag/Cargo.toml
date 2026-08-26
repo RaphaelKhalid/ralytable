@@ -1,0 +1,8 @@
+[package]
+name = "raly-diag"
+description = "Spans, diagnostics and diagnostic rendering for the Raly compiler."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
