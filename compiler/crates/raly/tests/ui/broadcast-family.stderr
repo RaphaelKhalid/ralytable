@@ -1,0 +1,21 @@
+error[RALY4012]: `bind` combines its operands position by position, and these two do not have the same type
+ --> broadcast-family.raly:8:5
+  |
+8 |     bind(a, b)
+  |     ^^^^ both operands of this must have identical types
+ ::: broadcast-family.raly:8:10
+  |
+8 |     bind(a, b)
+  |          - this one is `MAP[1024]`, in `Concepts`
+ ::: broadcast-family.raly:8:13
+  |
+8 |     bind(a, b)
+  |             - this one is `FHRR[1024]`, in `Phases`
+  |
+  = note: `Concepts` is bipolar vectors bound by elementwise product and `Phases` is unit-modulus complex vectors bound by phase addition
+  = note: a tensor library would not stop here: both sides are the same length, so it would add them position by position without a word and hand back a vector belonging to neither MAP nor FHRR
+  = note: Raly requires identical types here on purpose. Every property this message names is in the type, so the mistake is a compile error rather than a shape that happens to work
+  = help: if combining them is genuinely what you meant, say so: `bind(.., broadcast(<the second one>, Concepts))` re-expresses it in `Concepts`, and the result is `noisy`, because that reinterpretation throws information away
+  = help: otherwise the two values belong in one space; change a declaration
+
+error: 1 error

@@ -1,8 +1,13 @@
-// RALY4002: two MAP spaces of different width. The message prints the
-// residual of the abelian-group unification, not "cannot unify".
+// RALY4002: two MAP spaces of different width, where no elementwise operation
+// is involved. The message prints the residual of the abelian-group
+// unification, not "cannot unify".
+//
+// A width mismatch *inside* `bind` or `bundle` is RALY4012 instead: see
+// broadcast-width.raly. This one is the plain constraint failure, reported
+// against a signature that cannot be satisfied.
 space Wide = MAP[8192]
 space Narrow = MAP[1024]
 
-fn f(a: Sym[Wide], b: Sym[Narrow]) -> Vec[Wide; load 2] {
-    bundle(a, b)
+fn widen(a: Sym[Narrow]) -> Sym[Wide] {
+    a
 }

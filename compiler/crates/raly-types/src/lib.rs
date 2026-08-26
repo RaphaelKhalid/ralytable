@@ -75,12 +75,22 @@ pub struct Checked {
     pub spaces: Vec<SpaceInfo>,
     /// Expression node id -> inferred type.
     pub expr_types: HashMap<u32, Ty>,
+    /// Item node id -> the type the item declares: a `Ty::Fn` for a function,
+    /// the expansion for a type alias, the annotated or inferred type for a
+    /// `let`. Populated for **every** item, including ones nothing references,
+    /// because `raly explain` describes a program rather than checking it.
+    pub item_types: HashMap<u32, Ty>,
     pub diagnostics: Diagnostics,
 }
 
 impl Checked {
     pub fn type_of(&self, expr: ExprId) -> Option<&Ty> {
         self.expr_types.get(&expr.raw())
+    }
+
+    /// The type an item declares, for the explainer.
+    pub fn type_of_item(&self, item: ItemId) -> Option<&Ty> {
+        self.item_types.get(&item.raw())
     }
 
     pub fn has_errors(&self) -> bool {
@@ -114,6 +124,7 @@ struct Checker<'a> {
     /// The enclosing function's `(result type, name, span of the annotation)`.
     return_types: Vec<(Ty, String, Option<Span>)>,
     expr_types: HashMap<u32, Ty>,
+    item_types: HashMap<u32, Ty>,
     diagnostics: Diagnostics,
 }
 
@@ -130,6 +141,7 @@ impl<'a> Checker<'a> {
             alias_stack: Vec::new(),
             return_types: Vec::new(),
             expr_types: HashMap::new(),
+            item_types: HashMap::new(),
             diagnostics: Diagnostics::new(),
         }
     }
@@ -139,6 +151,7 @@ impl<'a> Checker<'a> {
         Checked {
             spaces: self.spaces,
             expr_types: self.expr_types,
+            item_types: self.item_types,
             diagnostics: self.diagnostics,
         }
     }
@@ -182,6 +195,7 @@ impl<'a> Checker<'a> {
                     }
                 }
             }
+            let dim_known = folded.is_some();
             let dim = folded.clone().unwrap_or_else(Dim::one);
             let effective_value = effective.and_then(|e| self.fold_int(e, &mut HashSet::new()));
             let nominal = folded.as_ref().and_then(|d| d.as_constant());
@@ -199,6 +213,7 @@ impl<'a> Checker<'a> {
                 dim_span,
                 family,
                 dim,
+                dim_known,
                 capacity_dim,
                 capacity_basis: basis,
                 capacity: capacity_dim.map(capacity::capacity),
@@ -605,6 +620,8 @@ impl<'a> Checker<'a> {
             ItemKind::Fn(f) => {
                 let name = self.ast.text(f.name).to_string();
                 let body = f.body;
+                let signature = self.fn_signature(item);
+                self.item_types.insert(item.raw(), signature);
                 let ret_ty = f.return_type;
                 let ret_span = ret_ty.map(|r| self.ast.types[r].span);
                 let ret = ret_ty.map(|r| self.lower_type(r)).unwrap_or(Ty::Unit);
@@ -624,11 +641,13 @@ impl<'a> Checker<'a> {
             }
             ItemKind::Let(binding) => {
                 let (annotation, init, name) = (binding.ty, binding.init, binding.name);
-                self.check_binding(annotation, init, name);
+                let ty = self.check_binding(annotation, init, name);
+                self.item_types.insert(item.raw(), ty);
             }
             ItemKind::TypeAlias(alias) => {
                 if let Some(ty) = alias.ty {
-                    let _ = self.lower_type(ty);
+                    let expansion = self.lower_type(ty);
+                    self.item_types.insert(item.raw(), expansion);
                 }
             }
             ItemKind::Space(_) | ItemKind::Role(_) | ItemKind::Import(_) | ItemKind::Error => {}
@@ -1022,20 +1041,29 @@ impl<'a> Checker<'a> {
     fn check_vsa(&mut self, call: &VsaSnapshot, args: &[ExprId], span: Span) -> Ty {
         let types: Vec<Ty> = args.iter().map(|&a| self.infer(a)).collect();
         match call.op {
-            VsaOp::Bind => self.check_bind(args, &types),
+            VsaOp::Bind => self.check_bind(call, args, &types),
             VsaOp::Bundle => self.check_bundle(call, args, &types, span),
             VsaOp::Permute => self.check_permute(args, &types),
             VsaOp::Unbind => self.check_unbind(call, args, &types),
             VsaOp::Cleanup => self.check_cleanup(args, &types),
+            VsaOp::Broadcast => self.check_broadcast(args, &types),
         }
     }
 
     /// Every operand must be a vector in one space; returns that space plus
     /// the operands' vector views. Operands that are not vectors are reported
     /// and dropped.
+    ///
+    /// `elementwise` carries the operation keyword's span for the operations
+    /// that combine their operands position by position — `bind` and `bundle`.
+    /// Those are the ones a tensor library would silently broadcast, so a
+    /// space mismatch between two of their operands is reported as
+    /// [`codes::SILENT_BROADCAST`] rather than as a plain space mismatch. See
+    /// GRAMMAR.md §7.3.
     fn vector_operands(
         &mut self,
         op: &'static str,
+        elementwise: Option<Span>,
         args: &[ExprId],
         types: &[Ty],
     ) -> (Option<SpaceId>, Vec<VecTy>) {
@@ -1065,12 +1093,29 @@ impl<'a> Checker<'a> {
                         anchor = Some(self.ast.exprs[arg].span);
                     }
                     Some(first) if first != id => {
-                        let mut blame =
-                            Blame::new(self.ast.exprs[arg].span, Reason::Operand { op, index });
-                        if let Some(anchor) = anchor {
-                            blame = blame.against(anchor, "the first operand is here");
+                        let shape = elementwise.zip(anchor).and_then(|(op_span, anchor)| {
+                            self.broadcast_shape(first, id)
+                                .map(|k| (op_span, anchor, k))
+                        });
+                        match shape {
+                            Some((op_span, anchor, kind)) => self.report_silent_broadcast(
+                                op,
+                                op_span,
+                                kind,
+                                (anchor, first),
+                                (self.ast.exprs[arg].span, id),
+                            ),
+                            None => {
+                                let mut blame = Blame::new(
+                                    self.ast.exprs[arg].span,
+                                    Reason::Operand { op, index },
+                                );
+                                if let Some(anchor) = anchor {
+                                    blame = blame.against(anchor, "the first operand is here");
+                                }
+                                self.report_space_mismatch(id, first, &blame);
+                            }
                         }
-                        self.report_space_mismatch(id, first, &blame);
                     }
                     Some(_) => {}
                 }
@@ -1080,8 +1125,8 @@ impl<'a> Checker<'a> {
         (space, out)
     }
 
-    fn check_bind(&mut self, args: &[ExprId], types: &[Ty]) -> Ty {
-        let (space, operands) = self.vector_operands("bind", args, types);
+    fn check_bind(&mut self, call: &VsaSnapshot, args: &[ExprId], types: &[Ty]) -> Ty {
+        let (space, operands) = self.vector_operands("bind", Some(call.op_span), args, types);
         if operands.is_empty() {
             return Ty::Error;
         }
@@ -1131,7 +1176,7 @@ impl<'a> Checker<'a> {
         if args.is_empty() {
             return Ty::Error;
         }
-        let (space, operands) = self.vector_operands("bundle", args, types);
+        let (space, operands) = self.vector_operands("bundle", Some(call.op_span), args, types);
         if operands.is_empty() {
             return Ty::Error;
         }
@@ -1179,7 +1224,8 @@ impl<'a> Checker<'a> {
 
     fn check_permute(&mut self, args: &[ExprId], types: &[Ty]) -> Ty {
         let head = args.len().min(1);
-        let (space, operands) = self.vector_operands("permute", &args[..head], &types[..head]);
+        let (space, operands) =
+            self.vector_operands("permute", None, &args[..head], &types[..head]);
         if let (Some(&shift), Some(ty)) = (args.get(1), types.get(1)) {
             let blame = Blame::new(
                 self.ast.exprs[shift].span,
@@ -1329,6 +1375,69 @@ impl<'a> Checker<'a> {
         // load collapses to one, the nesting counter resets, and the result is
         // clean by construction.
         Ty::Sym { space, role: None }
+    }
+
+    /// `broadcast(v, S)` — the explicit opt-in.
+    ///
+    /// GRAMMAR.md §7.3: elementwise operations require identical operand
+    /// types, so the intent "combine these two anyway" needs somewhere to
+    /// live. It lives here, as one keyword the reader cannot miss. The result
+    /// is deliberately **noisy**: re-expressing a vector in a space with a
+    /// different width or a different family is not information-preserving,
+    /// and pretending otherwise would give back exactly the silence this whole
+    /// feature exists to remove.
+    fn check_broadcast(&mut self, args: &[ExprId], types: &[Ty]) -> Ty {
+        let (Some(&target), Some(target_ty)) = (args.first(), types.first()) else {
+            return Ty::Error;
+        };
+        let target_ty = target_ty.clone();
+        if target_ty.is_error() {
+            return Ty::Error;
+        }
+        let Some(vector) = target_ty.as_vector() else {
+            let found = self.show(&target_ty);
+            self.diagnostics.push(
+                Diagnostic::error(codes::TYPE_MISMATCH, "`broadcast` operates on vectors")
+                    .with_primary(
+                        self.ast.exprs[target].span,
+                        format!("this is `{found}`, not a vector"),
+                    )
+                    .with_note(
+                        Reason::Operand {
+                            op: "broadcast",
+                            index: 0,
+                        }
+                        .context(),
+                    ),
+            );
+            return Ty::Error;
+        };
+        let mut into = None;
+        if let (Some(&arg), Some(ty)) = (args.get(1), types.get(1)) {
+            let span = self.ast.exprs[arg].span;
+            match ty {
+                Ty::Error => {}
+                Ty::Space(id) => into = Some(*id),
+                other => {
+                    let found = self.show(other);
+                    self.diagnostics.push(
+                        Diagnostic::error(codes::TYPE_MISMATCH, "expected a space")
+                            .with_primary(span, format!("this is `{found}`, not a space"))
+                            .with_note(
+                                "`broadcast`'s second operand names the space to re-express the first one in",
+                            )
+                            .with_help("name a `space` declaration here"),
+                    );
+                }
+            }
+        }
+        Ty::vector(VecTy {
+            space: into.or(vector.space),
+            load: vector.load,
+            roles: vector.roles,
+            clean: Some(false),
+            depth: vector.depth,
+        })
     }
 
     // -- the four properties, as checks --------------------------------------
@@ -1549,6 +1658,103 @@ impl<'a> Checker<'a> {
         );
     }
 
+    // -- silent broadcasting -------------------------------------------------
+
+    /// Which of the two shape properties makes these spaces different, if
+    /// either does.
+    ///
+    /// Deliberately scoped to **dimension and family**. A space also fixes a
+    /// codebook, and two spaces that agree on family and width but not on
+    /// codebook are still an error — but not a *broadcast* error, because no
+    /// tensor library has a notion of a codebook to paper over. That case
+    /// keeps `RALY4003`. Superposition load and role schema are not shape
+    /// either: `bundle` adds loads and unions role schemas by design, so
+    /// requiring those to be identical would break the algebra rather than
+    /// protect it. See GRAMMAR.md §7.3.
+    fn broadcast_shape(&self, left: SpaceId, right: SpaceId) -> Option<BroadcastShape> {
+        let (left, right) = (self.space_info(left)?, self.space_info(right)?);
+        if let (Some(a), Some(b)) = (left.family, right.family) {
+            if a != b {
+                return Some(BroadcastShape::Family(a, b));
+            }
+        }
+        match left.dim.unify(&right.dim) {
+            Err(residual) => Some(BroadcastShape::Width(residual)),
+            Ok(()) => None,
+        }
+    }
+
+    /// The diagnostic this whole feature exists for.
+    ///
+    /// It names what would have happened silently somewhere else, because
+    /// that is the part a reader cannot look up: the mistake in a tensor
+    /// library is invisible at the line that makes it, and only surfaces as a
+    /// loss curve that never comes down.
+    fn report_silent_broadcast(
+        &mut self,
+        op: &'static str,
+        op_span: Span,
+        shape: BroadcastShape,
+        left: (Span, SpaceId),
+        right: (Span, SpaceId),
+    ) {
+        let (Some(a), Some(b)) = (
+            self.space_info(left.1).cloned(),
+            self.space_info(right.1).cloned(),
+        ) else {
+            return;
+        };
+        let names = Names {
+            spaces: &self.spaces,
+            defs: &self.resolved.defs,
+        };
+        let (shown_a, shown_b) = (names.describe_space(left.1), names.describe_space(right.1));
+        let mut diag = Diagnostic::error(
+            codes::SILENT_BROADCAST,
+            format!(
+                "`{op}` combines its operands position by position, and these two do not have the same type"
+            ),
+        )
+        .with_primary(op_span, "both operands of this must have identical types")
+        .with_secondary(left.0, format!("this one is `{shown_a}`, in `{}`", a.name))
+        .with_secondary(right.0, format!("this one is `{shown_b}`, in `{}`", b.name));
+
+        match &shape {
+            BroadcastShape::Family(fa, fb) => {
+                diag = diag
+                    .with_note(format!(
+                        "`{}` is {} and `{}` is {}",
+                        a.name,
+                        fa.describe(),
+                        b.name,
+                        fb.describe()
+                    ))
+                    .with_note(format!(
+                        "a tensor library would not stop here: both sides are the same length, so it would add them position by position without a word and hand back a vector belonging to neither {} nor {}",
+                        fa.name(),
+                        fb.name()
+                    ));
+            }
+            BroadcastShape::Width(residual) => {
+                diag = diag
+                    .with_note(format!(
+                        "dimensions form an abelian group, and these do not cancel: the residual is {residual}"
+                    ))
+                    .with_note(silent_broadcast_note(&a, &b));
+            }
+        }
+        self.diagnostics.push(
+            diag.with_note(
+                "Raly requires identical types here on purpose. Every property this message names is in the type, so the mistake is a compile error rather than a shape that happens to work",
+            )
+            .with_help(format!(
+                "if combining them is genuinely what you meant, say so: `{op}(.., broadcast(<the second one>, {}))` re-expresses it in `{}`, and the result is `noisy`, because that reinterpretation throws information away",
+                a.name, a.name
+            ))
+            .with_help("otherwise the two values belong in one space; change a declaration"),
+        );
+    }
+
     // -- capacity ------------------------------------------------------------
 
     fn check_capacity(&mut self, space: SpaceId, items: u32, span: Span, site: CapacitySite) {
@@ -1582,7 +1788,7 @@ impl<'a> Checker<'a> {
             ),
             CapacitySite::Annotation => (
                 format!(
-                    "this type declares a load of {items} in a space that holds                      {capacity_limit}"
+                    "this type declares a load of {items} in a space that holds {capacity_limit}"
                 ),
                 format!("a load of {items} declared here"),
             ),
@@ -1838,6 +2044,33 @@ impl VsaSnapshot {
             // answer.
             args: call.args.clone(),
         }
+    }
+}
+
+/// Which property makes two spaces different shapes, for `RALY4012`.
+#[derive(Clone, Debug)]
+enum BroadcastShape {
+    /// Same width, different VSA family — the genuinely silent case: a tensor
+    /// library has no notion of family and combines them without complaint.
+    Family(Family, Family),
+    /// Different widths, carrying the abelian-group residual.
+    Width(Dim),
+}
+
+/// The `note:` that names what a tensor library would have done instead.
+///
+/// This is the sentence the feature exists for. PyTorch and NumPy broadcast:
+/// a length-1 axis on either operand — which is what every `unsqueeze`, every
+/// batch, head or beam dimension adds — turns a pair of mismatched widths into
+/// an outer product instead of an error. Nothing warns, nothing fails, and the
+/// first sign is a loss curve that never comes down.
+fn silent_broadcast_note(left: &SpaceInfo, right: &SpaceInfo) -> String {
+    match (left.dim.as_constant(), right.dim.as_constant()) {
+        (Some(m), Some(n)) => format!(
+            "a tensor library would not stop here: in NumPy or PyTorch, one length-1 axis on either side -- which is what every unsqueeze, batch, head or beam dimension adds -- makes ({m}, 1) and (1, {n}) broadcast to a matrix of shape ({m}, {n}), silently, and the first thing that looks wrong is a loss curve days later"
+        ),
+        _ => "a tensor library would not stop here: in NumPy or PyTorch, one length-1 axis on either side -- which is what every unsqueeze, batch, head or beam dimension adds -- makes two mismatched widths broadcast into an outer product instead of failing, silently, and the first thing that looks wrong is a loss curve days later"
+            .to_string(),
     }
 }
 

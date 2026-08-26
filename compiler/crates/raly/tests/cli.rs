@@ -208,3 +208,51 @@ fn f( { }
     assert!(stderr.contains("RALY1002"), "{stderr}");
     assert!(stderr.contains("RALY2002"), "{stderr}");
 }
+
+// -- explaining --------------------------------------------------------------
+
+#[test]
+fn explain_writes_prose_to_stdout_and_exits_zero() {
+    let output = raly()
+        .arg("explain")
+        .arg(example("explain-me.raly"))
+        .output()
+        .unwrap();
+    // `explain-me.raly` carries one deliberate warning and no errors.
+    assert_eq!(output.status.code(), Some(0));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("This file declares"), "{stdout}");
+    assert!(stdout.contains("exactly at capacity"), "{stdout}");
+    // Diagnostics keep to stderr even here, so the prose stays pipeable.
+    assert!(!stdout.contains("warning["), "{stdout}");
+}
+
+#[test]
+fn explain_json_is_machine_readable() {
+    let output = raly()
+        .args(["explain", "--json"])
+        .arg(example("explain-me.raly"))
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.starts_with('{'), "{stdout}");
+    assert!(stdout.trim_end().ends_with('}'), "{stdout}");
+    assert!(stdout.contains("\"capacity\": 3"), "{stdout}");
+    assert!(stdout.contains("\"kind\": \"space\""), "{stdout}");
+}
+
+#[test]
+fn explain_still_describes_a_file_that_does_not_check() {
+    // Explaining is not checking. A program with errors still has types, and
+    // "what is this meant to be?" is a question people ask precisely then.
+    let output = raly()
+        .arg("explain")
+        .arg(example("broadcast.raly"))
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stdout.contains("This file declares"), "{stdout}");
+    assert!(stderr.contains("error[RALY4012]"), "{stderr}");
+}

@@ -1,0 +1,14 @@
+// The explicit opt-in, which compiles: `broadcast(v, S)` says in one word that
+// re-expressing `b` in `Narrow` is deliberate. The result is `noisy`, because
+// that reinterpretation is not information-preserving, and the annotation
+// says so rather than hiding it.
+space Wide = MAP[8192]
+space Narrow = MAP[1024]
+
+fn merge(a: Sym[Narrow], b: Sym[Wide]) -> Vec[Narrow; load 2; noisy] {
+    bundle(a, broadcast(b, Narrow))
+}
+
+fn merge_piped(a: Sym[Narrow], b: Sym[Wide]) -> Vec[Narrow; load 2; noisy] {
+    bundle(a, b |> broadcast(Narrow))
+}

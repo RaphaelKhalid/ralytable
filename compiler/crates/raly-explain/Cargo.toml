@@ -1,0 +1,11 @@
+[package]
+name = "raly-explain"
+description = "Turns a checked Raly program into plain English, derived entirely from its types."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+raly-ast.workspace = true
+raly-resolve.workspace = true
+raly-types.workspace = true

@@ -34,6 +34,17 @@ impl Compilation {
         self.diagnostics.has_errors()
     }
 
+    /// What this program *is*, in plain English, derived entirely from its
+    /// types. See `raly-explain`.
+    pub fn explain(&self) -> raly_explain::Explanation {
+        raly_explain::explain(
+            &self.ast,
+            &self.resolved,
+            &self.checked,
+            self.sources.get(self.file).name(),
+        )
+    }
+
     /// The diagnostics as a user would see them, plus the summary line.
     ///
     /// Empty when nothing was reported, so a clean file has an empty golden
@@ -113,5 +124,55 @@ mod tests {
         assert!(text.contains("RALY1002"), "{text}");
         assert!(text.contains("RALY3001"), "{text}");
         assert!(text.contains("RALY4006"), "{text}");
+    }
+
+    /// GRAMMAR.md 7.3 scopes "identical" to width and family. Load and role
+    /// schema are *combined* by these operations, not required to match, so
+    /// requiring them identical would break the algebra rather than protect
+    /// it. This is the test that keeps that decision honest.
+    #[test]
+    fn differing_load_and_roles_are_not_a_broadcast_question() {
+        let compiled = compile(
+            "m.raly",
+            "space S = MAP[1024]
+             role A, B in S
+             fn f(x: Vec[S; load 2; roles {A}], y: Vec[S; load 3; roles {B}]) -> Vec[S; load 5]              { bundle(x, y) }
+",
+        );
+        let text = compiled.render(RenderConfig::plain());
+        assert!(!text.contains("RALY4012"), "{text}");
+        assert!(!compiled.has_errors(), "{text}");
+    }
+
+    /// Two spaces agreeing on width and family but not on codebook stay
+    /// RALY4003. No tensor library has a notion of a codebook, so there is
+    /// nothing for it to have papered over, and calling that a broadcast
+    /// error would be a lie about what happens elsewhere.
+    #[test]
+    fn a_codebook_difference_is_not_a_broadcast_error() {
+        let compiled = compile(
+            "m.raly",
+            "space A = MAP[1024]
+space B = MAP[1024]
+             fn f(x: Sym[A], y: Sym[B]) -> Vec[A; load 2] { bundle(x, y) }
+",
+        );
+        let text = compiled.render(RenderConfig::plain());
+        assert!(text.contains("RALY4003"), "{text}");
+        assert!(!text.contains("RALY4012"), "{text}");
+    }
+
+    /// The opt-in is the whole point: the intent stays expressible.
+    #[test]
+    fn an_explicit_broadcast_makes_the_error_go_away() {
+        let compiled = compile(
+            "m.raly",
+            "space Wide = MAP[8192]
+space Narrow = MAP[1024]
+             fn f(x: Sym[Narrow], y: Sym[Wide]) -> Vec[Narrow; load 2; noisy]              { bundle(x, broadcast(y, Narrow)) }
+",
+        );
+        let text = compiled.render(RenderConfig::plain());
+        assert!(!compiled.has_errors(), "{text}");
     }
 }
