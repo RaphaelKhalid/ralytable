@@ -1,127 +1,121 @@
-# Raly — Roadmap
+# Raly
 
-**Thesis: within a few years, the models people are permitted to deploy will have to be interpretable. Nobody is building for that. We are.**
+I think that within a few years you won't be allowed to deploy a model you can't explain, and almost nobody is building for that yet. So that's what this is.
 
-Raly is two things that only make sense together: a **language** whose type system understands what a model represents, and a **model** built in it whose reasoning can be read rather than reverse-engineered.
+Raly is two things that only make sense together: a language whose type system understands what a model represents, and a model built in that language whose reasoning you can read instead of reverse engineer.
 
----
+## Why now
 
-## Why this is possible now and wasn't before
+Reverse engineering trained networks is stalling out; the people furthest along with it are the ones saying so. Models have a bit of legible structure and then a very long tail of junk heuristics, and every year that stays true, building models legible from the start gets more valuable.
 
-Three things changed.
+Reasoning models also moved the interesting computation out into text, across thousands of forward passes with a visible scratchpad in between. That's an open invitation to make the scratchpad structured.
 
-**Interpretation-after-the-fact is stalling.** The field's own leading voices now say full reverse engineering of a trained network looks doomed — models carry a little legible structure and an enormous tail of niche heuristics. Every year that conclusion holds makes build-it-legible more valuable, not less.
+And teachers got cheap. DeepSeek V4 Flash is $0.03 per million input tokens, so distilling a small student is no longer something only a lab can afford; $10 buys around 130 million output tokens.
 
-**Reasoning models moved the computation into text.** The important part of a modern model's work now happens across thousands of forward passes with a visible scratchpad between them. That is an architectural invitation to make the scratchpad structured.
+## What I already measured
 
-**Teacher models became almost free.** A strong teacher now costs $0.03 per million input tokens. Distilling a small student is no longer a lab-scale privilege.
+Before writing a line of the language, on real data:
 
-## What we already know (measured, not assumed)
+Asking a model what its own reasoning depended on doesn't work. The dependency graph an LLM reports carries no causal information once you control for position (`experiments/01_claimed_vs_causal`). Structure has to be built in, not requested.
 
-Established in this repo, on real data, before writing a line of the language:
+Importance looks like it decays with depth, and that turns out not to be a measurement artifact; it disappears entirely once you condition on how decided the answer already is (`experiments/03_position_decay`). Models commit early and the rest of the trace is follow through.
 
-- An LLM's **stated** dependency structure carries no causal information beyond position (`experiments/01_claimed_vs_causal`). Asking a model to explain its own reasoning does not work. Structure has to be *built in*, not requested.
-- The apparent "importance decays with depth" effect is **not** a measurement artifact — it vanishes entirely once you condition on how decided the answer already is (`experiments/03_position_decay`). Models commit early; most of a reasoning trace is follow-through.
-- VSA bundling capacity at D=1000 is about 31 items, not the ~10 a literature summary implied (`experiments/04_capacity`). Measured, not cited.
+VSA capacity at D=1000 is about 31 items, not the 10 a literature summary suggested (`experiments/04_capacity`). I measured it rather than citing it.
 
-## What nobody has done (verified in `docs/prior-art.md`)
+## What nobody has done
 
-- A **typed** language where the gradient-carrying model *is* the symbolic program.
-- A **legibility-vs-capability curve that spans architecture families.** One lab has published a Pareto curve within a single family. Cross-family is unoccupied.
-- A small-alphabet discrete reasoning core built from scratch.
+Checked properly in `docs/prior-art.md`, and the honest answer is narrower than I hoped. A typed language where the gradient carrying model is the symbolic program is open. A legibility versus capability curve that spans architecture families is open; one lab has published a curve inside a single family, nobody has done it across families. A small alphabet discrete reasoning core built from scratch is open.
 
-Where prior art *does* exist we say so. All-logic-gate language models were tried (RDDLGN, ETH Zürich) and reached 4.39 BLEU — near the floor. That result kills the maximalist version and leaves ours untested: **soft perception, hard reasoning.**
+Plenty is already taken. HPVM-HDC is a real VSA compiler. GHRR already swapped transformer attention for VSA binding. And all-logic-gate language models were tried at ETH Zurich and got 4.39 BLEU, which is near the floor; that kills the maximalist version and leaves the version I actually want to test, which is soft perception with a hard reasoning core.
 
----
+## The phases
 
-# Phases
+Every phase has a gate, and a gate is a number that can fail, not a milestone to walk past.
 
-Each phase has a gate. A gate is a number that decides whether we continue, not a milestone we narrate past. Phases are ordered by information gained per unit cost.
+### Phase 0, foundations
 
-## Phase 0 — Foundations
+Write down the semantics before the compiler assumes them.
 
-The language's semantics, written down before the compiler assumes them.
-
-- [x] VSA and discrete-op formal semantics — which algebraic laws actually hold
-- [x] Capacity measured empirically rather than cited
-- [x] Prior art surveyed; the unoccupied ground identified
-- [x] Compiler architecture decisions researched before they get expensive
+- [x] VSA and discrete op semantics, including which algebraic laws actually hold
+- [x] Capacity measured instead of cited
+- [x] Prior art surveyed
+- [x] Compiler architecture decisions researched before they get expensive to change
 - [ ] `raly` compiler skeleton: diagnostics, lexer, AST
 
-**Gate:** the semantics document contains no claim we have not either measured or cited. *(Held so far: one asserted claim was caught and corrected.)*
+Gate: no claim in the semantics doc that isn't either measured or cited. Holding so far; one asserted claim already got caught and corrected.
 
-## Phase 1 — The language runs
+### Phase 1, the language runs
 
-A typed VSA DSL that catches what PyTorch cannot see.
+A typed VSA DSL that catches what PyTorch can't see.
 
 - [ ] Grammar, parser, typechecker
-- [ ] **Capacity types** — `Vec<D=1024, load=3/31>`; overstuffing is a compile error
-- [ ] **Role-schema types** — the type knows *which roles* are bound in, not which values. Unbinding a role the vector does not carry is a compile error.
-- [ ] Static nesting-depth checks that force a `cleanup` before retrieval degrades
-- [ ] Differentiable end-to-end
+- [ ] Capacity types, so `Vec<D=1024, load=3/31>` and overstuffing is a compile error
+- [ ] Role schema types, so the type knows which roles are bound in even though the values are runtime; unbinding a role the vector doesn't carry won't compile
+- [ ] Static nesting depth checks that force a `cleanup` before retrieval degrades
+- [ ] Differentiable end to end
 - [ ] Error messages good enough to be the reason people use it
 
-**Gate:** a VSA experiment that is *visibly easier* in Raly than in fifty lines of `jax.numpy`. If we cannot produce one, the language is a cathedral and we stop.
+Gate: one VSA experiment that is visibly easier in Raly than in fifty lines of `jax.numpy`. If I can't produce that, the language is a cathedral and I stop.
 
-## Phase 2 — The curve
+### Phase 2, the curve
 
-The contribution nobody has claimed, and the one that makes everything else credible.
+This is the contribution nobody has claimed and it goes first.
 
-Train the same task across architecture families — dense, weight-sparse, discrete bottleneck, VSA-structured, gate-based — and measure **both** capability and how much of the model a person or auditing model can actually recover.
+Train the same task across dense, weight sparse, discrete bottleneck, VSA structured and gate based models, and measure both how good each one is and how much of it a person or an auditing model can actually recover.
 
-- [ ] A legibility metric portable across families (the hard part — not "is it discrete" but "can the algorithm be recovered")
-- [ ] Blind / oracle-in-the-loop ablation as the instrument
-- [ ] The curve, with confidence intervals, published
+- [ ] A legibility metric that works across families; this is the hard part, and it has to measure whether the algorithm can be recovered, not whether the weights are discrete
+- [ ] Blind versus oracle in the loop as the instrument
+- [ ] The curve, with confidence intervals
 
-**Gate:** publishable either way. A cheap legibility tax means the direction is live. An expensive one is a real negative result that saves the field a wall. **This phase cannot fail, only inform** — which is why it comes before we bet on an architecture.
+Gate: none, because this one can't fail, it can only inform. Cheap legibility tax means the direction is live. Expensive tax is a real negative result that saves other people a wall. That's exactly why it comes before I bet on any architecture.
 
-## Phase 3 — Raly-1
+### Phase 3, Raly-1
 
-The first model. Small, local, legible.
+Small, local, legible.
 
-- [ ] Small enumerable alphabet — the model's internal vocabulary is *listable*
+- [ ] A small alphabet the model's whole internal vocabulary can be listed from
 - [ ] Soft perception, hard reasoning: neural encoder, discrete readable core
-- [ ] Distilled from a frontier teacher (DeepSeek V4 Flash: ~130M output tokens for $10)
+- [ ] Distilled from DeepSeek V4 Flash
 - [ ] Trains on one 8GB laptop GPU
 
-**Gate:** the reasoning core is readable *and* the model is not useless. Both, or the thesis is wrong and we say so.
+Gate: the reasoning core is readable and the model isn't useless. Both, or the thesis is wrong and I'll say so.
 
-## Phase 4 — Legible RLHF
+### Phase 4, legible RLHF
 
-**The idea that makes this more than a small model.**
+This is the part I'm most excited about.
 
-RLHF today rewards outcomes, because outcomes are all the reward model can see. The reasoning that produced them is opaque, so it goes ungraded — and that is precisely how you train a model to reach good answers by bad reasoning.
+RLHF rewards outcomes because outcomes are all a reward model can see. The reasoning that produced the answer is opaque so it goes ungraded, and that is exactly how you end up training a model to reach right answers through broken reasoning.
 
-If the reasoning core is legible, **the reward model can see inside.** Reward the *process*, not just the product. Penalise a correct answer reached through a structurally broken derivation. Reward a sound step that happened to end wrong.
+If the reasoning core is legible then the reward model can see inside it. You grade the process instead of just the product; you penalise a right answer that came out of a derivation that doesn't hold, and you reward a sound step that happened to land wrong. A dense transformer can't do this because there's no readable process to grade. Raly can, because of the architecture.
 
-This is not possible in a dense transformer, because there is no readable process to reward. It is possible here *because of the architecture*. Interpretability stops being a safety tax and becomes a training advantage — the first case where being legible makes a model **better**, not merely safer.
+That would make it the first case I know of where being interpretable makes a model better rather than just safer, which flips interpretability from a tax into an advantage.
 
-- [ ] Process-level reward over the discrete reasoning trace
+- [ ] Process level reward over the discrete reasoning trace
 - [ ] Preference data on reasoning structure, not just final answers
-- [ ] Test: does process-reward beat outcome-reward at equal compute?
+- [ ] Test whether process reward beats outcome reward at equal compute
 
-**Gate:** process-supervised Raly beats outcome-supervised Raly on held-out reasoning. If legibility does not buy capability here, it never will — and we will have found the most interesting negative result available.
+Gate: process supervised Raly beats outcome supervised Raly on held out reasoning. If legibility doesn't buy capability here it probably never will, and that's still worth knowing.
 
-## Phase 5 — Scale, and the bet
+### Phase 5, scale
 
-- [ ] Does the legibility tax shrink with scale, or grow?
-- [ ] Raly as infrastructure others build on
-- [ ] The regulatory thesis: be the default when interpretability stops being optional
+- [ ] Does the legibility tax shrink with scale or grow
+- [ ] Raly as infrastructure other people build on
+- [ ] Be the obvious default when interpretability stops being optional
 
----
+## How I work
 
-## How we work
+Every claim is measured or cited; motivating sentences that sound good and aren't known don't get written. Kill criteria go in before the experiment, not after. Negative results ship, and four of the first findings here are negative, which is the point rather than an embarrassment. And I try hard to break anything exciting before believing it; every headline number in this repo got independently re-derived, and twice that caught something that would have been wrong.
 
-- **Every claim is measured or cited.** Motivating sentences that sound good and are not known do not get written.
-- **Kill criteria before experiments.** Preregister what would change our minds.
-- **Negative results ship.** Four of this repo's first findings are negative. That is the point, not an embarrassment.
-- **Excitement is evidence of a bug.** Every headline number here has been independently re-derived before being believed. Twice that caught something.
+Built with heavy use of Claude Code, which is worth saying out loud.
 
-## The honest risks
+## What could kill this
 
-1. **The legibility tax may be fundamental.** Best current evidence (4.39 BLEU) is discouraging. Phase 2 exists to find out before we bet on it.
-2. **Learned codebooks may void VSA's capacity guarantees.** No published method gives a training-time guarantee. This gates learnable VSA entirely.
-3. **Discrete does not mean legible — small means legible.** A ten-million-gate circuit is as opaque as ten million weights. Phase 2's metric must measure recovery, not discreteness.
-4. **DSLs die from missing on-ramps, not from bad design.** Hence Phase 1's gate.
+The legibility tax might just be fundamental, and 4.39 BLEU is not encouraging. Phase 2 exists to find that out before I bet on it.
 
-We would rather find out which of these is true in a month than believe all four are false for a year.
+Learned codebooks might void VSA's capacity guarantees entirely; those guarantees depend on atoms staying near orthogonal and gradient descent has no reason to keep them that way. Nobody has published a training time guarantee, and this gates the whole learnable VSA premise.
+
+Discrete doesn't mean legible, small means legible. A ten million gate circuit is as opaque as ten million weights, so Phase 2's metric has to measure recovery rather than discreteness.
+
+And DSLs mostly die from missing on ramps rather than bad design, which is why Phase 1 has the gate it has.
+
+I'd rather find out which of these is true in a month than spend a year assuming none of them are.
