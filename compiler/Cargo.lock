@@ -80,6 +80,7 @@ dependencies = [
  "raly-ast",
  "raly-diag",
  "raly-lexer",
+ "raly-parse",
 ]
 
 [[package]]
@@ -99,6 +100,15 @@ version = "0.0.0"
 dependencies = [
  "logos",
  "raly-diag",
+]
+
+[[package]]
+name = "raly-parse"
+version = "0.0.0"
+dependencies = [
+ "raly-ast",
+ "raly-diag",
+ "raly-lexer",
 ]
 
 [[package]]

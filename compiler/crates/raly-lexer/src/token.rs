@@ -100,6 +100,8 @@ pub enum TokenKind {
     Import,
     #[token("space")]
     Space,
+    #[token("role")]
+    Role,
     #[token("bind")]
     Bind,
     #[token("bundle")]
@@ -224,6 +226,7 @@ impl TokenKind {
                 | Return
                 | Import
                 | Space
+                | Role
                 | Bind
                 | Bundle
                 | Permute
@@ -260,6 +263,7 @@ impl TokenKind {
             Return => "`return`",
             Import => "`import`",
             Space => "`space`",
+            Role => "`role`",
             Bind => "`bind`",
             Bundle => "`bundle`",
             Permute => "`permute`",

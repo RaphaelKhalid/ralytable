@@ -69,6 +69,7 @@ fn keywords_are_reserved_and_beat_identifiers() {
         ("return", TokenKind::Return),
         ("import", TokenKind::Import),
         ("space", TokenKind::Space),
+        ("role", TokenKind::Role),
         ("bind", TokenKind::Bind),
         ("bundle", TokenKind::Bundle),
         ("permute", TokenKind::Permute),
