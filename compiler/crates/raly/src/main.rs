@@ -1,11 +1,13 @@
 //! The `raly` compiler driver.
 //!
-//! Three subcommands exist today:
+//! Four subcommands exist today:
 //!
 //! * `raly lex <file>` — dump the spanned token stream.
 //! * `raly parse <file>` — dump the syntax tree.
 //! * `raly check <file>` — lex, parse, resolve, type-check, render every
 //!   diagnostic, exit non-zero on error.
+//! * `raly explain <file>` — say, in plain English, what the program
+//!   represents, derived entirely from its types.
 //!
 //! Every phase recovers and every phase returns a value plus diagnostics
 //! rather than a `Result`, so **one run reports everything that is wrong** —
@@ -33,11 +35,13 @@ COMMANDS:
     lex <file>      Tokenise a file and print each token with its span
     parse <file>    Parse a file and print the syntax tree
     check <file>    Lex and parse a file, and report any problems found
+    explain <file>  Say what the program represents, in plain English
 
 OPTIONS:
     --color         Force ANSI colour in diagnostics
     --no-color      Disable ANSI colour (the default)
     --explain       Print each diagnostic code's registry description
+    --json          With `explain`, emit machine-readable JSON instead of prose
     -h, --help      Print this message
     -V, --version   Print the version
 
@@ -63,6 +67,7 @@ enum Command {
     Lex,
     Parse,
     Check,
+    Explain,
 }
 
 fn run() -> Result<ExitCode, String> {
@@ -75,6 +80,7 @@ fn run() -> Result<ExitCode, String> {
     let mut command: Option<Command> = None;
     let mut path: Option<PathBuf> = None;
     let mut config = RenderConfig::plain();
+    let mut json = false;
 
     for arg in &args {
         match arg.as_str() {
@@ -89,9 +95,11 @@ fn run() -> Result<ExitCode, String> {
             "--color" => config.color = true,
             "--no-color" => config.color = false,
             "--explain" => config.explain_codes = true,
+            "--json" => json = true,
             "lex" if command.is_none() => command = Some(Command::Lex),
             "parse" if command.is_none() => command = Some(Command::Parse),
             "check" if command.is_none() => command = Some(Command::Check),
+            "explain" if command.is_none() => command = Some(Command::Explain),
             other if other.starts_with('-') => {
                 return Err(format!("unknown option `{other}`"));
             }
@@ -100,7 +108,8 @@ fn run() -> Result<ExitCode, String> {
         }
     }
 
-    let command = command.ok_or("no command given; expected `lex`, `parse` or `check`")?;
+    let command =
+        command.ok_or("no command given; expected `lex`, `parse`, `check` or `explain`")?;
     let path = path.ok_or("no input file given")?;
 
     let text = match std::fs::read_to_string(&path) {
@@ -133,6 +142,18 @@ fn run() -> Result<ExitCode, String> {
         Command::Lex => print_tokens(&compiled.sources, &compiled.tokens),
         Command::Parse => print!("{}", dump::dump(&compiled.ast)),
         Command::Check => {}
+        Command::Explain => {
+            // Explaining is not checking: a file with errors still gets
+            // described as far as its types are known, because "what is this
+            // program?" is a question people ask precisely when it does not
+            // work yet. The diagnostics still go to stderr below.
+            let explanation = compiled.explain();
+            if json {
+                print!("{}", raly_explain::render::json(&explanation));
+            } else {
+                print!("{}", raly_explain::render::plain(&explanation));
+            }
+        }
     }
 
     eprint!("{}", compiled.render(config));

@@ -1,0 +1,9 @@
+// RALY4012, the genuinely silent case: same width, different family. A tensor
+// library has no notion of a family, so it adds these position by position
+// without a word and returns something that is neither bipolar nor a phase.
+space Concepts = MAP[1024]
+space Phases = FHRR[1024]
+
+fn merge(a: Sym[Concepts], b: Sym[Phases]) -> Vec[Concepts; load 1] {
+    bind(a, b)
+}

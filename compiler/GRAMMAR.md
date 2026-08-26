@@ -246,10 +246,10 @@ is a module constant.
 
 ```ebnf
 VsaExpr   = VsaOp [ "." IDENT ] "(" [ Expr%"," ] ")" ;
-VsaOp     = "bind" | "bundle" | "permute" | "unbind" | "cleanup" ;
+VsaOp     = "bind" | "bundle" | "permute" | "unbind" | "cleanup" | "broadcast" ;
 ```
 
-The five operations are **keywords with call syntax** — not identifiers, and not
+The six operations are **keywords with call syntax** — not identifiers, and not
 infix operators. Three consequences, all wanted:
 
 1. They cannot be shadowed, so `bundle` in a Raly program always means bundling.
@@ -271,6 +271,7 @@ infix operators. Three consequences, all wanted:
 | `permute(v)` / `permute(v, k)` | 1 or 2 | `k` defaults to 1 |
 | `unbind(v, k)` | 2 | |
 | `cleanup(v)` / `cleanup(v, S)` | 1 or 2 | `S` names the codebook to project onto |
+| `broadcast(v, S)` | 2 | the explicit opt-in of §7.3; `S` names the space to re-express `v` in |
 
 **`bundle()` is a parse error, not a zero vector.** §7.10: no bundle identity
 exists in any discretized family, so an empty bundle has no value to denote. The
@@ -296,6 +297,86 @@ need to point at what the user actually wrote.
 
 `bundle.left` gets **no** canonical order — it is order-dependent by
 construction. That asymmetry in the AST is the point.
+
+`broadcast` is not commutative either: its operands are a vector and a space,
+and swapping them is not a different spelling of the same call, it is nonsense.
+
+### 7.3 No silent broadcasting
+
+**The rule.** An elementwise operation — `bind` and `bundle`, the two that
+combine their operands position against position — requires every operand to
+have an **identical** vector type. A mismatch is `RALY4012`, and there is no
+implicit widening, promotion or conversion anywhere in the language that could
+paper over one.
+
+**Why the rule is here.** In PyTorch, adding a tensor of shape `(32, 1)` to one
+of shape `(1, 32)` does not fail. It broadcasts, silently, and produces a
+`(32, 32)` matrix. NumPy does the same. It is almost never what the author
+meant, it raises no warning, and the first thing that looks wrong is a loss
+curve that never comes down — days later, in a different file. It is one of the
+most expensive silent bugs in machine learning, and it is expensive precisely
+because the shapes are not in the type: there is nothing at the line that made
+the mistake for a compiler to object to.
+
+Raly's types carry width and family, so there is. The accident becomes
+impossible; the intent stays available.
+
+**What "identical" means, decided deliberately.** The checker tracks four
+properties. Only two of them are shape:
+
+| Property | Must operands match? | Why |
+| --- | --- | --- |
+| dimension | **yes** | two different widths have no elementwise combination at all: position *i* of one is not position *i* of the other |
+| family | **yes** | this is the genuinely silent case — two same-length vectors of different families combine position by position in *any* tensor library, without a word, and give back something belonging to neither |
+| superposition load | no | `bundle` **adds** loads and `bind` multiplies them. That is what these operations are for; requiring loads to match would break the algebra rather than protect it |
+| role schema | no | `bundle` unions role schemas and `bind` extends them. Same reason |
+
+A fifth case is deliberately *not* a broadcast error: two spaces that agree on
+family and width but are still different spaces differ only in **codebook**,
+and no tensor library has a notion of a codebook to paper over. Calling that
+`RALY4012` would be a false claim about what happens elsewhere, so it keeps
+`RALY4003`.
+
+**The opt-in, and why it is spelled `broadcast(v, S)`.** A rule with no escape
+hatch is a rule people work around by restructuring their program until the
+compiler stops noticing, which is worse than the bug. So the intent has to be
+expressible — once, explicitly, at the site.
+
+Three shapes were available:
+
+- **`broadcast(a, b)`, two vectors.** Rejected. Broadcasting two mismatched
+  widths does not produce a vector, it produces the outer product — a
+  *matrix*. Raly has no matrix type, and inventing one so that an escape hatch
+  could be typed would drag in exactly the tensor model this design avoids.
+  Everything in §5 is built on a vector's type being fixed by its space.
+- **`a |> broadcast`, a bare pipeline step.** Rejected on its own, because it
+  cannot say *which* space to land in. With two operands of different widths
+  there are two answers and no principled way to pick.
+- **`broadcast(v, S)`, a vector and a space.** Chosen. It mirrors
+  `cleanup(v, S)` exactly — the other operation whose second operand names a
+  space — so it needs no new grammar shape, and because the pipeline threads
+  into the first operand (§8.2), `v |> broadcast(S)` comes free and reads in
+  the order the data moves. It makes the *conforming* explicit rather than the
+  product, which keeps "identical types" a true invariant of every elementwise
+  operation instead of a rule with an exception attached.
+
+```raly
+bundle(a, b)                        // RALY4012 if a and b differ in width or family
+bundle(a, broadcast(b, Narrow))     // fine, and says so in one word
+bundle(a, b |> broadcast(Narrow))   // the same thing, read left to right
+```
+
+`broadcast` is a keyword rather than a library function for the same reasons as
+the other five (§7): it cannot be shadowed, its arity is checked at the parse
+site, and a reader scanning for the places where a program stops being strict
+can grep for one word.
+
+**The result is `noisy`.** Re-expressing a vector in a space of a different
+width or a different family is not information-preserving, and the type says
+so: `broadcast(v, S)` yields a `Vec[S; .. ; noisy]`, which must be passed
+through `cleanup` before anywhere wanting a `clean` value will accept it. An
+escape hatch that handed back a clean vector would give back exactly the
+silence the rule exists to remove.
 
 ---
 
@@ -408,6 +489,8 @@ The parser **always returns a tree**. There is no `Result`. Recovery is:
 | `RALY2009` | a role repeated in one role schema |
 | `RALY2010` | a `space` declaration missing its family or dimension |
 | `RALY2011` | expected an item at the top level |
+
+The rule of §7.3 is a *type* error, not a syntax one, and is `RALY4012`.
 
 ---
 

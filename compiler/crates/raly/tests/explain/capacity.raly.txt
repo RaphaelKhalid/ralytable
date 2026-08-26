@@ -1,0 +1,67 @@
+capacity.raly
+This file declares 2 spaces, 1 role declaration and 4 functions.
+
+space Small = MAP[1000]
+  A value of `Small` is a list of 1000 numbers, where every position holds
+  either +1 or -1, and two of them are combined by multiplying position
+  against position. Nothing about that list means anything on its own; its
+  meaning is which other values it was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Small` that point is 31 items. It was measured at 95% retrieval, not
+  derived from a formula.
+
+role Subject, Verb, Object in Small
+  Subject, Verb and Object are fixed values of `Small`, used as keys:
+  attaching a value to one of them is how this program records which part that
+  value plays.
+  Which keys a value carries is a compile-time fact, tracked through every
+  operation, even though the values attached to them are not.
+
+fn scene(s: Sym[Small], v: Sym[Small], o: Sym[Small]) -> Vec[Small; load 3]
+  It takes three values, every one of them one single entry of `Small` — one
+  of its fixed values, not a combination of several.
+  It gives back a value of `Small` whose keys the type does not pin down,
+  holding 3 of the 31 items `Small` can hold.
+
+fn everything(a: Sym[Small], b: Sym[Small], c: Sym[Small], d: Sym[Small], e: Sym[Small], f: Sym[Small], g: Sym[Small], h: Sym[Small]) -> Vec[Small]
+  It takes eight values, every one of them one single entry of `Small` — one
+  of its fixed values, not a combination of several.
+  It gives back a value of `Small` whose keys the type does not pin down,
+  holding at least 1 item.
+  ! This is past capacity: 40 items in a space that holds 31. Some of what
+    goes in cannot be got back out.
+
+space Sentences = MAP[384]
+  A value of `Sentences` is a list of 384 numbers, where every position holds
+  either +1 or -1, and two of them are combined by multiplying position
+  against position. Nothing about that list means anything on its own; its
+  meaning is which other values it was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Sentences` that point is 3 items. It was measured at 95% retrieval, not
+  derived from a formula. That number comes from the measured effective width
+  of 111 this declaration records, not from the 384 written beside the family:
+  a real embedding space uses far fewer independent directions than its
+  nominal width suggests.
+  The declaration also records effective.
+  ! The written width would suggest room for 10 items. The measured width says
+    3. Anything sized against the written number is about 3x too optimistic.
+
+fn pair(a: Sym[Sentences], b: Sym[Sentences]) -> Vec[Sentences; load 2]
+  It takes two values, every one of them one single entry of `Sentences` — one
+  of its fixed values, not a combination of several.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding 2 of the 3 items `Sentences` can hold.
+
+fn quad(a: Sym[Sentences], b: Sym[Sentences], c: Sym[Sentences], d: Sym[Sentences]) -> Vec[Sentences]
+  It takes four values, every one of them one single entry of `Sentences` —
+  one of its fixed values, not a combination of several.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding at least 1 item.
+  ! This is past capacity: 4 items in a space that holds 3. Some of what goes
+    in cannot be got back out.
