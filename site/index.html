@@ -411,7 +411,7 @@ a.tile .go{
       <span><b>179</b> tests</span>
       <span><b>0</b> warnings</span>
       <span><b>8</b> Rust crates</span>
-      <span><b>102KB</b> of it runs in your browser</span>
+      <span><b>286KB</b> of it runs in your browser</span>
     </div>
   </div>
 </div>
@@ -428,16 +428,16 @@ a.tile .go{
       on every keystroke, squiggles under the exact characters at fault, click a message to jump to it.
     </p>
     <p class="lede">
-      This build carries the part that reads characters and the part that draws errors, which is the
-      same code the command line uses and is why the carets line up identically. The parser and the
-      type checker are written and tested in the repository and are not in this build yet, so the
-      mistakes it can catch here are spelling-level ones: a string that never closes, a lookalike
-      character pasted out of a document, a malformed number.
+      This build carries the whole front end: the part that reads characters, the parser, the part
+      that resolves names, and the type checker, plus the part that draws errors. It calls the same
+      function the command line calls, which is why the carets line up identically. The file it
+      opens with is the capacity error, and you can fix it in place: drop one item from the bundle
+      and the error goes away as you type.
     </p>
 
     <div class="frame rv" style="margin-top:30px">
       <div class="frame-bar">
-        <span class="pip">◆</span> raly, 102KB, running in this tab
+        <span class="pip">◆</span> raly, 286KB, running in this tab
         <a href="./playground/" id="pg">open full size ↗</a>
       </div>
       <iframe src="./playground/" title="The Raly compiler playground" loading="lazy"></iframe>
@@ -471,12 +471,12 @@ a.tile .go{
 
       <a class="tile rv" href="./playground/">
         <span class="tno">The compiler, full size</span>
-        <h3>Eight sample files, most of them broken.</h3>
+        <h3>Nine sample files, most of them broken.</h3>
         <p>Load one and read a real error before you write a line, then edit it and watch the message move.</p>
         <div class="tile-art" aria-hidden="true">
-<pre><span class="d-src">let greeting = "hello</span>
-<span class="d-caret">               ^</span> <span class="d-err">never closed</span>
-<span class="d-help">help: add a closing `"`</span></pre>
+<pre><span class="d-src">    bundle(a, b, c, d)</span>
+<span class="d-caret">    ^^^^^^^^^^^^^^^^^^</span> <span class="d-err">4 items, space holds 3</span>
+<span class="d-help">help: declare `Sentences` at dimension 147</span></pre>
         </div>
         <span class="go">playground/ →</span>
       </a>
@@ -504,8 +504,8 @@ a.tile .go{
         <p class="lede" style="font-size:15px;color:var(--fg-3)">
           The block on the right is copied from
           <code>compiler/crates/raly/tests/ui/capacity-exceeded.stderr</code>, which is checked
-          character for character on every build. It comes from <code>raly check</code> at the command
-          line, not from the browser build above.
+          character for character on every build. The <a href="./playground/">playground</a> above
+          prints the same thing, from the same code: it is the file it opens with.
         </p>
       </div>
 
@@ -738,7 +738,7 @@ scene = torch.<span class="fn">zeros</span>(D)
           <li><span class="mk yes">✓</span><span><b>Parser</b> written by hand, recovers from bad syntax, and produces a tree that covers the whole file.</span></li>
           <li><span class="mk yes">✓</span><span><b>Name resolution</b> with two namespaces and proper scopes. Using a name before it is defined gets its own message. Suggestions stay quiet unless they are confident.</span></li>
           <li><span class="mk yes">✓</span><span><b>Type checking</b> for all four properties: width, family, how full, and which slots. <b>179 tests, zero warnings.</b></span></li>
-          <li><span class="mk yes">✓</span><span><b>Browser playground</b>: the real compiler as 102KB of WebAssembly, live errors, no install.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Browser playground</b>: the whole front end as 286KB of WebAssembly, the capacity error live, no install.</span></li>
           <li><span class="mk no">·</span><span><b>Code generation</b> does not exist. <code>raly</code> checks programs; it cannot run them.</span></li>
           <li><span class="mk no">·</span><span><b>Ralytable itself</b> is not built. What exists is the 6.4M-parameter model the second demo takes apart.</span></li>
         </ul>
