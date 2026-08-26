@@ -1,0 +1,4 @@
+{"config": "dense", "params": 6396160, "val_loss": 0.9921, "val_acc": 0.8411, "live_codes": NaN, "code_entropy_bits": null, "role_purity": null, "n_codes": 0, "steps": 6000, "seconds": 355.1, "smoke": false}
+{"config": "codes=64", "params": 6412544, "val_loss": 0.9979, "val_acc": 0.7734, "live_codes": 64, "code_entropy_bits": 5.72, "role_purity": 0.6088, "n_codes": 64, "steps": 6000, "seconds": 368.9, "smoke": false}
+{"config": "codes=256", "params": 6412544, "val_loss": 0.9423, "val_acc": 0.7986, "live_codes": 256, "code_entropy_bits": 7.527, "role_purity": 0.6343, "n_codes": 256, "steps": 6000, "seconds": 368.0, "smoke": false}
+{"config": "codes=1024", "params": 6412544, "val_loss": 0.896, "val_acc": 0.8018, "live_codes": 1023, "code_entropy_bits": 8.993, "role_purity": 0.6639, "n_codes": 1024, "steps": 6000, "seconds": 379.4, "smoke": false}
