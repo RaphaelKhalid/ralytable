@@ -26,3 +26,6 @@ experiments/08_tinystories/train.log
 experiments/08_tinystories/prep.log
 experiments/08_tinystories/metrics.jsonl
 experiments/08_tinystories/wandb/
+experiments/08_tinystories/full.log
+experiments/08_tinystories/stdout.log
+experiments/08_tinystories/stderr.log
