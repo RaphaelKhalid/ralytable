@@ -108,8 +108,6 @@ Gate: process supervised Ralytable beats outcome supervised Ralytable on held ou
 
 Every claim is measured or cited; motivating sentences that sound good and aren't known don't get written. Kill criteria go in before the experiment, not after. Negative results ship, and four of the first findings here are negative, which is the point rather than an embarrassment. And I try hard to break anything exciting before believing it; every headline number in this repo got independently re-derived, and twice that caught something that would have been wrong.
 
-Built with heavy use of Claude Code, which is worth saying out loud.
-
 ## What could kill this
 
 The legibility tax might just be fundamental, and 4.39 BLEU is not encouraging. Phase 2 exists to find that out before I bet on it.
