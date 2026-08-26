@@ -1,0 +1,18 @@
+error[RALY4007]: `Place` is not bound into this vector
+  --> role-not-bound.raly:10:21
+   |
+10 |     scene |> unbind(Place) |> cleanup(Concepts)
+   |                     ^^^^^ this role is not in the vector's schema
+  ::: role-not-bound.raly:10:5
+   |
+10 |     scene |> unbind(Place) |> cleanup(Concepts)
+   |     ----- this carries roles {Subject, Verb, Object}
+  ::: role-not-bound.raly:5:6
+   |
+ 5 | role Place in Concepts
+   |      ----- `Place` declared here
+   |
+   = note: unbinding a role that was never bound returns pure crosstalk, and `cleanup` will happily project that onto some arbitrary atom
+   = help: bind `Place` first, or unbind one of roles {Subject, Verb, Object}
+
+error: 1 error

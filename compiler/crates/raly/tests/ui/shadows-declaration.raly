@@ -1,0 +1,8 @@
+// RALY3007: a local hiding a role. A warning, not an error.
+space Concepts = MAP[1024]
+role Subject in Concepts
+
+fn f(x: Sym[Concepts]) -> Int {
+    let Subject = 1
+    Subject
+}

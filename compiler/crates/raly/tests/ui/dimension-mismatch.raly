@@ -1,0 +1,8 @@
+// RALY4002: two MAP spaces of different width. The message prints the
+// residual of the abelian-group unification, not "cannot unify".
+space Wide = MAP[8192]
+space Narrow = MAP[1024]
+
+fn f(a: Sym[Wide], b: Sym[Narrow]) -> Vec[Wide; load 2] {
+    bundle(a, b)
+}

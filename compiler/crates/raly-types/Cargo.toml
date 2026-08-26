@@ -1,0 +1,11 @@
+[package]
+name = "raly-types"
+description = "The Raly type checker: dimension, family, capacity and role schema."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+raly-diag.workspace = true
+raly-ast.workspace = true
+raly-resolve.workspace = true

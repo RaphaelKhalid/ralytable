@@ -1,15 +1,16 @@
 //! The `raly` compiler driver.
 //!
-//! Three subcommands exist today. All of them stop after parsing, because
-//! there is no type checker yet:
+//! Three subcommands exist today:
 //!
 //! * `raly lex <file>` — dump the spanned token stream.
 //! * `raly parse <file>` — dump the syntax tree.
-//! * `raly check <file>` — lex, parse, render every diagnostic, exit non-zero
-//!   on error.
+//! * `raly check <file>` — lex, parse, resolve, type-check, render every
+//!   diagnostic, exit non-zero on error.
 //!
-//! Lexing and parsing both recover, so one run reports every problem in the
-//! file rather than the first.
+//! Every phase recovers and every phase returns a value plus diagnostics
+//! rather than a `Result`, so **one run reports everything that is wrong** —
+//! lexical, syntactic, resolution and type problems together, sorted into
+//! source order. A syntax error does not silence the type checker.
 //!
 //! Argument parsing is hand-rolled. The surface is four flags wide; a
 //! dependency would cost more to review than it saves, and `clap` can be
@@ -18,9 +19,9 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use raly_diag::{codes, Diagnostic, Diagnostics, RenderConfig, Renderer, Severity, SourceMap};
-use raly_lexer::{lex, TokenKind};
-use raly_parse::{dump, parse};
+use raly_diag::{codes, Diagnostic, Diagnostics, RenderConfig, Renderer, SourceMap};
+use raly_lexer::TokenKind;
+use raly_parse::dump;
 
 const USAGE: &str = "\
 raly — the Raly compiler
@@ -102,9 +103,6 @@ fn run() -> Result<ExitCode, String> {
     let command = command.ok_or("no command given; expected `lex`, `parse` or `check`")?;
     let path = path.ok_or("no input file given")?;
 
-    let mut sources = SourceMap::new();
-    let mut diagnostics = Diagnostics::new();
-
     let text = match std::fs::read_to_string(&path) {
         Ok(text) => text,
         Err(err) => {
@@ -116,40 +114,30 @@ fn run() -> Result<ExitCode, String> {
                 format!("could not read `{}`", path.display()),
             )
             .with_note(err.to_string());
-            let renderer = Renderer::with_config(&sources, config);
+            let empty = SourceMap::new();
+            let renderer = Renderer::with_config(&empty, config);
             eprint!("{}", renderer.render(&diag));
             return Ok(ExitCode::from(2));
         }
     };
 
-    let file = sources.add(path.display().to_string(), text);
-    check_extension(&path, &mut diagnostics);
-
-    let lexed = lex(file, sources.get(file).text());
-    diagnostics.extend(lexed.diagnostics);
-
-    // Parsing runs even when lexing found problems: error tokens are already
-    // reported and the parser steps over them, so one run surfaces both
-    // lexical and syntactic mistakes.
-    let parsed = parse(file, sources.get(file).text(), &lexed.tokens);
-    diagnostics.extend(parsed.diagnostics);
-    diagnostics.sort_by_position();
+    // One pure call does every phase. The binary and the UI tests share it, so
+    // a golden test asserts on exactly the bytes a user sees.
+    let mut compiled = raly::compile(path.display().to_string(), text);
+    let mut extension = Diagnostics::new();
+    check_extension(&path, &mut extension);
+    compiled.diagnostics.extend(extension);
+    compiled.diagnostics.sort_by_position();
 
     match command {
-        Command::Lex => print_tokens(&sources, &lexed.tokens),
-        Command::Parse => print!("{}", dump::dump(&parsed.ast)),
+        Command::Lex => print_tokens(&compiled.sources, &compiled.tokens),
+        Command::Parse => print!("{}", dump::dump(&compiled.ast)),
         Command::Check => {}
     }
 
-    let renderer = Renderer::with_config(&sources, config);
-    if !diagnostics.is_empty() {
-        eprint!("{}", renderer.render_all(&diagnostics));
-        let errors = diagnostics.count(Severity::Error);
-        let warnings = diagnostics.count(Severity::Warning);
-        eprint!("\n{}", renderer.summary(errors, warnings));
-    }
+    eprint!("{}", compiled.render(config));
 
-    if diagnostics.has_errors() {
+    if compiled.has_errors() {
         Ok(ExitCode::from(1))
     } else {
         Ok(ExitCode::SUCCESS)

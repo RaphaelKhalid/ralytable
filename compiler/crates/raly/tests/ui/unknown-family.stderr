@@ -1,0 +1,10 @@
+error[RALY3005]: `MAPP` is not a VSA family
+ --> unknown-family.raly:2:18
+  |
+2 | space Concepts = MAPP[1024]
+  |                  ^^^^ no family by this name
+  |
+  = note: the families Raly knows are MAP, BSC, HRR, FHRR
+  = help: did you mean `MAP`?
+
+error: 1 error

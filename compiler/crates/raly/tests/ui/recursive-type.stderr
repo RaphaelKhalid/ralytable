@@ -1,0 +1,10 @@
+error[RALY4010]: the type alias `Ring` is defined in terms of itself
+ --> recursive-type.raly:2:13
+  |
+2 | type Loop = Ring
+  |             ^^^^ this expansion never terminates
+  |
+  = note: Raly type aliases are expanded, not boxed, so a cycle has no size
+  = help: break the cycle, or introduce a `space` instead
+
+error: 1 error

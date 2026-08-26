@@ -1,0 +1,16 @@
+error[RALY5001]: this bundles 40 items into a space that holds 31
+ --> capacity-exceeded.raly:9:5
+  |
+9 |     bundle(
+  |     ^^^^^^^ 40 items superposed here
+  | ...continues to line 15
+ ::: capacity-exceeded.raly:3:1
+  |
+3 | space Small = MAP[1000]
+  | ----------------------- `Small` holds 31 items
+  |
+  = note: 31 is the capacity of `Small` at dimension 1000, measured at 95% retrieval in experiments/04_capacity
+  = note: past capacity, cleanup returns the wrong atom and accuracy degrades towards chance without anything failing at run time
+  = help: superpose fewer items, or declare `Small` at dimension 1247, or 2048 for a power of two
+
+error: 1 error

@@ -1,0 +1,10 @@
+// RALY3003: one name, two definitions, one scope.
+space Concepts = MAP[1024]
+
+fn twice(x: Int) -> Int {
+    x
+}
+
+fn twice(y: Int) -> Int {
+    y
+}

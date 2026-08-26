@@ -1,0 +1,7 @@
+// RALY3001: a name with no definition, with a near-miss suggestion.
+space Concepts = MAP[1024]
+role Subject in Concepts
+
+fn f(x: Sym[Concepts]) -> Vec[Concepts] {
+    bind(Subjekt, x)
+}

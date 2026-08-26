@@ -1,0 +1,6 @@
+// RALY5003: the left-nested fold is a different function from n-ary bundle.
+space Concepts = MAP[1024]
+
+fn f(a: Sym[Concepts], b: Sym[Concepts], c: Sym[Concepts]) -> Vec[Concepts; load 3] {
+    bundle.left(a, b, c)
+}

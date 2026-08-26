@@ -1,0 +1,6 @@
+// RALY3002: a type name that does not exist.
+space Concepts = MAP[1024]
+
+fn f(x: Sym[Concept]) -> Sym[Concept] {
+    x
+}

@@ -1,0 +1,5 @@
+// A `load` annotation can exceed capacity all on its own, with no bundle in
+// sight. Reporting it at the declaration beats waiting for a call site.
+space Tiny = MAP[256]
+
+type TooMuch = Vec[Tiny; load 40]

@@ -1,0 +1,4 @@
+// RALY3006: a role declared in something that is not a space.
+type Alias = Int
+
+role Subject in Alias

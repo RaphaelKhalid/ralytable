@@ -1,0 +1,53 @@
+// capacity.raly -- a program that is perfectly well-shaped and silently wrong.
+//
+// Every vector here is 1000-dimensional. Every operation is defined. A tensor
+// library would run this and return a number. What it would not tell you is
+// that the bundle is 9 items past what a 1000-dimensional MAP space can
+// actually retrieve, so `cleanup` on the result comes back with the wrong atom
+// roughly a third of the time and accuracy just quietly sags.
+//
+//     cargo run -p raly -- check examples/capacity.raly
+//
+// Raly says so at compile time, with the number and where the number came from.
+
+space Small = MAP[1000]
+
+role Subject, Verb, Object in Small
+
+// This one is fine: three items in a space that holds thirty-one.
+fn scene(s: Sym[Small], v: Sym[Small], o: Sym[Small]) -> Vec[Small; load 3] {
+    bundle(bind(Subject, s), bind(Verb, v), bind(Object, o))
+}
+
+// This one is not. Forty items, and the space holds thirty-one.
+fn everything(
+    a: Sym[Small], b: Sym[Small], c: Sym[Small], d: Sym[Small],
+    e: Sym[Small], f: Sym[Small], g: Sym[Small], h: Sym[Small],
+) -> Vec[Small] {
+    bundle(
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+    )
+}
+
+// Real embedding spaces are worse than their nominal width suggests: MiniLM's
+// 384 dimensions carry about 111 dimensions of usable variance
+// (experiments/05_real_embeddings). A space can say so, and then the capacity
+// bound uses the measured number instead of the flattering one.
+space Sentences = MAP[384] where effective = 111
+
+fn pair(a: Sym[Sentences], b: Sym[Sentences]) -> Vec[Sentences; load 2] {
+    bundle(a, b)
+}
+
+fn quad(
+    a: Sym[Sentences],
+    b: Sym[Sentences],
+    c: Sym[Sentences],
+    d: Sym[Sentences],
+) -> Vec[Sentences] {
+    bundle(a, b, c, d)
+}

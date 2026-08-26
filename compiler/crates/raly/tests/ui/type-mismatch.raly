@@ -1,0 +1,10 @@
+// RALY4006: an ordinary scalar mismatch, and a noisy vector where a clean
+// atom was wanted.
+space Concepts = MAP[1024]
+role Subject in Concepts
+
+let flag: Int = true
+
+fn f(v: Vec[Concepts; roles {Subject}]) -> Sym[Concepts] {
+    unbind(v, Subject)
+}
