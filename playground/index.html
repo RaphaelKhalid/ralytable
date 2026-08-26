@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raly playground</title>
+<meta name="description" content="Run the Raly lexer and diagnostic renderer in your browser, compiled to WebAssembly.">
+<style>
+:root {
+  color-scheme: light dark;
+
+  --bg:        #fbfaf8;
+  --bg-panel:  #ffffff;
+  --bg-sunken: #f2efea;
+  --bg-hover:  #ebe7e0;
+  --border:    #dcd6cc;
+  --border-strong: #c3bbae;
+
+  --fg:        #26231e;
+  --fg-muted:  #6b6459;
+  --fg-faint:  #938b7d;
+
+  --accent:      #9a4b1c;
+  --accent-soft: #f3e5da;
+
+  --tok-keyword: #8a3a86;
+  --tok-ident:   #26231e;
+  --tok-number:  #1f6a4d;
+  --tok-string:  #9a4b1c;
+  --tok-comment: #938b7d;
+  --tok-punct:   #6b6459;
+
+  --error:      #b3261e;
+  --error-soft: #fbe6e4;
+  --warn:       #8a6100;
+  --warn-soft:  #fbf1d9;
+  --ok:         #1f6a4d;
+  --ok-soft:    #e2f0e9;
+
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --radius: 10px;
+  --code-size: 13.5px;
+  --code-leading: 1.65;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #16151a;
+    --bg-panel:  #1d1c22;
+    --bg-sunken: #131217;
+    --bg-hover:  #292830;
+    --border:    #33313c;
+    --border-strong: #4a4756;
+
+    --fg:        #e8e5ef;
+    --fg-muted:  #a29daf;
+    --fg-faint:  #78737f;
+
+    --accent:      #e79a6a;
+    --accent-soft: #3a2a21;
+
+    --tok-keyword: #d79ad8;
+    --tok-ident:   #e8e5ef;
+    --tok-number:  #7fd6ab;
+    --tok-string:  #e79a6a;
+    --tok-comment: #78737f;
+    --tok-punct:   #a29daf;
+
+    --error:      #ff8a80;
+    --error-soft: #3a1f1e;
+    --warn:       #e9c46a;
+    --warn-soft:  #352c15;
+    --ok:         #7fd6ab;
+    --ok-soft:    #172b23;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body { max-width: 100%; overflow-x: hidden; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap { max-width: 1240px; margin: 0 auto; padding: 28px 20px 64px; }
+
+/* ---------- header ---------- */
+
+header.masthead { margin-bottom: 22px; }
+
+.title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+h1 {
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  margin: 0;
+  font-weight: 620;
+}
+
+h1 .dot { color: var(--accent); }
+
+.subtitle {
+  margin: 10px 0 0;
+  max-width: 70ch;
+  color: var(--fg-muted);
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+.honest {
+  margin-top: 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--bg-panel);
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  max-width: 90ch;
+}
+
+.honest strong { color: var(--fg); font-weight: 600; }
+
+/* ---------- examples ---------- */
+
+.examples {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 22px 0 12px;
+}
+
+.examples .lbl {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+  margin-right: 2px;
+}
+
+button.chip {
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-panel);
+  color: var(--fg);
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+button.chip:hover { background: var(--bg-hover); }
+button.chip[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--fg);
+}
+button.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- layout ---------- */
+
+.panes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .panes { grid-template-columns: minmax(0, 1fr); }
+}
+
+.pane {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.pane-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-sunken);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  min-height: 40px;
+}
+
+.pane-head .grow { flex: 1; }
+
+/* ---------- editor ---------- */
+
+.editor {
+  position: relative;
+  font-family: var(--mono);
+  font-size: var(--code-size);
+  line-height: var(--code-leading);
+  tab-size: 4;
+}
+
+.editor .layer {
+  margin: 0;
+  padding: 14px 16px;
+  font: inherit;
+  font-family: var(--mono);
+  letter-spacing: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  tab-size: 4;
+  border: 0;
+}
+
+#highlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--tok-ident);
+  overflow: hidden;
+}
+
+#source {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 340px;
+  resize: vertical;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--accent);
+  outline: none;
+}
+
+#source::selection { background: color-mix(in srgb, var(--accent) 26%, transparent); }
+
+.t-keyword { color: var(--tok-keyword); font-weight: 600; }
+.t-ident   { color: var(--tok-ident); }
+.t-number  { color: var(--tok-number); }
+.t-string  { color: var(--tok-string); }
+.t-comment { color: var(--tok-comment); font-style: italic; }
+.t-punct   { color: var(--tok-punct); }
+.t-error   { color: var(--error); }
+
+.m-primary {
+  text-decoration: underline wavy var(--error);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  background: var(--error-soft);
+  border-radius: 2px;
+}
+.m-secondary {
+  text-decoration: underline dotted var(--fg-muted);
+  text-underline-offset: 3px;
+  background: var(--bg-hover);
+  border-radius: 2px;
+}
+.m-warn { text-decoration-color: var(--warn); background: var(--warn-soft); }
+.m-flash { animation: flash .9s ease-out; }
+@keyframes flash {
+  from { background: color-mix(in srgb, var(--accent) 55%, transparent); }
+  to   { background: var(--error-soft); }
+}
+
+.statusbar {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 7px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-sunken);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--fg-faint);
+}
+.statusbar .err { color: var(--error); }
+.statusbar .ok  { color: var(--ok); }
+
+/* ---------- tabs ---------- */
+
+.tabs { display: flex; gap: 4px; }
+
+button.tab {
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg-faint);
+  cursor: pointer;
+}
+button.tab:hover { background: var(--bg-hover); color: var(--fg); }
+button.tab[aria-selected="true"] {
+  background: var(--bg-panel);
+  border-color: var(--border);
+  color: var(--fg);
+}
+button.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.tabpanel { display: none; }
+.tabpanel.active { display: block; }
+
+.scroller { max-height: 520px; overflow: auto; }
+
+/* ---------- diagnostics ---------- */
+
+.diaglist { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+
+.diag {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--error);
+  border-radius: 0 8px 8px 0;
+  background: var(--bg-panel);
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+  overflow: hidden;
+}
+.diag:hover { background: var(--bg-hover); }
+.diag:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.diag.sev-warning { border-left-color: var(--warn); }
+.diag.sev-advice  { border-left-color: var(--fg-muted); }
+
+.diag-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 9px 12px 0;
+}
+
+.sev {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--error-soft);
+  color: var(--error);
+}
+.sev-warning .sev { background: var(--warn-soft); color: var(--warn); }
+.sev-advice  .sev { background: var(--bg-hover);  color: var(--fg-muted); }
+
+.code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--fg-faint);
+}
+.diag-msg { font-weight: 560; font-size: 14px; }
+.diag-at { font-family: var(--mono); font-size: 11.5px; color: var(--fg-faint); margin-left: auto; }
+
+.diag pre {
+  margin: 8px 0 0;
+  padding: 10px 12px 12px;
+  background: var(--bg-sunken);
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--fg-muted);
+}
+.diag pre b { color: var(--error); font-weight: 600; }
+.sev-warning .diag pre b { color: var(--warn); }
+
+.empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--fg-muted);
+}
+.empty .big { font-size: 15px; color: var(--ok); font-weight: 600; }
+.empty .sub { font-size: 13px; margin-top: 6px; }
+
+/* ---------- tokens ---------- */
+
+table.tokens {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+table.tokens th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  padding: 7px 10px;
+  background: var(--bg-sunken);
+  border-bottom: 1px solid var(--border);
+  color: var(--fg-faint);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+table.tokens td {
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  white-space: nowrap;
+}
+table.tokens tr:hover td { background: var(--bg-hover); }
+table.tokens td.txt {
+  color: var(--fg-muted);
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+table.tokens td.num { color: var(--fg-faint); text-align: right; }
+
+pre.json {
+  margin: 0;
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--fg-muted);
+}
+
+/* ---------- tooltip ---------- */
+
+#tip {
+  position: fixed;
+  z-index: 40;
+  max-width: min(360px, 82vw);
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-panel);
+  color: var(--fg);
+  font-size: 12.5px;
+  line-height: 1.45;
+  box-shadow: 0 6px 22px rgba(0,0,0,.18);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .1s;
+}
+#tip.on { opacity: 1; }
+#tip .tip-code { font-family: var(--mono); font-size: 11px; color: var(--fg-faint); display: block; }
+
+footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--fg-faint);
+}
+footer a { color: var(--accent); }
+footer code { font-family: var(--mono); font-size: 12px; }
+
+.boot-error {
+  margin: 24px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  background: var(--error-soft);
+  color: var(--error);
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="title-row">
+    <h1>Raly<span class="dot">.</span> playground</h1>
+    <span class="badge" id="ver">wasm</span>
+  </div>
+  <p class="subtitle">
+    Raly is a language being designed around vector-symbolic computation, where
+    <code>bind</code>, <code>bundle</code> and <code>permute</code> are reserved as primitives rather than
+    library calls. Its front end is built error-message-first: the diagnostic renderer was written
+    before anything that could produce a diagnostic.
+  </p>
+  <div class="honest">
+    <strong>What works today.</strong> Everything on this page is the real compiler, compiled to
+    WebAssembly and running in your browser: the <code>logos</code>-based lexer and the hand-written
+    diagnostic renderer, spans, codes and all. <strong>There is no parser and no type system yet</strong>
+    — nothing here checks types, resolves names, or understands what a program means. The keywords
+    lex to distinct tokens and carry no semantics. Errors below are lexical only.
+  </div>
+</header>
+
+<div class="examples" id="examples">
+  <span class="lbl">Examples</span>
+</div>
+
+<main class="panes">
+  <section class="pane" aria-label="Editor">
+    <div class="pane-head">
+      <span>playground.raly</span>
+      <span class="grow"></span>
+      <span id="phase">lex ok &middot; parse not built</span>
+    </div>
+    <div class="editor" id="editor">
+      <pre class="layer" id="highlight" aria-hidden="true"></pre>
+      <textarea class="layer" id="source" spellcheck="false" autocapitalize="off"
+        autocorrect="off" autocomplete="off" aria-label="Raly source code"></textarea>
+    </div>
+    <div class="statusbar">
+      <span id="st-pos">1:1</span>
+      <span id="st-tokens">0 tokens</span>
+      <span id="st-diags" class="ok">no errors</span>
+      <span id="st-time"></span>
+    </div>
+  </section>
+
+  <section class="pane" aria-label="Analysis">
+    <div class="pane-head">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-diagnostics" aria-selected="true" aria-controls="panel-diagnostics">Diagnostics</button>
+        <button class="tab" role="tab" id="tab-tokens" aria-selected="false" aria-controls="panel-tokens">Tokens</button>
+        <button class="tab" role="tab" id="tab-json" aria-selected="false" aria-controls="panel-json">JSON</button>
+      </div>
+    </div>
+
+    <div class="tabpanel active scroller" id="panel-diagnostics" role="tabpanel" aria-labelledby="tab-diagnostics">
+      <div class="diaglist" id="diaglist"></div>
+    </div>
+
+    <div class="tabpanel scroller" id="panel-tokens" role="tabpanel" aria-labelledby="tab-tokens">
+      <table class="tokens">
+        <thead><tr><th>Kind</th><th>Text</th><th>Bytes</th><th>Line:Col</th></tr></thead>
+        <tbody id="tokbody"></tbody>
+      </table>
+    </div>
+
+    <div class="tabpanel scroller" id="panel-json" role="tabpanel" aria-labelledby="tab-json">
+      <pre class="json" id="jsonout"></pre>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>
+    Built from <code>compiler/crates/raly-wasm</code> with <code>wasm-bindgen</code>. No network requests, no CDN:
+    the WebAssembly module is embedded in this page's scripts, so it runs from a static host or straight off disk.
+    Click any diagnostic to jump to its span; hover an underline in the editor to read its message.
+  </p>
+</footer>
+
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script src="wasm/raly_wasm_embedded.js"></script>
+<script src="wasm/raly_wasm.js"></script>
+<script src="examples.js"></script>
+<script src="playground.js"></script>
+</body>
+</html>
