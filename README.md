@@ -21,10 +21,12 @@ That is the real Rust compiler cross-compiled to WebAssembly, 102KB. Type Raly, 
 
 | | status |
 |---|---|
-| Lexer, diagnostics, AST | done, 154 tests, zero warnings |
-| Grammar and parser | done, error recovery, total over input |
+| Lexer, diagnostics, AST | done |
+| Grammar and parser | done, error recovery, tree total over input |
 | Browser playground | done |
-| Name resolution, type system, IR, codegen | not built |
+| Name resolution | done, scopes, two namespaces, suggestions |
+| Type system | done, all four properties, 179 tests, zero warnings |
+| IR, codegen | not built |
 | The model | not built |
 
 The diagnostics are the part I'd point at first:
@@ -44,7 +46,7 @@ error[RALY1002]: unterminated string literal
   = help: add a closing `"` before the end of the line
 ```
 
-## What the type system will track
+## What the type system tracks
 
 Four things, none of which PyTorch can see: vector space dimension, VSA family, superposition load (`load 3` out of a capacity derived from D), and a role schema (which roles are bound into a vector; the roles are static, the values bound to them are runtime).
 
@@ -53,6 +55,24 @@ Vec[Concepts; load 3; roles {Subject, Verb, Object}]
 ```
 
 The second half is the point. If the type knows which roles are in a vector, the type signature is a description of what the model represents, readable without running it. That is interpretability living in the type system rather than in an archaeology pass over trained weights.
+
+The capacity bound is not a guess; it comes from `experiments/04_capacity`, and where a space declares a measured effective dimension it uses that instead of the nominal one, because `experiments/07_retrieval_cost` showed nominal dimension predicts nothing:
+
+```
+error[RALY5001]: this bundles 4 items into a space that holds 3
+ --> capacity-effective.raly:7:5
+  |
+7 |     bundle(a, b, c, d)
+  |     ^^^^^^^^^^^^^^^^^^ 4 items superposed here
+ ::: capacity-effective.raly:4:1
+  |
+4 | space Sentences = MAP[384] where effective = 111
+  | ------- `Sentences` holds 3 items (from its measured effective dimension 111, not its nominal one)
+  |
+  = note: past capacity, cleanup returns the wrong atom and accuracy degrades
+          towards chance without anything failing at run time
+  = help: superpose fewer items, or declare `Sentences` at dimension 147
+```
 
 Grammar and rationale: [compiler/GRAMMAR.md](compiler/GRAMMAR.md).
 
