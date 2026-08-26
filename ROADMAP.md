@@ -51,10 +51,10 @@ Gate: no claim in the semantics doc that isn't either measured or cited. Holding
 A typed VSA DSL that catches what PyTorch can't see.
 
 - [x] Grammar and parser, with error recovery and a tree total over the input
-- [ ] Name resolution and typechecker
-- [ ] Capacity types, so `Vec[Concepts; load 3]` and overstuffing is a compile error
-- [ ] Role schema types, so the type knows which roles are bound in even though the values are runtime; unbinding a role the vector doesn't carry won't compile
-- [ ] Static nesting depth checks that force a `cleanup` before retrieval degrades
+- [x] Name resolution and typechecker
+- [x] Capacity types, so `Vec[Concepts; load 3]` and overstuffing is a compile error
+- [x] Role schema types, so the type knows which roles are bound in even though the values are runtime; unbinding a role the vector doesn't carry won't compile
+- [x] Static nesting depth checks that force a `cleanup` before retrieval degrades
 - [ ] Differentiable end to end
 - [ ] Error messages good enough to be the reason people use it
 - [x] Browser playground (`playground/`), the compiler as wasm
