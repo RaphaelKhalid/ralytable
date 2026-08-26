@@ -221,11 +221,15 @@
       var big = document.createElement('div');
       big.className = 'big';
       big.textContent = analysis.counts.tokens
-        ? 'Lexed clean — ' + analysis.counts.tokens + ' tokens, no diagnostics'
-        : 'Nothing to lex yet';
+        ? 'Checks clean — ' + analysis.counts.tokens + ' tokens, no diagnostics'
+        : 'Nothing to check yet';
       var sub = document.createElement('div');
       sub.className = 'sub';
-      sub.textContent = 'The parser and type system are not built, so this is as far as the compiler goes.';
+      sub.textContent = analysis.counts.tokens
+        ? 'Lexed, parsed, resolved and type-checked. ' +
+          analysis.counts.items + (analysis.counts.items === 1 ? ' declaration' : ' declarations') +
+          ', nothing to report.'
+        : 'The front end is total: empty input is a valid, empty program.';
       empty.appendChild(big);
       empty.appendChild(sub);
       diagListEl.appendChild(empty);
@@ -401,8 +405,14 @@
     }
     $('st-time').textContent = ms.toFixed(1) + ' ms';
 
+    // All four phases run on every keystroke. Naming them when they all
+    // succeeded is shorter than repeating "ok" four times, and if one ever
+    // reports something else it is spelled out.
     var p = analysis.phases;
-    $('phase').textContent = 'lex ' + p.lex + ' · parse ' + p.parse.replace('not-implemented', 'not built');
+    var names = ['lex', 'parse', 'resolve', 'typecheck'];
+    var allOk = names.every(function (name) { return p[name] === 'ok'; });
+    $('phase').textContent = allOk ? names.join(' · ')
+      : names.map(function (name) { return name + ' ' + p[name]; }).join(' · ');
 
     syncScroll();
   }
