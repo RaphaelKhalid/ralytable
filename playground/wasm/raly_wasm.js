@@ -119,7 +119,8 @@ let wasm_bindgen;
         return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
     }
     /**
-     * Lex `source` and return the tokens and diagnostics as structured data.
+     * Run the whole front end over `source` and return tokens, declarations and
+     * diagnostics as structured data.
      *
      * Total: any input, including arbitrary bytes and empty text, produces a
      * result rather than a panic or an exception.

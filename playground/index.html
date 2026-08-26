@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Raly playground</title>
-<meta name="description" content="Run the Raly lexer and diagnostic renderer in your browser, compiled to WebAssembly.">
+<meta name="description" content="Run the whole Raly front end in your browser: lexer, parser, name resolution and the capacity type system, compiled to WebAssembly.">
 <style>
 :root {
   color-scheme: light dark;
@@ -218,6 +218,15 @@ button.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2p
 }
 
 .pane-head .grow { flex: 1; }
+
+/* The phase list is the longest thing in a pane head. Let it shrink and
+   ellipsize rather than push the page sideways on a narrow phone. */
+.pane-head #phase {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* ---------- editor ---------- */
 
@@ -513,10 +522,12 @@ footer code { font-family: var(--mono); font-size: 12px; }
   </p>
   <div class="honest">
     <strong>What works today.</strong> Everything on this page is the real compiler, compiled to
-    WebAssembly and running in your browser: the <code>logos</code>-based lexer and the hand-written
-    diagnostic renderer, spans, codes and all. <strong>There is no parser and no type system yet</strong>
-    — nothing here checks types, resolves names, or understands what a program means. The keywords
-    lex to distinct tokens and carry no semantics. Errors below are lexical only.
+    WebAssembly and running in your browser. It runs the whole front end on every keystroke:
+    the <code>logos</code>-based lexer, the recursive-descent parser, name resolution and the
+    type system, then renders the diagnostics with the compiler's own renderer. This is the same
+    <code>raly::compile</code> the command line calls, so the caret blocks below are
+    character-for-character what <code>raly check</code> prints. There is no code generation
+    yet: nothing here runs a Raly program.
   </div>
 </header>
 
@@ -529,7 +540,7 @@ footer code { font-family: var(--mono); font-size: 12px; }
     <div class="pane-head">
       <span>playground.raly</span>
       <span class="grow"></span>
-      <span id="phase">lex ok &middot; parse not built</span>
+      <span id="phase">lex &middot; parse &middot; resolve &middot; typecheck</span>
     </div>
     <div class="editor" id="editor">
       <pre class="layer" id="highlight" aria-hidden="true"></pre>
