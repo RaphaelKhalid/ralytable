@@ -1,0 +1,101 @@
+broadcast.raly
+This file declares 3 spaces, 1 role declaration and 5 functions.
+
+space Sentences = MAP[384]
+  A value of `Sentences` is a list of 384 numbers, where every position holds
+  either +1 or -1, and two of them are combined by multiplying position
+  against position. Nothing about that list means anything on its own; its
+  meaning is which other values it was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Sentences` that point is 3 items. It was measured at 95% retrieval, not
+  derived from a formula. That number comes from the measured effective width
+  of 111 this declaration records, not from the 384 written beside the family:
+  a real embedding space uses far fewer independent directions than its
+  nominal width suggests.
+  The declaration also records effective.
+  ! The written width would suggest room for 10 items. The measured width says
+    3. Anything sized against the written number is about 3x too optimistic.
+
+space Tokens = MAP[1024]
+  A value of `Tokens` is a list of 1024 numbers, where every position holds
+  either +1 or -1, and two of them are combined by multiplying position
+  against position. Nothing about that list means anything on its own; its
+  meaning is which other values it was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Tokens` that point is 31 items. It was measured at 95% retrieval, not
+  derived from a formula.
+
+space Phases = FHRR[1024]
+  A value of `Phases` is a list of 1024 numbers, where every position holds an
+  angle, and two of them are combined by adding their angles. Nothing about
+  that list means anything on its own; its meaning is which other values it
+  was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Phases` that point is 31 items. It was measured at 95% retrieval, not
+  derived from a formula.
+
+role Subject, Verb in Sentences
+  Subject and Verb are fixed values of `Sentences`, used as keys: attaching a
+  value to one of them is how this program records which part that value
+  plays.
+  Which keys a value carries is a compile-time fact, tracked through every
+  operation, even though the values attached to them are not.
+
+fn merge_widths(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2]
+  `a` is one single entry of `Sentences` — one of its fixed values, not a
+  combination of several.
+  `b` is one single entry of `Tokens` — one of its fixed values, not a
+  combination of several.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding 2 of the 3 items `Sentences` can hold.
+
+fn merge_families(a: Sym[Tokens], b: Sym[Phases]) -> Vec[Tokens; load 2]
+  `a` is one single entry of `Tokens` — one of its fixed values, not a
+  combination of several.
+  `b` is one single entry of `Phases` — one of its fixed values, not a
+  combination of several.
+  It gives back a value of `Tokens` whose keys the type does not pin down,
+  holding 2 of the 31 items `Tokens` can hold.
+
+fn merge_deliberately(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2; noisy]
+  `a` is one single entry of `Sentences` — one of its fixed values, not a
+  combination of several.
+  `b` is one single entry of `Tokens` — one of its fixed values, not a
+  combination of several.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding 2 of the 3 items `Sentences` can hold, and not yet matched back to
+  one of them.
+  ! Getting a value back out is only approximate: it returns what was asked
+    for plus a little of everything else that was combined with it. Matching
+    it against the space's own entries with `cleanup` is what makes it exact
+    again, and that has not happened here.
+
+fn merge_piped(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2; noisy]
+  `a` is one single entry of `Sentences` — one of its fixed values, not a
+  combination of several.
+  `b` is one single entry of `Tokens` — one of its fixed values, not a
+  combination of several.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding 2 of the 3 items `Sentences` can hold, and not yet matched back to
+  one of them.
+  ! Getting a value back out is only approximate: it returns what was asked
+    for plus a little of everything else that was combined with it. Matching
+    it against the space's own entries with `cleanup` is what makes it exact
+    again, and that has not happened here.
+
+fn merge_loads(a: Vec[Sentences; roles {Subject}], b: Vec[Sentences; roles {Verb}]) -> Vec[Sentences]
+  `a` is a value of `Sentences` carrying exactly the keys Subject, holding at
+  least 1 item.
+  `b` is a value of `Sentences` carrying exactly the keys Verb, holding at
+  least 1 item.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding at least 1 item.

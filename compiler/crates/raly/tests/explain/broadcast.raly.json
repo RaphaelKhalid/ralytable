@@ -1,0 +1,162 @@
+{
+  "file": "broadcast.raly",
+  "headline": "This file declares 3 spaces, 1 role declaration and 5 functions.",
+  "items": [
+    {
+      "kind": "space",
+      "name": "Sentences",
+      "signature": "space Sentences = MAP[384]",
+      "summary": ["A value of `Sentences` is a list of 384 numbers, where every position holds either +1 or -1, and two of them are combined by multiplying position against position. Nothing about that list means anything on its own; its meaning is which other values it was built from.", "Several values can be added together into a single one, which is what `load` counts everywhere below. That only works up to a point. Past it, asking for one of the items back returns a different item instead, and nothing fails while it happens.", "For `Sentences` that point is 3 items. It was measured at 95% retrieval, not derived from a formula. That number comes from the measured effective width of 111 this declaration records, not from the 384 written beside the family: a real embedding space uses far fewer independent directions than its nominal width suggests.", "The declaration also records effective."],
+      "notable": ["The written width would suggest room for 10 items. The measured width says 3. Anything sized against the written number is about 3x too optimistic."],
+      "facts": {
+        "family": "MAP",
+        "dimension": 384,
+        "capacity_dimension": 111,
+        "capacity_basis": "measured effective width",
+        "capacity": 3,
+        "attributes": ["effective"]
+      }
+    },
+    {
+      "kind": "space",
+      "name": "Tokens",
+      "signature": "space Tokens = MAP[1024]",
+      "summary": ["A value of `Tokens` is a list of 1024 numbers, where every position holds either +1 or -1, and two of them are combined by multiplying position against position. Nothing about that list means anything on its own; its meaning is which other values it was built from.", "Several values can be added together into a single one, which is what `load` counts everywhere below. That only works up to a point. Past it, asking for one of the items back returns a different item instead, and nothing fails while it happens.", "For `Tokens` that point is 31 items. It was measured at 95% retrieval, not derived from a formula."],
+      "notable": [],
+      "facts": {
+        "family": "MAP",
+        "dimension": 1024,
+        "capacity_dimension": 1024,
+        "capacity_basis": "declared width",
+        "capacity": 31,
+        "attributes": []
+      }
+    },
+    {
+      "kind": "space",
+      "name": "Phases",
+      "signature": "space Phases = FHRR[1024]",
+      "summary": ["A value of `Phases` is a list of 1024 numbers, where every position holds an angle, and two of them are combined by adding their angles. Nothing about that list means anything on its own; its meaning is which other values it was built from.", "Several values can be added together into a single one, which is what `load` counts everywhere below. That only works up to a point. Past it, asking for one of the items back returns a different item instead, and nothing fails while it happens.", "For `Phases` that point is 31 items. It was measured at 95% retrieval, not derived from a formula."],
+      "notable": [],
+      "facts": {
+        "family": "FHRR",
+        "dimension": 1024,
+        "capacity_dimension": 1024,
+        "capacity_basis": "declared width",
+        "capacity": 31,
+        "attributes": []
+      }
+    },
+    {
+      "kind": "role",
+      "name": "Subject, Verb",
+      "signature": "role Subject, Verb in Sentences",
+      "summary": ["Subject and Verb are fixed values of `Sentences`, used as keys: attaching a value to one of them is how this program records which part that value plays.", "Which keys a value carries is a compile-time fact, tracked through every operation, even though the values attached to them are not."],
+      "notable": [],
+      "facts": {
+        "names": ["Subject", "Verb"],
+        "space": "Sentences"
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "merge_widths",
+      "signature": "fn merge_widths(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2]",
+      "summary": ["`a` is one single entry of `Sentences` — one of its fixed values, not a combination of several.", "`b` is one single entry of `Tokens` — one of its fixed values, not a combination of several.", "It gives back a value of `Sentences` whose keys the type does not pin down, holding 2 of the 3 items `Sentences` can hold."],
+      "notable": [],
+      "facts": {
+        "parameters": ["a: Sym[Sentences]", "b: Sym[Tokens]"],
+        "result": "Vec[Sentences; load 2]",
+        "result_of_the_body": "Vec[Sentences; load 2; roles {}; clean]",
+        "space": "Sentences",
+        "load_low": 2,
+        "load_high": 2,
+        "capacity": 3,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "merge_families",
+      "signature": "fn merge_families(a: Sym[Tokens], b: Sym[Phases]) -> Vec[Tokens; load 2]",
+      "summary": ["`a` is one single entry of `Tokens` — one of its fixed values, not a combination of several.", "`b` is one single entry of `Phases` — one of its fixed values, not a combination of several.", "It gives back a value of `Tokens` whose keys the type does not pin down, holding 2 of the 31 items `Tokens` can hold."],
+      "notable": [],
+      "facts": {
+        "parameters": ["a: Sym[Tokens]", "b: Sym[Phases]"],
+        "result": "Vec[Tokens; load 2]",
+        "result_of_the_body": "Vec[Tokens; load 1; roles {}; clean]",
+        "space": "Tokens",
+        "load_low": 1,
+        "load_high": 1,
+        "capacity": 31,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "merge_deliberately",
+      "signature": "fn merge_deliberately(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2; noisy]",
+      "summary": ["`a` is one single entry of `Sentences` — one of its fixed values, not a combination of several.", "`b` is one single entry of `Tokens` — one of its fixed values, not a combination of several.", "It gives back a value of `Sentences` whose keys the type does not pin down, holding 2 of the 3 items `Sentences` can hold, and not yet matched back to one of them."],
+      "notable": ["Getting a value back out is only approximate: it returns what was asked for plus a little of everything else that was combined with it. Matching it against the space's own entries with `cleanup` is what makes it exact again, and that has not happened here."],
+      "facts": {
+        "parameters": ["a: Sym[Sentences]", "b: Sym[Tokens]"],
+        "result": "Vec[Sentences; load 2; noisy]",
+        "result_of_the_body": "Vec[Sentences; load 2; roles {}; noisy]",
+        "space": "Sentences",
+        "load_low": 2,
+        "load_high": 2,
+        "capacity": 3,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": false,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "merge_piped",
+      "signature": "fn merge_piped(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2; noisy]",
+      "summary": ["`a` is one single entry of `Sentences` — one of its fixed values, not a combination of several.", "`b` is one single entry of `Tokens` — one of its fixed values, not a combination of several.", "It gives back a value of `Sentences` whose keys the type does not pin down, holding 2 of the 3 items `Sentences` can hold, and not yet matched back to one of them."],
+      "notable": ["Getting a value back out is only approximate: it returns what was asked for plus a little of everything else that was combined with it. Matching it against the space's own entries with `cleanup` is what makes it exact again, and that has not happened here."],
+      "facts": {
+        "parameters": ["a: Sym[Sentences]", "b: Sym[Tokens]"],
+        "result": "Vec[Sentences; load 2; noisy]",
+        "result_of_the_body": "Vec[Sentences; load 2; roles {}; noisy]",
+        "space": "Sentences",
+        "load_low": 2,
+        "load_high": 2,
+        "capacity": 3,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": false,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "merge_loads",
+      "signature": "fn merge_loads(a: Vec[Sentences; roles {Subject}], b: Vec[Sentences; roles {Verb}]) -> Vec[Sentences]",
+      "summary": ["`a` is a value of `Sentences` carrying exactly the keys Subject, holding at least 1 item.", "`b` is a value of `Sentences` carrying exactly the keys Verb, holding at least 1 item.", "It gives back a value of `Sentences` whose keys the type does not pin down, holding at least 1 item."],
+      "notable": [],
+      "facts": {
+        "parameters": ["a: Vec[Sentences; roles {Subject}]", "b: Vec[Sentences; roles {Verb}]"],
+        "result": "Vec[Sentences]",
+        "result_of_the_body": "Vec[Sentences; load at least 2; roles {Subject, Verb}; clean]",
+        "space": "Sentences",
+        "load_low": 2,
+        "load_high": null,
+        "capacity": 3,
+        "roles": ["Subject", "Verb"],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    }
+  ]
+}

@@ -397,6 +397,34 @@ fn bundle_accepts_a_trailing_comma_and_many_operands() {
 }
 
 #[test]
+fn broadcast_is_an_operation_keyword_not_an_identifier() {
+    // GRAMMAR.md 7.3: the explicit opt-in out of "no silent broadcasting" is a
+    // sixth operation keyword, so it cannot be shadowed and the reader cannot
+    // mistake it for an ordinary call.
+    let dump = ok("fn f() { broadcast(v, Narrow) }
+");
+    contains_lines(
+        &dump,
+        "
+        broadcast @ 9..29
+        path `v` @ 19..20
+        path `Narrow` @ 22..28
+        ",
+    );
+    // It is not commutative: `broadcast(v, S)` and `broadcast(S, v)` are not
+    // the same call, so no canonical order is recorded.
+    assert!(!dump.contains("broadcast (multiset)"), "{dump}");
+}
+
+#[test]
+fn broadcast_reads_as_a_pipeline_stage() {
+    let dump = ok("fn f() { v |> broadcast(Narrow) }
+");
+    assert!(dump.contains("pipeline `|>`"), "{dump}");
+    assert!(dump.contains("broadcast @"), "{dump}");
+}
+
+#[test]
 fn commutative_operations_are_marked_as_multisets() {
     let dump = ok("fn f() { bind(a, b) }\nfn g() { bundle(a, b) }\n");
     assert!(dump.contains("bind (multiset)"), "{dump}");

@@ -262,6 +262,11 @@ mod tests {
         assert_eq!(VsaOp::Unbind.arity(None), (2, Some(2)));
         assert_eq!(VsaOp::Cleanup.arity(None), (1, Some(2)));
         assert_eq!(VsaOp::Permute.arity(None), (1, Some(2)));
+        assert_eq!(VsaOp::Broadcast.arity(None), (2, Some(2)));
+        assert!(
+            !VsaOp::Broadcast.is_commutative(),
+            "`broadcast(v, S)` takes a vector then a space; the order is the meaning"
+        );
         assert_eq!(VsaOp::Bundle.variants(), &["left"]);
         assert!(VsaOp::Permute.variants().is_empty());
     }

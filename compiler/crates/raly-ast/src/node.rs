@@ -448,7 +448,7 @@ pub enum ExprKind {
         base: ExprId,
         name: Ident,
     },
-    /// One of the five VSA primitives.
+    /// One of the six VSA primitives.
     Vsa(VsaCall),
     /// `[a, b, c]` — an ordinary collection, *not* a superposition.
     List(Vec<ExprId>),
@@ -491,7 +491,7 @@ impl ExprKind {
     }
 }
 
-/// The five VSA primitives. See GRAMMAR.md §7 for why these are keywords with
+/// The six VSA primitives. See GRAMMAR.md §7 for why these are keywords with
 /// call syntax rather than infix operators.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum VsaOp {
@@ -500,6 +500,11 @@ pub enum VsaOp {
     Permute,
     Unbind,
     Cleanup,
+    /// `broadcast(v, S)` — the explicit opt-in that re-expresses a vector in
+    /// another space. See GRAMMAR.md §7.3: elementwise operations require
+    /// identical operand types, and this is the only way to say "yes, I really
+    /// do mean to combine these two".
+    Broadcast,
 }
 
 impl VsaOp {
@@ -510,6 +515,7 @@ impl VsaOp {
             VsaOp::Permute => "permute",
             VsaOp::Unbind => "unbind",
             VsaOp::Cleanup => "cleanup",
+            VsaOp::Broadcast => "broadcast",
         }
     }
 
@@ -532,6 +538,7 @@ impl VsaOp {
             (VsaOp::Permute, _) => (1, Some(2)),
             (VsaOp::Unbind, _) => (2, Some(2)),
             (VsaOp::Cleanup, _) => (1, Some(2)),
+            (VsaOp::Broadcast, _) => (2, Some(2)),
         }
     }
 

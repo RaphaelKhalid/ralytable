@@ -1,0 +1,339 @@
+{
+  "file": "scene.raly",
+  "headline": "This file declares 2 spaces, 3 role declarations, 3 named types and 12 functions.",
+  "items": [
+    {
+      "kind": "space",
+      "name": "Concepts",
+      "signature": "space Concepts = MAP[8192]",
+      "summary": ["A value of `Concepts` is a list of 8192 numbers, where every position holds either +1 or -1, and two of them are combined by multiplying position against position. Nothing about that list means anything on its own; its meaning is which other values it was built from.", "Several values can be added together into a single one, which is what `load` counts everywhere below. That only works up to a point. Past it, asking for one of the items back returns a different item instead, and nothing fails while it happens.", "For `Concepts` that point is 352 items. It was measured at 95% retrieval, not derived from a formula.", "The declaration also records seed and codebook."],
+      "notable": [],
+      "facts": {
+        "family": "MAP",
+        "dimension": 8192,
+        "capacity_dimension": 8192,
+        "capacity_basis": "declared width",
+        "capacity": 352,
+        "attributes": ["seed", "codebook"]
+      }
+    },
+    {
+      "kind": "space",
+      "name": "Phases",
+      "signature": "space Phases = FHRR[1024]",
+      "summary": ["A value of `Phases` is a list of 1024 numbers, where every position holds an angle, and two of them are combined by adding their angles. Nothing about that list means anything on its own; its meaning is which other values it was built from.", "Several values can be added together into a single one, which is what `load` counts everywhere below. That only works up to a point. Past it, asking for one of the items back returns a different item instead, and nothing fails while it happens.", "For `Phases` that point is 31 items. It was measured at 95% retrieval, not derived from a formula.", "The declaration also records seed."],
+      "notable": [],
+      "facts": {
+        "family": "FHRR",
+        "dimension": 1024,
+        "capacity_dimension": 1024,
+        "capacity_basis": "declared width",
+        "capacity": 31,
+        "attributes": ["seed"]
+      }
+    },
+    {
+      "kind": "role",
+      "name": "Subject, Verb, Object",
+      "signature": "role Subject, Verb, Object in Concepts",
+      "summary": ["Subject, Verb and Object are fixed values of `Concepts`, used as keys: attaching a value to one of them is how this program records which part that value plays.", "Which keys a value carries is a compile-time fact, tracked through every operation, even though the values attached to them are not."],
+      "notable": [],
+      "facts": {
+        "names": ["Subject", "Verb", "Object"],
+        "space": "Concepts"
+      }
+    },
+    {
+      "kind": "role",
+      "name": "Time, Place",
+      "signature": "role Time, Place in Concepts",
+      "summary": ["Time and Place are fixed values of `Concepts`, used as keys: attaching a value to one of them is how this program records which part that value plays.", "Which keys a value carries is a compile-time fact, tracked through every operation, even though the values attached to them are not."],
+      "notable": [],
+      "facts": {
+        "names": ["Time", "Place"],
+        "space": "Concepts"
+      }
+    },
+    {
+      "kind": "role",
+      "name": "Angle",
+      "signature": "role Angle in Phases",
+      "summary": ["Angle is a fixed value of `Phases`, used as a key: attaching a value to it is how this program records which part that value plays.", "Which keys a value carries is a compile-time fact, tracked through every operation, even though the values attached to them are not."],
+      "notable": [],
+      "facts": {
+        "names": ["Angle"],
+        "space": "Phases"
+      }
+    },
+    {
+      "kind": "type",
+      "name": "Scene",
+      "signature": "type Scene = Vec[Concepts; load 3; roles {Subject, Verb, Object}]",
+      "summary": ["`Scene` is a name for a value of `Concepts` carrying exactly the keys Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold."],
+      "notable": [],
+      "facts": {
+        "type": "Vec[Concepts; load 3; roles {Subject, Verb, Object}]",
+        "space": "Concepts",
+        "load_low": 3,
+        "load_high": 3,
+        "capacity": 352,
+        "roles": ["Subject", "Verb", "Object"],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": null,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "type",
+      "name": "SituatedScene",
+      "signature": "type SituatedScene = Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}]",
+      "summary": ["`SituatedScene` is a name for a value of `Concepts` carrying exactly the keys Subject, Verb, Object, Time and Place, holding 5 of the 352 items `Concepts` can hold."],
+      "notable": [],
+      "facts": {
+        "type": "Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}]",
+        "space": "Concepts",
+        "load_low": 5,
+        "load_high": 5,
+        "capacity": 352,
+        "roles": ["Subject", "Verb", "Object", "Time", "Place"],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": null,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "type",
+      "name": "Recovered",
+      "signature": "type Recovered = Vec[Concepts; load 1; noisy]",
+      "summary": ["`Recovered` is a name for a value of `Concepts` whose keys the type does not pin down, holding 1 of the 352 items `Concepts` can hold, and not yet matched back to one of them."],
+      "notable": ["The set of keys is left open, so the compiler knows some of what this carries but cannot prove any particular key is absent. Asking for a key that was never attached returns noise, and nothing here can catch that.", "Getting a value back out is only approximate: it returns what was asked for plus a little of everything else that was combined with it. Matching it against the space's own entries with `cleanup` is what makes it exact again, and that has not happened here."],
+      "facts": {
+        "type": "Vec[Concepts; load 1; noisy]",
+        "space": "Concepts",
+        "load_low": 1,
+        "load_high": 1,
+        "capacity": 352,
+        "roles": [],
+        "role_schema_open": true,
+        "matched_to_a_codebook_entry": false,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "encode",
+      "signature": "fn encode(s: Sym[Concepts], v: Sym[Concepts], o: Sym[Concepts]) -> Vec[Concepts; load 3; roles {Subject, Verb, Object}]",
+      "summary": ["It takes three values, every one of them one single entry of `Concepts` — one of its fixed values, not a combination of several.", "It gives back a value of `Concepts` carrying exactly the keys Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold."],
+      "notable": [],
+      "facts": {
+        "parameters": ["s: Sym[Concepts]", "v: Sym[Concepts]", "o: Sym[Concepts]"],
+        "result": "Vec[Concepts; load 3; roles {Subject, Verb, Object}]",
+        "result_of_the_body": "Vec[Concepts; load 3; roles {Subject, Verb, Object}; clean]",
+        "space": "Concepts",
+        "load_low": 3,
+        "load_high": 3,
+        "capacity": 352,
+        "roles": ["Subject", "Verb", "Object"],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "situate",
+      "signature": "fn situate(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}], t: Sym[Concepts], p: Sym[Concepts]) -> Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}]",
+      "summary": ["`scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold.", "`t` is one single entry of `Concepts` — one of its fixed values, not a combination of several.", "`p` is one single entry of `Concepts` — one of its fixed values, not a combination of several.", "It gives back a value of `Concepts` carrying exactly the keys Subject, Verb, Object, Time and Place, holding 5 of the 352 items `Concepts` can hold."],
+      "notable": [],
+      "facts": {
+        "parameters": ["scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]", "t: Sym[Concepts]", "p: Sym[Concepts]"],
+        "result": "Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}]",
+        "result_of_the_body": "Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}; clean]",
+        "space": "Concepts",
+        "load_low": 5,
+        "load_high": 5,
+        "capacity": 352,
+        "roles": ["Subject", "Verb", "Object", "Time", "Place"],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "fold_three",
+      "signature": "fn fold_three(a: Vec[Concepts], b: Vec[Concepts], c: Vec[Concepts]) -> Vec[Concepts; load 3]",
+      "summary": ["It takes three values, every one of them a value of `Concepts` whose keys the type does not pin down, holding at least 1 item.", "It gives back a value of `Concepts` whose keys the type does not pin down, holding 3 of the 352 items `Concepts` can hold."],
+      "notable": ["The set of keys is left open, so the compiler knows some of what this carries but cannot prove any particular key is absent. Asking for a key that was never attached returns noise, and nothing here can catch that."],
+      "facts": {
+        "parameters": ["a: Vec[Concepts]", "b: Vec[Concepts]", "c: Vec[Concepts]"],
+        "result": "Vec[Concepts; load 3]",
+        "result_of_the_body": "Vec[Concepts; load at least 3; clean]",
+        "space": "Concepts",
+        "load_low": 3,
+        "load_high": null,
+        "capacity": 352,
+        "roles": [],
+        "role_schema_open": true,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "subject_of",
+      "signature": "fn subject_of(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]) -> Sym[Concepts]",
+      "summary": ["`scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold.", "It gives back one single entry of `Concepts` — one of its fixed values, not a combination of several."],
+      "notable": [],
+      "facts": {
+        "parameters": ["scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]"],
+        "result": "Sym[Concepts]",
+        "result_of_the_body": "Sym[Concepts]",
+        "space": "Concepts",
+        "load_low": 1,
+        "load_high": 1,
+        "capacity": 352,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "verb_of",
+      "signature": "fn verb_of(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]) -> Sym[Concepts]",
+      "summary": ["`scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold.", "It gives back one single entry of `Concepts` — one of its fixed values, not a combination of several."],
+      "notable": [],
+      "facts": {
+        "parameters": ["scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]"],
+        "result": "Sym[Concepts]",
+        "result_of_the_body": "Sym[Concepts]",
+        "space": "Concepts",
+        "load_low": 1,
+        "load_high": 1,
+        "capacity": 352,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "object_residue",
+      "signature": "fn object_residue(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]) -> Vec[Concepts; load 1; noisy]",
+      "summary": ["`scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold.", "It gives back a value of `Concepts` whose keys the type does not pin down, holding 1 of the 352 items `Concepts` can hold, and not yet matched back to one of them."],
+      "notable": ["Getting a value back out is only approximate: it returns what was asked for plus a little of everything else that was combined with it. Matching it against the space's own entries with `cleanup` is what makes it exact again, and that has not happened here."],
+      "facts": {
+        "parameters": ["scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]"],
+        "result": "Vec[Concepts; load 1; noisy]",
+        "result_of_the_body": "Vec[Concepts; load 1; roles {Subject, Verb}; noisy]",
+        "space": "Concepts",
+        "load_low": 1,
+        "load_high": 1,
+        "capacity": 352,
+        "roles": ["Subject", "Verb"],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": false,
+        "unbind_depth": 1
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "ordered_pair",
+      "signature": "fn ordered_pair(a: Sym[Concepts], b: Sym[Concepts]) -> Vec[Concepts; load 2]",
+      "summary": ["It takes two values, every one of them one single entry of `Concepts` — one of its fixed values, not a combination of several.", "It gives back a value of `Concepts` whose keys the type does not pin down, holding 2 of the 352 items `Concepts` can hold."],
+      "notable": [],
+      "facts": {
+        "parameters": ["a: Sym[Concepts]", "b: Sym[Concepts]"],
+        "result": "Vec[Concepts; load 2]",
+        "result_of_the_body": "Vec[Concepts; load 2; roles {}; clean]",
+        "space": "Concepts",
+        "load_low": 2,
+        "load_high": 2,
+        "capacity": 352,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "sequence3",
+      "signature": "fn sequence3(a: Sym[Concepts], b: Sym[Concepts], c: Sym[Concepts]) -> Vec[Concepts; load 3]",
+      "summary": ["It takes three values, every one of them one single entry of `Concepts` — one of its fixed values, not a combination of several.", "It gives back a value of `Concepts` whose keys the type does not pin down, holding 3 of the 352 items `Concepts` can hold."],
+      "notable": [],
+      "facts": {
+        "parameters": ["a: Sym[Concepts]", "b: Sym[Concepts]", "c: Sym[Concepts]"],
+        "result": "Vec[Concepts; load 3]",
+        "result_of_the_body": "Vec[Concepts; load 3; roles {}; clean]",
+        "space": "Concepts",
+        "load_low": 3,
+        "load_high": 3,
+        "capacity": 352,
+        "roles": [],
+        "role_schema_open": false,
+        "matched_to_a_codebook_entry": true,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "apply_twice",
+      "signature": "fn apply_twice(f: (Vec[Concepts]) -> Vec[Concepts], x: Vec[Concepts]) -> Vec[Concepts]",
+      "summary": ["`f` is a function taking a value of `Concepts` whose keys the type does not pin down, holding at least 1 item and giving back a value of `Concepts` whose keys the type does not pin down, holding at least 1 item.", "`x` is a value of `Concepts` whose keys the type does not pin down, holding at least 1 item.", "It gives back a value of `Concepts` whose keys the type does not pin down, holding at least 1 item."],
+      "notable": ["The set of keys is left open, so the compiler knows some of what this carries but cannot prove any particular key is absent. Asking for a key that was never attached returns noise, and nothing here can catch that."],
+      "facts": {
+        "parameters": ["f: (Vec[Concepts]) -> Vec[Concepts]", "x: Vec[Concepts]"],
+        "result": "Vec[Concepts]",
+        "result_of_the_body": "Vec[Concepts]",
+        "space": "Concepts",
+        "load_low": 1,
+        "load_high": null,
+        "capacity": 352,
+        "roles": [],
+        "role_schema_open": true,
+        "matched_to_a_codebook_entry": null,
+        "unbind_depth": 0
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "headroom",
+      "signature": "fn headroom(load: Int, capacity: Int) -> Int",
+      "summary": ["It takes two values, every one of them a whole number.", "It gives back a whole number."],
+      "notable": [],
+      "facts": {
+        "parameters": ["load: Int", "capacity: Int"],
+        "result": "Int",
+        "result_of_the_body": "Int"
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "describe",
+      "signature": "fn describe(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}], verbose: Bool) -> Str",
+      "summary": ["`scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold.", "`verbose` is either true or false.", "It gives back a piece of text."],
+      "notable": [],
+      "facts": {
+        "parameters": ["scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]", "verbose: Bool"],
+        "result": "Str",
+        "result_of_the_body": "Str"
+      }
+    },
+    {
+      "kind": "fn",
+      "name": "candidates",
+      "signature": "fn candidates(a: Sym[Concepts], b: Sym[Concepts]) -> (Int, Str)",
+      "summary": ["It takes two values, every one of them one single entry of `Concepts` — one of its fixed values, not a combination of several.", "It gives back two values side by side: a whole number and a piece of text."],
+      "notable": [],
+      "facts": {
+        "parameters": ["a: Sym[Concepts]", "b: Sym[Concepts]"],
+        "result": "(Int, Str)",
+        "result_of_the_body": "(Int, Str)"
+      }
+    }
+  ]
+}

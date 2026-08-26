@@ -3,9 +3,9 @@
 Infrastructure for the **Raly** language front end. Source files use the
 `.raly` extension.
 
-It **lexes, parses, resolves names, type-checks, and reports errors
-beautifully**. It does not generate code — see
-[Deliberately not here yet](#deliberately-not-here-yet).
+It **lexes, parses, resolves names, type-checks, reports errors beautifully,
+and explains a program back to you in plain English**. It does not generate
+code — see [Deliberately not here yet](#deliberately-not-here-yet).
 
 The type system is the point. It tracks four properties a tensor library
 cannot see at all — **dimension**, **VSA family**, **superposition load against
@@ -41,7 +41,7 @@ Then, from this directory:
 
 ```
 cargo build              # zero warnings expected
-cargo test --workspace   # 179 tests, all passing
+cargo test --workspace   # 198 tests, all passing
 cargo clippy --workspace --all-targets   # clean
 cargo fmt --all --check
 ```
@@ -49,7 +49,10 @@ cargo fmt --all --check
 ### Trying it
 
 ```
+cargo run -p raly -- explain examples/explain-me.raly   # what the program means
+cargo run -p raly -- explain examples/explain-me.raly --json
 cargo run -p raly -- check examples/scene.raly          # exits 0
+cargo run -p raly -- check examples/broadcast.raly      # a silent-broadcast error
 cargo run -p raly -- check examples/capacity.raly       # a capacity error
 cargo run -p raly -- check examples/wrong-role.raly     # a wrong-role unbind
 cargo run -p raly -- parse examples/scene.raly          # dumps the tree
@@ -63,6 +66,8 @@ cargo run -p raly -- lex   examples/tour.raly
 | `examples/scene.raly` | A substantial, valid program: a role-filler scene memory. What real Raly looks like. |
 | `examples/capacity.raly` | Well-shaped, silently wrong: a bundle 9 items past what its space can retrieve, plus a space declaring its *measured effective* dimension. |
 | `examples/wrong-role.raly` | Unbinding a role that was never bound, and nesting two unbinds with no `cleanup` between. |
+| `examples/broadcast.raly` | The PyTorch bug, made impossible: two elementwise operands a tensor library would silently broadcast, plus the explicit `broadcast(v, S)` that says you meant it. |
+| `examples/explain-me.raly` | A program worth explaining. Three facts nobody wrote down in it — at capacity, approximate, two levels deep — come out of `raly explain`. |
 | `examples/broken-syntax.raly` | One of each recoverable *syntax* error. All 13 are reported in a single run. |
 | `examples/broken.raly` | One of each recoverable *lexical* error. |
 | `examples/tour.raly` | Exercises every token class. A lexer fixture, **not** a valid program — `check` reports on it by design. |
@@ -113,6 +118,7 @@ error[RALY1002]: unterminated string literal
 | `raly lex <file>` | Dump every token with its kind, byte span and line:column |
 | `raly parse <file>` | Parse and dump the syntax tree to stdout |
 | `raly check <file>` | Lex, parse, resolve, type-check, render all diagnostics to stderr, exit non-zero on error |
+| `raly explain <file>` | Say, in plain English, what the program represents — derived entirely from its types. `--json` for machine-readable output |
 
 `check` runs every phase every time. No phase returns a `Result`; each returns
 a value plus diagnostics, so a syntax error does not silence name resolution
@@ -120,7 +126,12 @@ and an unresolved name does not silence the type checker. One run tells you
 everything that is wrong, sorted into reading order.
 
 Flags: `--color` / `--no-color` (default off), `--explain` (append each code's
-registry description), `-h`, `-V`.
+registry description), `--json` (machine-readable `explain` output), `-h`, `-V`.
+
+`explain` is not `check`: a file with errors is still described as far as its
+types are known, because "what is this meant to be?" is a question people ask
+precisely when a program does not work yet. Prose goes to stdout, diagnostics
+to stderr, and the exit code is still the checker's.
 
 Exit codes: `0` success · `1` the input contained errors · `2` bad command line
 or unreadable file.
@@ -137,6 +148,9 @@ compiler/
     ├── raly-lexer/            tokeniser                       [logos]
     ├── raly-ast/              arena AST + visitor
     ├── raly-parse/            recursive-descent parser        [hand-written]
+    ├── raly-resolve/          name resolution, two namespaces
+    ├── raly-types/            the type checker, four small solvers
+    ├── raly-explain/          a program, in plain English     [no dependencies]
     └── raly/                  the `raly` binary
 ```
 
@@ -376,9 +390,124 @@ function boundaries. There is therefore no search, and no expression can be
 already a vector of load one, so it is accepted where a `Vec[S]` is wanted. The
 reverse is not, and the message names `cleanup` as the operation that fixes it.
 
+### No silent broadcasting
+
+In PyTorch, adding a tensor of shape `(32, 1)` to one of shape `(1, 32)` does
+not fail. It broadcasts, silently, and returns a `(32, 32)` matrix. NumPy does
+the same. It is almost never what the author meant, it raises no warning, and
+the first thing that looks wrong is a loss curve that never comes down, days
+later, in a different file. It is one of the most expensive silent bugs in
+machine learning, and it is expensive precisely *because the shapes are not in
+the type*: at the line that made the mistake there is nothing for a compiler to
+object to.
+
+Raly's types carry width and family, so there is. **`bind` and `bundle` -- the
+operations that combine their operands position against position -- require
+operands of an identical vector type.** A mismatch is `RALY4012`, and the
+message names what would have happened silently somewhere else:
+
+```
+error[RALY4012]: `bundle` combines its operands position by position, and these two do not have the same type
+ --> broadcast-width.raly:8:5
+  |
+8 |     bundle(a, b)
+  |     ^^^^^^ both operands of this must have identical types
+ ::: broadcast-width.raly:8:12
+  |
+8 |     bundle(a, b)
+  |            - this one is `MAP[8192]`, in `Wide`
+ ::: broadcast-width.raly:8:15
+  |
+8 |     bundle(a, b)
+  |               - this one is `MAP[1024]`, in `Narrow`
+  |
+  = note: dimensions form an abelian group, and these do not cancel: the
+          residual is 8192 / 1024
+  = note: a tensor library would not stop here: in NumPy or PyTorch, one
+          length-1 axis on either side -- which is what every unsqueeze, batch,
+          head or beam dimension adds -- makes (8192, 1) and (1, 1024)
+          broadcast to a matrix of shape (8192, 1024), silently, and the first
+          thing that looks wrong is a loss curve days later
+  = help: if combining them is genuinely what you meant, say so:
+          `bundle(.., broadcast(<the second one>, Wide))` re-expresses it in
+          `Wide`, and the result is `noisy`, because that reinterpretation
+          throws information away
+```
+
+**"Identical" is scoped deliberately, to width and family.** Those are the two
+shape properties. Load and role schema are *combined* by these operations --
+`bundle` adds loads and unions schemas, `bind` multiplies and extends -- so
+requiring those to match would break the algebra rather than protect it. Two
+spaces agreeing on family and width but differing in **codebook** stay
+`RALY4003`: no tensor library has a notion of a codebook to paper over, and
+calling that a broadcast error would be a false claim about what happens
+elsewhere. The same-width, different-family case is the genuinely silent one --
+a tensor library adds a bipolar vector to a phase vector without a word -- and
+its `note:` says exactly that.
+
+**The intent stays expressible.** `broadcast(v, S)` re-expresses `v` in `S`,
+explicitly, in one greppable word; `v |> broadcast(S)` is the same thing read
+in the order the data moves. The result is **`noisy`**, because reinterpreting
+a vector across a width or a family is not information-preserving, and an
+escape hatch that returned a clean vector would hand back exactly the silence
+the rule exists to remove. GRAMMAR.md 7.3 has the full rationale, including why
+`broadcast(a, b)` over two vectors was rejected: it would denote an outer
+product, which is a matrix, and Raly has no matrix type.
+
+### `raly-explain` -- the thesis, out loud
+
+`raly explain <file>` prints, in plain English, what a program represents. No
+other language can do this, because no other language's types carry meaning. A
+Rust signature says `Vec<f32> -> Vec<f32>`. This is what Raly's says:
+
+```
+space Sentences = MAP[384]
+  A value of `Sentences` is a list of 384 numbers, where every position holds
+  either +1 or -1, and two of them are combined by multiplying position
+  against position. [...]
+  For `Sentences` that point is 3 items. It was measured at 95% retrieval, not
+  derived from a formula. That number comes from the measured effective width
+  of 111 this declaration records, not from the 384 written beside the family:
+  a real embedding space uses far fewer independent directions than its
+  nominal width suggests.
+  ! The written width would suggest room for 10 items. The measured width says
+    3. Anything sized against the written number is about 3x too optimistic.
+
+fn encode(s: Sym[Sentences], v: Sym[Sentences], o: Sym[Sentences]) -> Vec[Sentences; load 3; roles {Subject, Verb, Object}]
+  It takes three values, every one of them one single entry of `Sentences` --
+  one of its fixed values, not a combination of several.
+  It gives back a value of `Sentences` carrying exactly the keys Subject, Verb
+  and Object, holding 3 of the 3 items `Sentences` can hold.
+  ! This is exactly at capacity: 3 of the 3 items `Sentences` can hold. One
+    more and asking for an item back starts returning a different one, with
+    nothing failing to say so.
+```
+
+Three rules govern the output, and they are the deliverable:
+
+1. **Plain words.** No term is used that is not defined where it is used.
+   "Bundle", "superposition", "codebook" and "role" do not appear; what they
+   *are* does. Someone who does not know what a vector space is should still
+   learn something true.
+2. **Only what the types prove.** Where a property is open or unknown, the
+   output says so -- a dimension the checker could not fold prints as unknown
+   rather than as the placeholder the checker fell back to, and the JSON
+   carries `null`.
+3. **Say the unwritten.** A `!` marks something that follows from the types
+   without appearing in the source: a value at or near capacity, a set of keys
+   left open so no key can be proven absent, an extraction that is only
+   approximate, and a nesting depth that will need a `cleanup`. In
+   `examples/explain-me.raly` none of those four facts is written down
+   anywhere, and all four come out.
+
+`--json` gives the same content as data: the numbers the prose was derived
+from, not the prose in quotes. The serialiser is hand-written for the same
+reason `raly-diag`'s renderer is -- the crate has no dependencies outside the
+workspace, and the output is asserted on character for character.
+
 ## Tests
 
-179 tests: 174 unit and integration, plus doctests.
+198 tests: 193 unit and integration, plus 5 doctests.
 
 ```
 raly-diag    3 unit + 21 integration   source map, spans, rendered output
@@ -395,10 +524,16 @@ raly-resolve 3 unit                    edit distance, suggestion silence,
 raly-types  17 unit                    capacity anchors and monotonicity,
                                        dimension group laws and residuals,
                                        load intervals, row extend and restrict
-raly         2 unit                    the pipeline reports every phase at once
-            13 integration             exit codes, stdout/stderr discipline
-             2 UI                      24 golden files, plus a test that every
+raly-explain 5 unit                    prose wrapping, JSON escaping, English
+                                       list and count forms, load phrasing
+raly         5 unit                    the pipeline reports every phase at once,
+                                       and what RALY4012 is and is not for
+            16 integration             exit codes, stdout/stderr discipline,
+                                       `explain` prose and `--json`
+             2 UI                      28 golden files, plus a test that every
                                        3xxx/4xxx/5xxx code has one
+             6 explain                 golden prose and JSON over the example
+                                       programs, plus the unwritten facts
 ```
 
 ### UI tests
@@ -438,11 +573,13 @@ Nothing below exists, and no part of it is stubbed, faked, or half-written.
   there is no `fn f[S: Space](v: Vec[S])`. Every generic-looking program has to
   be written once per space. This is the largest gap, and it is the next thing
   a real model would ask for.
-- **No load coercions.** Decision 4 calls for Futhark-style *explicit*
-  coercions where the checker cannot see through a size. There is no syntax for
-  one, so today an annotation the checker cannot satisfy is simply an error.
-  Interval intersection absorbs most of what a coercion would be needed for,
-  but not all of it.
+- **No *load* coercions.** Decision 4 calls for Futhark-style *explicit*
+  coercions where the checker cannot see through a size. `broadcast(v, S)` is
+  now exactly that for a **space** — see [No silent
+  broadcasting](#no-silent-broadcasting) — but there is still no syntax for
+  coercing a *load*, so an annotation whose load the checker cannot satisfy is
+  simply an error. Interval intersection absorbs most of what a load coercion
+  would be needed for, but not all of it.
 - **Row variables are anonymous.** A row is open or closed; there is no way to
   name a tail and thread it through a signature, so "returns whatever roles it
   was given, plus `Time`" cannot be written down.

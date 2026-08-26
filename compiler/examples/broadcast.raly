@@ -1,0 +1,49 @@
+// Well-shaped, silently wrong somewhere else.
+//
+// In PyTorch, adding a tensor of shape (32, 1) to one of shape (1, 32) does
+// not fail. It broadcasts, and quietly produces a (32, 32) matrix. Nothing
+// warns. It is almost never what the author meant, and it is one of the most
+// expensive silent bugs in machine learning, because the first thing that
+// looks wrong is a loss curve days later.
+//
+// Raly makes the accident impossible and keeps the intent available. Every
+// elementwise operation -- `bind` and `bundle` -- requires its operands to
+// have identical types, and a mismatch is RALY4012. See GRAMMAR.md §7.3.
+
+space Sentences = MAP[384] where effective = 111
+space Tokens    = MAP[1024]
+space Phases    = FHRR[1024]
+
+role Subject, Verb in Sentences
+
+// Two different widths. A tensor library would broadcast rather than fail.
+fn merge_widths(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2] {
+    bundle(a, b)
+}
+
+// Same width, different family: the genuinely silent one. Both are 1024 long,
+// so a tensor library adds them position by position without a word and hands
+// back something that is neither bipolar nor a phase.
+fn merge_families(a: Sym[Tokens], b: Sym[Phases]) -> Vec[Tokens; load 2] {
+    bind(a, b)
+}
+
+// The explicit opt-in. `broadcast(v, S)` re-expresses `v` in `S` and says so
+// in one word at the site. The result is `noisy`, because reinterpreting a
+// vector across a width or a family is not information-preserving, and the
+// type refuses to pretend otherwise.
+fn merge_deliberately(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2; noisy] {
+    bundle(a, broadcast(b, Sentences))
+}
+
+// The same thing as a pipeline stage, which reads in the order the data moves.
+fn merge_piped(a: Sym[Sentences], b: Sym[Tokens]) -> Vec[Sentences; load 2; noisy] {
+    bundle(a, b |> broadcast(Sentences))
+}
+
+// Nothing about `bundle` requires its operands to agree on *load* or on which
+// roles they carry -- adding loads and unioning role schemas is what bundling
+// is for. Only width and family have to match. This one is fine.
+fn merge_loads(a: Vec[Sentences; roles {Subject}], b: Vec[Sentences; roles {Verb}]) -> Vec[Sentences] {
+    bundle(a, b)
+}

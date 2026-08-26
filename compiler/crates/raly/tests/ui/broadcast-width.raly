@@ -1,0 +1,9 @@
+// RALY4012: the flagship of "no silent broadcasting". Two vectors of
+// different width, bundled. In NumPy or PyTorch this pair does not fail --
+// one length-1 axis on either side and it becomes an outer product instead.
+space Wide = MAP[8192]
+space Narrow = MAP[1024]
+
+fn merge(a: Sym[Wide], b: Sym[Narrow]) -> Vec[Wide; load 2] {
+    bundle(a, b)
+}

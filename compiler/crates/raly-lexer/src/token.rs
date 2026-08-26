@@ -112,6 +112,8 @@ pub enum TokenKind {
     Unbind,
     #[token("cleanup")]
     Cleanup,
+    #[token("broadcast")]
+    Broadcast,
     #[token("where")]
     Where,
     #[token("mut")]
@@ -232,6 +234,7 @@ impl TokenKind {
                 | Permute
                 | Unbind
                 | Cleanup
+                | Broadcast
                 | Where
                 | Mut
                 | True
@@ -269,6 +272,7 @@ impl TokenKind {
             Permute => "`permute`",
             Unbind => "`unbind`",
             Cleanup => "`cleanup`",
+            Broadcast => "`broadcast`",
             Where => "`where`",
             Mut => "`mut`",
             True => "`true`",

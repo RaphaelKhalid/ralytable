@@ -1,0 +1,21 @@
+error[RALY4012]: `bundle` combines its operands position by position, and these two do not have the same type
+ --> broadcast-width.raly:8:5
+  |
+8 |     bundle(a, b)
+  |     ^^^^^^ both operands of this must have identical types
+ ::: broadcast-width.raly:8:12
+  |
+8 |     bundle(a, b)
+  |            - this one is `MAP[8192]`, in `Wide`
+ ::: broadcast-width.raly:8:15
+  |
+8 |     bundle(a, b)
+  |               - this one is `MAP[1024]`, in `Narrow`
+  |
+  = note: dimensions form an abelian group, and these do not cancel: the residual is 8192 / 1024
+  = note: a tensor library would not stop here: in NumPy or PyTorch, one length-1 axis on either side -- which is what every unsqueeze, batch, head or beam dimension adds -- makes (8192, 1) and (1, 1024) broadcast to a matrix of shape (8192, 1024), silently, and the first thing that looks wrong is a loss curve days later
+  = note: Raly requires identical types here on purpose. Every property this message names is in the type, so the mistake is a compile error rather than a shape that happens to work
+  = help: if combining them is genuinely what you meant, say so: `bundle(.., broadcast(<the second one>, Wide))` re-expresses it in `Wide`, and the result is `noisy`, because that reinterpretation throws information away
+  = help: otherwise the two values belong in one space; change a declaration
+
+error: 1 error

@@ -41,6 +41,12 @@ pub struct SpaceInfo {
     pub dim_span: Option<Span>,
     pub family: Option<Family>,
     pub dim: Dim,
+    /// Whether the declaration's dimension expression was understood at all.
+    ///
+    /// `false` means the checker fell back to the identity so that later
+    /// comparisons still work; the number in `dim` is then a placeholder and
+    /// nothing may report it as the space's width.
+    pub dim_known: bool,
     /// The dimension capacity was computed from, when it is a known number.
     pub capacity_dim: Option<u64>,
     pub capacity_basis: CapacityBasis,

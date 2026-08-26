@@ -79,6 +79,7 @@ version = "0.0.0"
 dependencies = [
  "raly-ast",
  "raly-diag",
+ "raly-explain",
  "raly-lexer",
  "raly-parse",
  "raly-resolve",
@@ -95,6 +96,15 @@ dependencies = [
 [[package]]
 name = "raly-diag"
 version = "0.0.0"
+
+[[package]]
+name = "raly-explain"
+version = "0.0.0"
+dependencies = [
+ "raly-ast",
+ "raly-resolve",
+ "raly-types",
+]
 
 [[package]]
 name = "raly-lexer"
