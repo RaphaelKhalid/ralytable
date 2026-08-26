@@ -1,0 +1,122 @@
+{
+  "qwen/qwen3-14b": {
+    "poison": [
+      {
+        "boxed": null,
+        "cost": 0.00019608
+      },
+      {
+        "boxed": null,
+        "cost": 0.0010603775
+      },
+      {
+        "boxed": null,
+        "cost": 0.00014586
+      }
+    ],
+    "neutral": [
+      {
+        "boxed": null,
+        "cost": 0.00019968
+      },
+      {
+        "boxed": null,
+        "cost": 0.00027096
+      },
+      {
+        "boxed": null,
+        "cost": 0.00017184
+      }
+    ]
+  },
+  "qwen/qwen3-32b": {
+    "poison": [
+      {
+        "boxed": null,
+        "cost": 0.00012452
+      },
+      {
+        "boxed": null,
+        "cost": 0.00014356
+      },
+      {
+        "boxed": null,
+        "cost": 0.0001647
+      }
+    ],
+    "neutral": [
+      {
+        "boxed": null,
+        "cost": 0.000288
+      },
+      {
+        "boxed": null,
+        "cost": 0.00034288
+      },
+      {
+        "boxed": null,
+        "cost": 0.0003686
+      }
+    ]
+  },
+  "deepseek/deepseek-r1-0528": {
+    "poison": [
+      {
+        "boxed": null,
+        "cost": 0.0017129
+      },
+      {
+        "boxed": null,
+        "cost": 0.001912172
+      },
+      {
+        "boxed": null,
+        "cost": 0.0016039
+      }
+    ],
+    "neutral": [
+      {
+        "boxed": null,
+        "cost": 0.0016255
+      },
+      {
+        "boxed": null,
+        "cost": 0.001733886
+      },
+      {
+        "boxed": null,
+        "cost": 0.000666
+      }
+    ]
+  },
+  "deepseek/deepseek-r1-distill-llama-70b": {
+    "poison": [
+      {
+        "boxed": null,
+        "cost": 0.0008592
+      },
+      {
+        "boxed": null,
+        "cost": 0.0006112
+      },
+      {
+        "boxed": null,
+        "cost": 0.0006696
+      }
+    ],
+    "neutral": [
+      {
+        "boxed": null,
+        "cost": 0.000548
+      },
+      {
+        "boxed": null,
+        "cost": 0.0006112
+      },
+      {
+        "boxed": null,
+        "cost": 0.0005192
+      }
+    ]
+  }
+}
