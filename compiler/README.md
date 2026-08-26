@@ -88,8 +88,16 @@ compiler/
     ├── raly-diag/             spans, diagnostics, rendering   [no dependencies]
     ├── raly-lexer/            tokeniser                       [logos]
     ├── raly-ast/              provisional arena AST + visitor
+    ├── raly-wasm/             wasm-bindgen wrapper for the browser playground
     └── raly/                  the `raly` binary
 ```
+
+`raly-wasm` is deliberately **excluded** from the workspace: it only ever
+builds for `wasm32-unknown-unknown`, so keeping it out means
+`cargo build/test/clippy --workspace` stays exactly what it was. It exposes
+`analyze(source)`, which returns tokens and diagnostics as structured data
+rather than rendered text, and it is what `playground/` runs. See
+[`../playground/README.md`](../playground/README.md) to build or serve it.
 
 ### `raly-diag` — the important one
 
