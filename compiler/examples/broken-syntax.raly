@@ -1,0 +1,53 @@
+// broken-syntax.raly -- one of each recoverable *syntax* error.
+//
+// Every mistake below is independent, and one `raly check` run reports all of
+// them. If a single mistake ever produces two messages, or hides a later one,
+// that is a recovery bug.
+//
+// For lexical errors, see broken.raly.
+
+space Concepts = 1024
+
+space Phases = FHRR
+
+role Subject, Verb
+
+type Scene = Vec[Concepts; load 3; rolls {Subject, Verb}]
+
+type Repeated = Vec[Concepts; roles {Subject, Verb, Subject}]
+
+type Unknown = Vec[Concepts; sparsity 0.1]
+
+fn no_annotation(scene) -> Vec[Concepts] {
+    scene
+}
+
+fn empty_bundle() -> Vec[Concepts] {
+    bundle()
+}
+
+fn wrong_arity(v: Vec[Concepts]) -> Vec[Concepts] {
+    unbind(v)
+}
+
+fn bad_variant(a: Vec[Concepts], b: Vec[Concepts]) -> Vec[Concepts] {
+    bundle.rightwards(a, b)
+}
+
+fn infix_bind(a: Vec[Concepts], b: Vec[Concepts]) -> Vec[Concepts] {
+    a ^ b
+}
+
+fn unclosed(a: Vec[Concepts] -> Vec[Concepts] {
+    a
+}
+
+fn loops(v: Vec[Concepts]) -> Vec[Concepts] {
+    for x in v {
+        v
+    }
+}
+
+fn ok_after_all_that(a: Sym[Concepts], b: Sym[Concepts]) -> Vec[Concepts; load 2] {
+    bundle(a, b)
+}

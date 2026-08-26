@@ -105,3 +105,98 @@ fn colour_is_opt_in() {
         .unwrap();
     assert!(colored.stderr.contains(&0x1b));
 }
+
+// -- parsing -----------------------------------------------------------------
+
+/// The repository's example files, resolved relative to this crate.
+fn example(name: &str) -> std::path::PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../examples")
+        .join(name)
+}
+
+#[test]
+fn check_accepts_the_substantial_example() {
+    let output = raly()
+        .arg("check")
+        .arg(example("scene.raly"))
+        .output()
+        .unwrap();
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(output.stderr.is_empty());
+}
+
+#[test]
+fn check_reports_every_planted_syntax_error_in_one_run() {
+    let output = raly()
+        .arg("check")
+        .arg(example("broken-syntax.raly"))
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    for code in [
+        "RALY2001", "RALY2002", "RALY2003", "RALY2004", "RALY2005", "RALY2006", "RALY2007",
+        "RALY2008", "RALY2009", "RALY2010",
+    ] {
+        assert!(
+            stderr.contains(code),
+            "{code} missing from:
+{stderr}"
+        );
+    }
+    // Well over the one-error-per-run bar the whole design exists to clear.
+    assert!(stderr.contains("errors"), "{stderr}");
+}
+
+#[test]
+fn parse_dumps_the_tree_to_stdout() {
+    let path = temp_file(
+        "dump.raly",
+        "space S = MAP[64]
+role R in S
+",
+    );
+    let output = raly().arg("parse").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(0));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("space `S` family=MAP"), "{stdout}");
+    assert!(stdout.contains("role R in `S`"), "{stdout}");
+    assert!(output.stderr.is_empty());
+}
+
+#[test]
+fn parse_still_dumps_a_tree_for_a_broken_file() {
+    // The parser never fails, so `parse` always has something to print.
+    let path = temp_file(
+        "dump-bad.raly",
+        "fn f( { }
+",
+    );
+    let output = raly().arg("parse").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("fn `f`"), "{stdout}");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("RALY2002"), "{stderr}");
+}
+
+#[test]
+fn check_reports_lexical_and_syntactic_errors_together() {
+    let path = temp_file(
+        "both.raly",
+        "let s = \"unclosed
+fn f( { }
+",
+    );
+    let output = raly().arg("check").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("RALY1002"), "{stderr}");
+    assert!(stderr.contains("RALY2002"), "{stderr}");
+}

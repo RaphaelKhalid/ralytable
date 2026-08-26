@@ -1,0 +1,11 @@
+[package]
+name = "raly-parse"
+description = "Hand-written recursive-descent parser for the Raly language."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+raly-diag.workspace = true
+raly-lexer.workspace = true
+raly-ast.workspace = true

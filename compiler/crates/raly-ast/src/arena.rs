@@ -128,6 +128,16 @@ impl<T> std::ops::IndexMut<Id<T>> for Arena<T> {
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Symbol(u32);
 
+impl Symbol {
+    /// The interner index behind this symbol.
+    ///
+    /// Only for hashing and serialisation; comparing `Symbol`s directly is
+    /// what the type is for.
+    pub fn as_u32(self) -> u32 {
+        self.0
+    }
+}
+
 impl fmt::Debug for Symbol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "sym#{}", self.0)

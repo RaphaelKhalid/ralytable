@@ -1,13 +1,15 @@
-# Raly — compiler skeleton
+# Raly — compiler front end
 
 Infrastructure for the **Raly** language front end. Source files use the
 `.raly` extension.
 
-This is **scaffolding, not a compiler**. It lexes and it reports errors
-beautifully. It does not parse, type-check, or generate code — those are
-deliberately absent, see [Deliberately not here yet](#deliberately-not-here-yet).
-The language's grammar and semantics are being designed separately; this repo
-holds the machinery that grammar will drop into.
+It **lexes, parses, and reports errors beautifully**. It does not type-check or
+generate code — those are deliberately absent, see
+[Deliberately not here yet](#deliberately-not-here-yet).
+
+The concrete grammar is written down in **[GRAMMAR.md](GRAMMAR.md)**, which is
+normative: EBNF, the rationale for each decision, and worked examples. Read it
+before reading `raly-parse`.
 
 ## Building and running
 
@@ -33,7 +35,7 @@ Then, from this directory:
 
 ```
 cargo build              # zero warnings expected
-cargo test               # 71 tests, all passing
+cargo test --workspace   # 154 tests, all passing
 cargo clippy --workspace --all-targets   # clean
 cargo fmt --all --check
 ```
@@ -41,14 +43,21 @@ cargo fmt --all --check
 ### Trying it
 
 ```
+cargo run -p raly -- check examples/scene.raly          # exits 0
+cargo run -p raly -- parse examples/scene.raly          # dumps the tree
+cargo run -p raly -- check examples/broken-syntax.raly  # 13 errors, exits 1
+cargo run -p raly -- check examples/broken.raly         # lexical errors
 cargo run -p raly -- lex   examples/tour.raly
-cargo run -p raly -- check examples/tour.raly     # exits 0
-cargo run -p raly -- check examples/broken.raly   # exits 1
 ```
 
-`examples/tour.raly` exercises every token class. `examples/broken.raly`
-contains one of each recoverable lexical error, and is the fastest way to see
-what the diagnostics look like:
+| File | What it is |
+| --- | --- |
+| `examples/scene.raly` | A substantial, valid program: a role-filler scene memory. What real Raly looks like. |
+| `examples/broken-syntax.raly` | One of each recoverable *syntax* error. All 13 are reported in a single run. |
+| `examples/broken.raly` | One of each recoverable *lexical* error. |
+| `examples/tour.raly` | Exercises every token class. A lexer fixture, **not** a valid program — `check` reports on it by design. |
+
+`broken.raly` is the fastest way to see what the diagnostics look like:
 
 ```
 error[RALY1002]: unterminated string literal
@@ -70,7 +79,8 @@ error[RALY1002]: unterminated string literal
 | Command | Behaviour |
 | --- | --- |
 | `raly lex <file>` | Dump every token with its kind, byte span and line:column |
-| `raly check <file>` | Lex, render all diagnostics to stderr, exit non-zero on error |
+| `raly parse <file>` | Parse and dump the syntax tree to stdout |
+| `raly check <file>` | Lex, parse, render all diagnostics to stderr, exit non-zero on error |
 
 Flags: `--color` / `--no-color` (default off), `--explain` (append each code's
 registry description), `-h`, `-V`.
@@ -83,21 +93,15 @@ or unreadable file.
 ```
 compiler/
 ├── Cargo.toml                 workspace root (Rust 2021)
-├── examples/                  .raly files for manual smoke-testing
+├── GRAMMAR.md                 the normative grammar: EBNF, rationale, examples
+├── examples/                  .raly files, valid and deliberately broken
 └── crates/
     ├── raly-diag/             spans, diagnostics, rendering   [no dependencies]
     ├── raly-lexer/            tokeniser                       [logos]
-    ├── raly-ast/              provisional arena AST + visitor
-    ├── raly-wasm/             wasm-bindgen wrapper for the browser playground
+    ├── raly-ast/              arena AST + visitor
+    ├── raly-parse/            recursive-descent parser        [hand-written]
     └── raly/                  the `raly` binary
 ```
-
-`raly-wasm` is deliberately **excluded** from the workspace: it only ever
-builds for `wasm32-unknown-unknown`, so keeping it out means
-`cargo build/test/clippy --workspace` stays exactly what it was. It exposes
-`analyze(source)`, which returns tokens and diagnostics as structured data
-rather than rendered text, and it is what `playground/` runs. See
-[`../playground/README.md`](../playground/README.md) to build or serve it.
 
 ### `raly-diag` — the important one
 
@@ -162,48 +166,102 @@ painful to build during error recovery. Names are interned to `Symbol`. Every
 node carries a `Span`. A generic `Visitor` derives its traversal from the node
 definitions, so adding variants later means editing `walk_*` and nothing else.
 
-**The node definitions are explicitly provisional and marked as such in the
-source.** They encode no precedence, no evaluation order, and no meaning for
-any keyword. `ExprKind::Op` records an operator token verbatim with a flat
-operand list precisely so that no precedence decision could be smuggled in
-under cover of "scaffolding". Type annotations are stored as opaque source
-text for the same reason. Expect `ExprKind`, `ItemKind` and `TypeExprKind` to
-be **replaced**, not extended, when the grammar lands; the extension points are
-commented in `crates/raly-ast/src/node.rs`.
+Two invariants matter more than the node list:
+
+- **The tree is total.** Parsing never fails. Text that could not be understood
+  becomes an `Error` node whose span covers the tokens involved, so every
+  significant token in a file lies inside some node and later phases can always
+  walk the whole thing. There is a test asserting this over both a valid and a
+  deliberately broken program.
+- **Every node knows why it exists.** `Origin` distinguishes a node the user
+  wrote from one recovery synthesised, and names the `Reason` in the latter
+  case. A checker can then decline to blame an expression that is not really
+  there. This is the cheap-now, expensive-later kind of decision: the gap
+  between good and bad error messages is mostly provenance.
+
+`VsaCall` stores its operands twice: in source order for diagnostics, and in a
+**canonical order** derived from `Ast::structural_key`. Binding and n-ary
+bundling are commutative, so this makes commutativity structurally true rather
+than a law each later pass has to remember. `bundle.left` deliberately gets no
+canonical order — the fold is order-dependent, and that asymmetry in the AST is
+the point.
+
+### `raly-parse`
+
+Hand-written recursive descent, with Pratt precedence climbing for expressions.
+No parser generator, and no `Result` anywhere in the crate.
+
+`parse(file, src, tokens) -> Parsed` is a pure function: no ambient state, no
+global interner, no `&mut` compiler context threaded through. That is the shape
+an incremental query engine would demand later, and keeping it costs nothing
+now.
+
+**Recovery** is panic mode with bracket-aware synchronisation sets:
+
+- Skipping tracks bracket depth, so one stray token deep inside a call does not
+  abandon the enclosing declaration.
+- After a diagnostic, further "unexpected token" reports are suppressed until at
+  least one token has been consumed. One mistake produces one message — there
+  are tests pinning that for six different mistakes.
+- Lexical errors are not re-reported. `123abc` is one diagnostic, not two.
+
+The interesting diagnostics are the ones that encode the algebra rather than the
+grammar. `bundle()` is `RALY2003` with a note explaining that superposition has
+no identity element in any VSA family, so an empty bundle denotes no vector.
+`bundle.foo` is `RALY2005`, and its help says that `bundle.left` is a different
+function from `bundle`, not a spelling of it. `space S = 1024` is `RALY2010`,
+pointing at both the dimension and the name, because family is part of a
+vector's identity.
 
 ## Tests
 
-71 tests: 65 unit and integration, plus 3 doctests and the CLI suite.
+154 tests: 150 unit and integration, plus 4 doctests.
 
 ```
-raly-diag   3 unit + 21 integration   source map, spans, rendered output
-raly-lexer  32 integration            one group per token class, comments,
-                                      string edge cases, recovery, totality
-raly-ast    4 unit                    arena, interner, visitor walk and prune
-raly        8 integration             exit codes, stdout/stderr discipline
+raly-diag    3 unit + 21 integration   source map, spans, rendered output
+raly-lexer  32 integration             one group per token class, comments,
+                                       string edge cases, recovery, totality
+raly-ast     9 unit                    arena, interner, provenance, canonical
+                                       operand order, visitor walk and prune
+raly-parse  46 grammar                 one per construct, asserted on the dump
+            16 recovery                multiple errors per run, no cascades,
+                                       error-node provenance, termination
+            10 diagnostics             rendered output, character for character
+raly        13 integration             exit codes, stdout/stderr discipline
 ```
 
 Several rendering tests assert on the **exact** text a user sees, character for
 character. That is deliberate: a change to diagnostic layout should be a change
 somebody had to look at and approve.
 
+Two properties get their own tests because they are the ones that would be
+expensive to discover late: that the tree covers every token of both a valid and
+a broken program with no gaps, and that fourteen kinds of pathological input
+(unbalanced brackets, runs of keywords, empty files) terminate and still yield a
+tree.
+
 ## Deliberately not here yet
 
 Nothing below exists, and no part of it is stubbed, faked, or half-written.
 
-- **Parser.** No grammar, no precedence table, no parse function. `raly check`
-  stops after lexing. Nothing currently produces an `Ast` except tests building
-  one by hand.
-- **Type system.** No types, no inference, no checking. This is where the
-  interesting design work is happening elsewhere, which is exactly why
-  `raly-ast` stores annotations opaquely instead of guessing.
+- **Type system.** No types, no inference, no checking. Nothing verifies that a
+  `load 3` is within capacity, that two vectors share a space, or that a role
+  schema is satisfied. The AST *carries* every annotation the checker will need
+  — space, load, role schema, cleanliness — and checks none of them.
+- **Constant folding.** A space's dimension is stored as an arbitrary
+  expression. Deciding that `2 * BASE_D` is a constant, and what it evaluates
+  to, is the checker's job.
 - **Name resolution.** No scopes, no bindings, no symbol table beyond the
   string interner.
 - **IR and codegen.** No lowering, no optimisation, no backend. `raly` cannot
   produce an executable and does not pretend to.
-- **Semantics for the reserved keywords.** `space`, `bind`, `bundle`,
-  `permute`, `unbind` and `cleanup` are reserved words that lex to distinct
-  tokens and mean nothing yet. Reserving them now is the only commitment made.
+- **Semantics for the operations.** `bind`, `bundle`, `permute`, `unbind` and
+  `cleanup` parse, and their arities are enforced. What they *compute* is not
+  implemented anywhere.
+- **`struct`, `enum`, `match`, `for`.** Reserved, and parsed to a dedicated
+  "recognised but not implemented" diagnostic (`RALY2007`) rather than a
+  confusing syntax error. `for` in particular waits on the checker being able to
+  count loop iterations against a space's capacity.
 - **Multi-file compilation.** `SourceMap` holds many files and spans carry a
   `FileId`, but the driver only ever loads one. `import` does not resolve.
 - **Block comments, raw strings, char literals, literal suffixes.** Not in the

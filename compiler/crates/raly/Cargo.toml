@@ -13,3 +13,4 @@ path = "src/main.rs"
 raly-diag.workspace = true
 raly-lexer.workspace = true
 raly-ast.workspace = true
+raly-parse.workspace = true
