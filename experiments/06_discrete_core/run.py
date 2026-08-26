@@ -187,7 +187,25 @@ def stop_requested():
     return STOP.exists()
 
 
+
+class _Tee:
+    """Mirror stdout to run.log so progress can be watched from anywhere."""
+
+    def __init__(self, path):
+        self.f = open(path, "w", encoding="utf-8", buffering=1)
+        self.out = sys.__stdout__
+
+    def write(self, s):
+        self.out.write(s)
+        self.f.write(s)
+
+    def flush(self):
+        self.out.flush()
+        self.f.flush()
+
+
 def main():
+    sys.stdout = _Tee(ROOT / "run.log")
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true", help="tiny run to prove it works")
     a = ap.parse_args()
