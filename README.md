@@ -1,44 +1,85 @@
-# legible-reasoning
+# Ralytable
 
-Interpretability for reasoning models: is the structure of a chain of thought the
-structure of the computation?
+I think that within a few years you won't be allowed to deploy a model you can't explain, and almost nobody is building for that yet.
 
-**Status:** scoping. Nothing here is a result yet.
+**Raly** is a language whose type system understands what a model represents. **Ralytable** is the model built in it. The name is the pitch; a model you can actually relate to, because you can read what it's doing.
 
-## The question
+Full plan and honest risks: [ROADMAP.md](ROADMAP.md).
 
-Reasoning models do their work across thousands of forward passes, with the visible
-text acting as the wire between them. [Thought Anchors](https://arxiv.org/abs/2506.19143)
-(Bogdan et al., 2025) proposed the first paradigm for this: treat a *sentence* as the
-unit of computation, and measure its importance by resampling it ~100 times and watching
-the final-answer distribution move.
+## Try it
 
-That instrument is expensive (~100 API calls per sentence) and has known confounds
-(overdetermination, sentence position). This repo asks whether the dependency structure
-of a reasoning trace can be read off *directly* instead of estimated by ablation --
-and whether the structure you read off is the one that is causally real.
+The compiler runs in your browser. No install, no toolchain.
 
-## Planned work
+```
+playground/RUN.bat          # Windows, double-click it
+python -m http.server -d playground 8000   # anything else
+```
 
-1. **Baseline.** Reproduce sentence-level resampling importance on a cheap
-   open reasoning model via OpenRouter. Small: a handful of problems, capped resamples.
-2. **Instrument audit.** Quantify the position confound and the overdetermination
-   blind spot in that baseline.
-3. **Substrate experiment.** Have the model reason in a formally-structured substrate
-   where step dependencies are explicit, and test whether the read-off dependency graph
-   predicts the resampling-measured causal importance.
+That is the real Rust compiler cross-compiled to WebAssembly, 102KB. Type Raly, get live errors with inline squiggles, click a diagnostic to jump to it.
 
-Outcomes are informative in both directions: agreement gives a much cheaper
-interpretability instrument, disagreement is a faithfulness result about what
-natural-language CoT is doing.
+## What actually exists
 
-## Conventions
+| | status |
+|---|---|
+| Lexer, diagnostics, AST | done, 154 tests, zero warnings |
+| Grammar and parser | done, error recovery, total over input |
+| Browser playground | done |
+| Name resolution, type system, IR, codegen | not built |
+| The model | not built |
 
-- Every experiment lands via a PR. Claims are preregistered in `preregistrations/`
-  before the run, not after.
-- Negative and null results are kept, not deleted.
-- `RESEARCH_LOG.md` is append-only and includes dead ends.
+The diagnostics are the part I'd point at first:
 
-## License
+```
+error[RALY1002]: unterminated string literal
+ --> examples/broken.raly:2:20
+  |
+2 |     let greeting = "hello
+  |                    ^ this string is never closed
+ ::: examples/broken.raly:2:26
+  |
+2 |     let greeting = "hello
+  |                          - the line ends here, still inside the string
+  |
+  = note: Raly string literals may not span multiple lines
+  = help: add a closing `"` before the end of the line
+```
 
-MIT
+## What the type system will track
+
+Four things, none of which PyTorch can see: vector space dimension, VSA family, superposition load (`load 3` out of a capacity derived from D), and a role schema (which roles are bound into a vector; the roles are static, the values bound to them are runtime).
+
+```
+Vec[Concepts; load 3; roles {Subject, Verb, Object}]
+```
+
+The second half is the point. If the type knows which roles are in a vector, the type signature is a description of what the model represents, readable without running it. That is interpretability living in the type system rather than in an archaeology pass over trained weights.
+
+Grammar and rationale: [compiler/GRAMMAR.md](compiler/GRAMMAR.md).
+
+## Findings
+
+Everything here was measured, not cited, and independently re-derived before I believed it.
+
+| | |
+|---|---|
+| [01](experiments/01_claimed_vs_causal/FINDINGS.md) | An LLM annotator's dependency graph over reasoning traces carries no causal information beyond position. rho +0.203 raw, +0.015 once position is controlled. Structure has to be built in, not requested. |
+| [03](experiments/03_position_decay/FINDINGS.md) | The decay of step importance with depth is not a measurement artifact. It vanishes when you condition on how decided the answer already is. Models commit early; the rest is follow through. |
+| [04](experiments/04_capacity/FINDINGS.md) | VSA bundling capacity at D=1000 is about 31 items, roughly 3x what a literature summary implied. |
+| [05](experiments/05_real_embeddings/FINDINGS.md) | Real embeddings are worse at this than random noise. Average 10 MiniLM sentence vectors and you recover 3. Effective dimension is 110 of a nominal 384, and mean-centring recovers only half. |
+| [02](experiments/02_committor/FINDINGS.md) | A negative result on my own idea: committor trajectories are not step-like and inherit the same position confound they were meant to remove. |
+
+## Repo
+
+```
+compiler/      the Raly compiler (Rust workspace, 4 crates)
+playground/    browser playground, wasm
+site/          landing page
+docs/          semantics, prior art, compiler architecture, language precedent
+experiments/   every experiment, with its findings and the code to reproduce
+```
+
+## How I work
+
+Every claim is measured or cited; motivating sentences that sound good and aren't known don't get written. Kill criteria go in before the experiment. Negative results ship, and several of the findings above are negative, which is the point rather than an embarrassment. Anything exciting gets attacked before it gets believed.
+
+MIT.
