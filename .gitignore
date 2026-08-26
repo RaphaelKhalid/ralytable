@@ -10,3 +10,4 @@ data/cache/
 results/*.jsonl
 *.ipynb_checkpoints
 .DS_Store
+data/math-rollouts/
