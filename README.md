@@ -66,6 +66,7 @@ Everything here was measured, not cited, and independently re-derived before I b
 | [03](experiments/03_position_decay/FINDINGS.md) | The decay of step importance with depth is not a measurement artifact. It vanishes when you condition on how decided the answer already is. Models commit early; the rest is follow through. |
 | [04](experiments/04_capacity/FINDINGS.md) | VSA bundling capacity at D=1000 is about 31 items, roughly 3x what a literature summary implied. |
 | [05](experiments/05_real_embeddings/FINDINGS.md) | Real embeddings are worse at this than random noise. Average 10 MiniLM sentence vectors and you recover 3. Effective dimension is 110 of a nominal 384, and mean-centring recovers only half. |
+| [07](experiments/07_retrieval_cost/FINDINGS.md) | And it costs real accuracy. On BEIR scifact, averaging chunks into document vectors drops recall from 0.877 to 0.619 with realistic grouping, and 70-76% of that loss is the averaging itself rather than coarser granularity, isolated with a max-pooling control. mpnet has twice MiniLM's nominal dimension, the same effective dimension, and the same cost; nominal D predicts nothing. |
 | [02](experiments/02_committor/FINDINGS.md) | A negative result on my own idea: committor trajectories are not step-like and inherit the same position confound they were meant to remove. |
 
 ## Repo

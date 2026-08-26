@@ -18,3 +18,4 @@ compiler/crates/raly-wasm/target/
 experiments/06_discrete_core/corpus.jsonl
 experiments/06_discrete_core/STOP
 experiments/07_retrieval_cost/cache/
+run.log
