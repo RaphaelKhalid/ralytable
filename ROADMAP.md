@@ -1,8 +1,10 @@
-# Raly
+# Ralytable
 
 I think that within a few years you won't be allowed to deploy a model you can't explain, and almost nobody is building for that yet. So that's what this is.
 
-Raly is two things that only make sense together: a language whose type system understands what a model represents, and a model built in that language whose reasoning you can read instead of reverse engineer.
+Ralytable is two things that only make sense together: **Raly**, a language whose type system understands what a model represents, and **Ralytable**, a model built in that language whose reasoning you can read instead of reverse engineer.
+
+The name is the pitch; a model you can actually relate to, because you can read what it's doing.
 
 ## Why now
 
@@ -69,7 +71,7 @@ Train the same task across dense, weight sparse, discrete bottleneck, VSA struct
 
 Gate: none, because this one can't fail, it can only inform. Cheap legibility tax means the direction is live. Expensive tax is a real negative result that saves other people a wall. That's exactly why it comes before I bet on any architecture.
 
-### Phase 3, Raly-1
+### Phase 3, Ralytable-1
 
 Small, local, legible.
 
@@ -86,7 +88,7 @@ This is the part I'm most excited about.
 
 RLHF rewards outcomes because outcomes are all a reward model can see. The reasoning that produced the answer is opaque so it goes ungraded, and that is exactly how you end up training a model to reach right answers through broken reasoning.
 
-If the reasoning core is legible then the reward model can see inside it. You grade the process instead of just the product; you penalise a right answer that came out of a derivation that doesn't hold, and you reward a sound step that happened to land wrong. A dense transformer can't do this because there's no readable process to grade. Raly can, because of the architecture.
+If the reasoning core is legible then the reward model can see inside it. You grade the process instead of just the product; you penalise a right answer that came out of a derivation that doesn't hold, and you reward a sound step that happened to land wrong. A dense transformer can't do this because there's no readable process to grade. Ralytable can, because of the architecture.
 
 That would make it the first case I know of where being interpretable makes a model better rather than just safer, which flips interpretability from a tax into an advantage.
 
@@ -94,7 +96,7 @@ That would make it the first case I know of where being interpretable makes a mo
 - [ ] Preference data on reasoning structure, not just final answers
 - [ ] Test whether process reward beats outcome reward at equal compute
 
-Gate: process supervised Raly beats outcome supervised Raly on held out reasoning. If legibility doesn't buy capability here it probably never will, and that's still worth knowing.
+Gate: process supervised Ralytable beats outcome supervised Ralytable on held out reasoning. If legibility doesn't buy capability here it probably never will, and that's still worth knowing.
 
 ### Phase 5, scale
 
