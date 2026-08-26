@@ -1,0 +1,94 @@
+{
+  "model": "qwen/qwen3-14b",
+  "checks": {
+    "G1_reasoning_visible": {
+      "http_error": null,
+      "error_body": null,
+      "reasoning_present": true,
+      "reasoning_chars": 1692,
+      "reasoning_head": "\nOkay, let's see. There's a tank that can hold 60 liters. It starts empty. There's a pipe filling it at 7 liters per minute and another draining it at 3 liters per minute. Both are running at the same time. I need to find out how many minutes it takes until the tank is full.\n\nHmm, so first, maybe I should figure out the net rate at which the tank is being filled. If the fill pipe is adding 7 liter",
+      "content": "The tank is being filled at a rate of 7 liters per minute and drained at 3 liters per minute. The net rate of filling is $7 - 3 = 4$ liters per minute. To fill a 60-liter tank at this net rate, the time required is $\\frac{60}{4} = 15$ minutes.\n\nANSWER: 15",
+      "correct": true,
+      "usage": {
+        "prompt_tokens": 78,
+        "completion_tokens": 540,
+        "total_tokens": 618,
+        "cost": 0.0001266,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0001266,
+          "upstream_inference_prompt_cost": 7.8e-06,
+          "upstream_inference_completions_cost": 0.0001188
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 427,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "cost_usd": 0.0001266
+    },
+    "G2_prefill": {
+      "prefix_used_chars": 564,
+      "a_assistant_reasoning_field": {
+        "http_error": null,
+        "error_body": null,
+        "returned_reasoning_chars": 0,
+        "prefix_echoed": false,
+        "content_tail": "The tank is being filled at a net rate of $7 - 3 = 4$ liters per minute. To fill a 60-liter tank, the time required is $\\frac{60}{4} = 15$ minutes.\n\nANSWER: 15",
+        "cost_usd": 3.516e-05
+      },
+      "b_open_think_prefill": {
+        "http_error": null,
+        "error_body": null,
+        "returned_reasoning_chars": 1247,
+        "content_head": "The tank is being filled at a net rate of $7 - 3 = 4$ liters per minute. To fill a 60-liter tank, the time required is $60 \\div 4 = 15$ minutes.\n\nANSWER: 15",
+        "content_tail": "The tank is being filled at a net rate of $7 - 3 = 4$ liters per minute. To fill a 60-liter tank, the time required is $60 \\div 4 = 15$ minutes.\n\nANSWER: 15",
+        "cost_usd": 0.0001123
+      },
+      "c_user_turn_continuation": {
+        "http_error": null,
+        "error_body": null,
+        "returned_reasoning_chars": 707,
+        "content_tail": "ANSWER: 15",
+        "cost_usd": 6.566e-05
+      }
+    },
+    "G3_annotated": {
+      "n": 3,
+      "runs": [
+        {
+          "http_error": null,
+          "n_steps": 6,
+          "n_steps_with_citations": 2,
+          "correct": true,
+          "cost_usd": 0.00013872,
+          "content": "[1] The tank is filled at 7 litres per minute and drained at 3 litres per minute.  \n[2] The net rate of filling is the difference between the fill and drain rates.  \n[3] from [1],[2]: The net rate is 7 - 3 = 4 litres per minute.  \n[4] The tank needs to be filled from 0 to 60 litres.  \n[5] Time required is total volume divided by net rate.  \n[6] from [3],[4],[5]: Time = 60 / 4 = 15 minutes.  \n\nANSWER: 15"
+        },
+        {
+          "http_error": null,
+          "n_steps": 4,
+          "n_steps_with_citations": 0,
+          "correct": true,
+          "cost_usd": 0.00013634,
+          "content": "[1] The tank is filled at 7 litres per minute and drained at 3 litres per minute.  \n[2] The net rate of filling is 7 - 3 = 4 litres per minute.  \n[3] The tank needs to be filled with 60 litres.  \n[4] Time required is total volume divided by net rate: 60 / 4 = 15 minutes.  \n\nANSWER: 15"
+        },
+        {
+          "http_error": null,
+          "n_steps": 5,
+          "n_steps_with_citations": 0,
+          "correct": true,
+          "cost_usd": 0.0001106,
+          "content": "[1] The tank is being filled at 7 litres per minute and drained at 3 litres per minute.  \n[2] The net rate of filling is 7 - 3 = 4 litres per minute.  \n[3] The tank needs to be filled with 60 litres.  \n[4] Time required = Total volume / Net rate.  \n[5] From [2] and [3]: Time required = 60 / 4 = 15 minutes.  \n\nANSWER: 15"
+        }
+      ]
+    }
+  },
+  "total_cost_usd": 0.00072538
+}
