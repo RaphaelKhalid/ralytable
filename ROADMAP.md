@@ -42,7 +42,7 @@ Write down the semantics before the compiler assumes them.
 - [x] Capacity measured instead of cited
 - [x] Prior art surveyed
 - [x] Compiler architecture decisions researched before they get expensive to change
-- [ ] `raly` compiler skeleton: diagnostics, lexer, AST
+- [x] `raly` compiler skeleton: diagnostics, lexer, AST
 
 Gate: no claim in the semantics doc that isn't either measured or cited. Holding so far; one asserted claim already got caught and corrected.
 
@@ -50,12 +50,14 @@ Gate: no claim in the semantics doc that isn't either measured or cited. Holding
 
 A typed VSA DSL that catches what PyTorch can't see.
 
-- [ ] Grammar, parser, typechecker
-- [ ] Capacity types, so `Vec<D=1024, load=3/31>` and overstuffing is a compile error
+- [x] Grammar and parser, with error recovery and a tree total over the input
+- [ ] Name resolution and typechecker
+- [ ] Capacity types, so `Vec[Concepts; load 3]` and overstuffing is a compile error
 - [ ] Role schema types, so the type knows which roles are bound in even though the values are runtime; unbinding a role the vector doesn't carry won't compile
 - [ ] Static nesting depth checks that force a `cleanup` before retrieval degrades
 - [ ] Differentiable end to end
 - [ ] Error messages good enough to be the reason people use it
+- [x] Browser playground (`playground/`), the compiler as wasm
 
 Gate: one VSA experiment that is visibly easier in Raly than in fifty lines of `jax.numpy`. If I can't produce that, the language is a cathedral and I stop.
 
