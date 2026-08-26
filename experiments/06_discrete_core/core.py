@@ -195,8 +195,15 @@ def build(vocab, device="cuda", compile_model=True, **kw):
     m = DiscreteCore(vocab, **kw).to(device)
     if compile_model and device == "cuda":
         # reduce-overhead captures CUDA graphs; the big win at this size, where
-        # kernel launch cost dominates actual arithmetic
-        m = torch.compile(m, mode="reduce-overhead")
+        # kernel launch cost dominates actual arithmetic. Needs Triton, which
+        # does not ship on Windows, so fall back to eager rather than dying.
+        try:
+            compiled = torch.compile(m, mode="reduce-overhead")
+            compiled(torch.zeros(1, 8, dtype=torch.long, device=device))
+            return compiled
+        except Exception as e:
+            print(f"  (torch.compile unavailable, running eager: "
+                  f"{type(e).__name__})", flush=True)
     return m
 
 
