@@ -1,0 +1,107 @@
+//! End-to-end tests for the `raly` binary: exit codes and stream discipline.
+
+use std::process::Command;
+
+fn raly() -> Command {
+    Command::new(env!("CARGO_BIN_EXE_raly"))
+}
+
+/// Write a temp file next to the test binary and return its path.
+fn temp_file(name: &str, contents: &str) -> std::path::PathBuf {
+    let dir = std::env::temp_dir().join("raly-cli-tests");
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join(name);
+    std::fs::write(&path, contents).unwrap();
+    path
+}
+
+#[test]
+fn check_succeeds_on_a_clean_file() {
+    let path = temp_file("clean.raly", "// fine\nlet x = 1 |> f\n");
+    let output = raly().arg("check").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(0));
+    assert!(
+        output.stderr.is_empty(),
+        "{:?}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+#[test]
+fn check_exits_non_zero_on_error_and_writes_to_stderr() {
+    let path = temp_file("bad.raly", "let s = \"unclosed\n");
+    let output = raly().arg("check").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("error[RALY1002]"), "{stderr}");
+    assert!(stderr.contains("error: 1 error"), "{stderr}");
+    assert!(output.stdout.is_empty(), "check prints nothing on stdout");
+}
+
+#[test]
+fn a_warning_alone_does_not_fail_the_run() {
+    // Wrong extension is a warning, so the exit code stays 0.
+    let path = temp_file("clean.txt", "let x = 1\n");
+    let output = raly().arg("check").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(0));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("warning[RALY0002]"), "{stderr}");
+}
+
+#[test]
+fn lex_dumps_tokens_to_stdout() {
+    let path = temp_file("tokens.raly", "let x = 1\n");
+    let output = raly().arg("lex").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(0));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("KIND"), "{stdout}");
+    assert!(stdout.contains("Let"), "{stdout}");
+    assert!(stdout.contains("Eof"), "{stdout}");
+}
+
+#[test]
+fn a_missing_file_exits_two() {
+    let output = raly()
+        .arg("check")
+        .arg("definitely-not-here.raly")
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("RALY0001"), "{stderr}");
+}
+
+#[test]
+fn a_bad_command_line_exits_two() {
+    for args in [
+        vec!["check"],              // no file
+        vec!["nonsense", "f.raly"], // no command; `nonsense` is read as the file
+        vec!["lex", "--bogus", "f.raly"],
+    ] {
+        let output = raly().args(&args).output().unwrap();
+        assert_eq!(output.status.code(), Some(2), "for {args:?}");
+    }
+}
+
+#[test]
+fn help_and_version_exit_zero() {
+    for flag in ["--help", "-h", "--version", "-V"] {
+        let output = raly().arg(flag).output().unwrap();
+        assert_eq!(output.status.code(), Some(0), "for {flag}");
+        assert!(!output.stdout.is_empty(), "for {flag}");
+    }
+}
+
+#[test]
+fn colour_is_opt_in() {
+    let path = temp_file("bad2.raly", "let s = \"unclosed\n");
+    let plain = raly().arg("check").arg(&path).output().unwrap();
+    assert!(!plain.stderr.contains(&0x1b));
+
+    let colored = raly()
+        .args(["check", "--color"])
+        .arg(&path)
+        .output()
+        .unwrap();
+    assert!(colored.stderr.contains(&0x1b));
+}
