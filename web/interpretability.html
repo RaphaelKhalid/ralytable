@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ralytable — inside the codebook</title>
-<meta name="description" content="Every one of the 1024 discrete codes in our 6.4M-parameter model, enumerated: what each one fires on, what role it sits in, and the whole internal alphabet laid over a real reasoning trace.">
+<title>Ralytable, inside a trained model</title>
+<meta name="description" content="Every one of the 1024 symbols a 6.4M-parameter model learned, pulled out of the trained checkpoint: what each one fires on, where it lands, and the whole alphabet laid over a real worked problem.">
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Inside the codebook">
-<meta property="og:description" content="A finite, enumerable internal alphabet — all 1024 codes, extracted from the trained model.">
+<meta property="og:description" content="All 1024 symbols, extracted from the trained checkpoint and made clickable.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -311,6 +311,107 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--fg-3);fo
 html{scroll-behavior:smooth}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
 .err{color:var(--err);font-family:var(--mono);font-size:12.5px;line-height:1.7}
+
+/* ------------------------------------------------------- hover definitions */
+/* A definition is a dictionary entry and nothing else. The trigger is a real
+   button so it is reachable by Tab and works on a tap, not only on hover. */
+.dfn{
+  font:inherit;color:inherit;background:none;padding:0;margin:0;
+  border:0;border-bottom:1px dotted var(--accent);
+  cursor:help;line-height:inherit;
+}
+.dfn:hover{border-bottom-style:solid}
+.dfn[aria-expanded="true"]{border-bottom-style:solid;color:var(--accent)}
+#dfn-pop{
+  position:fixed;z-index:200;max-width:min(300px,calc(100vw - 24px));
+  background:var(--panel-2);color:var(--fg);
+  border:1px solid var(--line-2);border-radius:8px;
+  padding:11px 13px;font-size:13.5px;line-height:1.5;
+  box-shadow:0 16px 40px -18px rgba(0,0,0,.7);
+  opacity:0;visibility:hidden;transition:opacity .12s;
+  pointer-events:none;
+}
+#dfn-pop.on{opacity:1;visibility:visible}
+#dfn-pop b{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:5px;font-weight:500}
+
+/* ------------------------------------------------------------- live demo */
+.frame{
+  border:1px solid var(--line-2);border-radius:12px;background:var(--panel);
+  overflow:hidden;box-shadow:0 30px 70px -34px rgba(0,0,0,.8);
+}
+.frame-bar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);background:var(--panel-2);padding:10px 14px;
+  font-family:var(--mono);font-size:11.5px;color:var(--fg-2);
+}
+.frame-bar .pip{color:var(--accent)}
+.frame-bar a{margin-left:auto;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)}
+.frame-bar a:hover{border-bottom-color:var(--accent)}
+.frame iframe{
+  display:block;width:100%;border:0;background:var(--bg);
+  height:clamp(430px,64vh,640px);
+}
+
+/* --------------------------------------------------------------- demo tiles */
+.tiles{display:grid;gap:clamp(16px,2.2vw,22px);margin-top:34px}
+@media(min-width:900px){.tiles{grid-template-columns:1fr 1fr}}
+a.tile{
+  display:block;text-decoration:none;color:inherit;
+  border:1px solid var(--line-2);border-radius:12px;background:var(--panel);
+  padding:clamp(22px,3vw,30px);transition:border-color .16s,transform .16s;
+}
+a.tile:hover{border-color:var(--accent);transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){a.tile:hover{transform:none}}
+a.tile .tno{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:14px;
+}
+a.tile h3{font-size:clamp(19px,2.2vw,25px);letter-spacing:-.02em}
+a.tile p{color:var(--fg-2);font-size:15px;margin-top:11px;max-width:44ch}
+a.tile .go{
+  display:inline-block;margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--accent);
+}
+.tile-art{
+  margin-top:20px;border:1px solid var(--line);border-radius:8px;background:var(--bg-2);
+  padding:14px;overflow:hidden;
+}
+.tile-art .dots{display:flex;flex-wrap:wrap;gap:4px}
+.tile-art .dots i{width:7px;height:7px;border-radius:50%;display:block}
+.tile-art pre{margin:0;font-size:11.5px;line-height:1.6;color:var(--fg-2);white-space:pre;overflow-x:auto}
+
+/* ------------------------------------------------------------ number table */
+.nums{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:8px}
+.nums th,.nums td{text-align:left;padding:9px 14px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.nums th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3);font-weight:400}
+.nums td{color:var(--fg-2)}
+.nums td b{color:var(--fg);font-family:var(--mono);font-weight:500}
+.nums tr:last-child td{border-bottom:0}
+
+/* ----------------------------------------------------------------- limits */
+.limits{
+  border:1px solid var(--line-2);border-radius:12px;background:var(--panel);
+  padding:clamp(22px,3vw,32px);margin-top:32px;
+}
+.limits ul{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:13px}
+.limits li{display:flex;gap:12px;font-size:15px;color:var(--fg-2);align-items:flex-start}
+.limits li::before{content:"·";font-family:var(--mono);color:var(--fg-3);flex:none}
+.limits li b{color:var(--fg);font-weight:600}
+.scroller{overflow-x:auto}
+.scroller::-webkit-scrollbar{height:9px}
+.scroller::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
+
+/* --------------------------------------------------------------- buttons */
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  font-size:14px;font-weight:500;padding:10px 18px;border-radius:7px;
+  border:1px solid var(--line-2);color:var(--fg);transition:.16s;
+}
+.btn:hover{border-color:var(--fg-3)}
+.btn.primary{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn .arr{font-family:var(--mono);opacity:.7}
 </style>
 </head>
 <body>
@@ -319,9 +420,9 @@ html{scroll-behavior:smooth}
   <div class="wrap nav-in">
     <a class="brand" href="./index.html"><span class="dot"></span>Ralytable<small>/ raly</small></a>
     <nav class="nav-links">
-      <a class="hide-s" href="./index.html#types">Types</a>
-      <a class="hide-s" href="./index.html#findings">Findings</a>
-      <a class="here" href="./interpretability.html">Codebook</a>
+      <a class="hide-s" href="./index.html#type">The type</a>
+      <a class="hide-s" href="./index.html#measured">What we measured</a>
+      <a class="here" href="./interpretability.html">The symbols</a>
       <a class="ghost" href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments/06_discrete_core">Experiment</a>
     </nav>
   </div>
@@ -332,36 +433,120 @@ html{scroll-behavior:smooth}
 <!-- ==================================================== HERO -->
 <div class="hero">
   <div class="wrap hero-in">
-    <h1>You can <em>enumerate</em> what this model thinks in.</h1>
+    <h1>You can <em>list</em> everything this model thinks in.</h1>
     <p class="sub">
-      Between the encoder and the decoder, this model's hidden state is snapped to the nearest of
-      <b>1024 discrete codes</b>. That codebook is the whole internal alphabet — finite, countable, and
-      every character of every text gets exactly one of them. Below is all of it, extracted from the
-      trained checkpoint. Nothing on this page is illustrative.
+      Halfway through this model, its hidden state is snapped to the nearest of
+      <b>1024 fixed vectors</b>. That set is its entire internal alphabet, finite and countable, and every
+      character of every text gets exactly one entry from it. All 1024 are below, read out of the
+      trained checkpoint. Nothing on this page is an illustration.
     </p>
     <div class="statline" id="statline">
       <span>loading measurements…</span>
     </div>
+    <div class="cta" style="margin-top:24px">
+      <a class="btn primary" href="#map-demo">Open the alphabet <span class="arr">↓</span></a>
+      <a class="btn" href="./index.html">The compiler <span class="arr">→</span></a>
+    </div>
   </div>
 </div>
+
+<!-- ==================================================== DEMO 1: THE MAP -->
+<section id="map-demo">
+<div class="wrap sec rv">
+  <p class="eyebrow">Demo one, all 1024 symbols</p>
+  <h2 class="big">The whole alphabet, on one screen.</h2>
+  <p class="lede">
+    Each dot is one symbol. Its position comes from the two directions in which the 1024 vectors
+    differ most, its size from how often it fires across the corpus, and its colour from where its
+    characters usually sit: in a premise, in a working step, or in the answer.
+    <b>Click any dot</b> to read what it actually fires on.
+  </p>
+
+  <div class="explorer" style="margin-top:26px">
+    <div class="panel">
+      <div class="panel-bar">
+        <b>the 1024 symbols, flattened to two directions</b>
+        <span id="pcavar"></span>
+        <span class="lab" style="margin-left:auto">
+          <span class="key k0"><i></i>premise</span>
+          <span class="key k1"><i></i>working step</span>
+          <span class="key k2"><i></i>answer</span>
+        </span>
+      </div>
+      <div class="mapwrap">
+        <svg id="map" viewBox="0 0 560 520" role="application"
+             aria-label="Scatter plot of 1024 symbols along the two directions of largest variation. Click a dot to inspect that symbol."></svg>
+        <div class="tip" id="tip" aria-hidden="true"></div>
+      </div>
+      <div class="panel-note">
+        Dot area is proportional to how often the symbol fires. The two directions carry
+        <span id="pcavar2"></span> of the variation between the 1024 vectors, found by
+        <button type="button" class="dfn" data-t="Principal components" data-d="The directions along which a set of vectors varies most, found by ranking those directions by how much of the variation each one accounts for.">principal component analysis</button>,
+        so this is a projection of the real thing rather than a decorative layout.
+      </div>
+    </div>
+
+    <div class="panel insp">
+      <div class="panel-bar">
+        <b>Inspector</b>
+        <span class="toggles" style="margin-left:auto">
+          <button class="tg" id="rand" type="button">show me a random one</button>
+        </span>
+      </div>
+      <div style="padding:clamp(16px,2.4vw,22px)" id="insp">
+        <p class="mini">Select a symbol from the map, or from the text below.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================================================== DEMO 2: THE TRACE -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">Demo two, the alphabet over real text</p>
+  <h2 class="big">One worked problem, every character tagged with the symbol that fired on it.</h2>
+  <p class="lede">
+    This is a real example from the training text, put through the model. Every character below
+    carries the symbol the model picked at that position. <b>Hover</b> to see which one;
+    <b>click</b> to open it in the inspector above. Colour by part of the argument to see the
+    model's sense of structure, or by symbol to see how finely the alphabet is chopped.
+  </p>
+
+  <div class="panel" style="margin-top:24px">
+    <div class="panel-bar">
+      <b id="tracemeta">trace</b>
+      <span class="toggles" style="margin-left:auto">
+        <button class="tg" id="mode-role" type="button" aria-pressed="true">colour by part</button>
+        <button class="tg" id="mode-code" type="button" aria-pressed="false">colour by symbol</button>
+        <button class="tg" id="mode-fill" type="button" aria-pressed="false">solid</button>
+      </span>
+    </div>
+    <div class="tracebox" id="trace">loading…</div>
+    <div class="panel-note" id="tracenote"></div>
+  </div>
+</div>
+</section>
 
 <!-- ==================================================== ARCHITECTURE -->
 <section>
 <div class="wrap sec rv">
-  <p class="eyebrow">Where the codes live</p>
-  <h2 class="big">Three layers in, snap to a code, three layers out.</h2>
+  <p class="eyebrow">Where the symbols live</p>
+  <h2 class="big">Three layers in, pick a symbol, three layers out.</h2>
   <p class="lede">
-    A dense transformer's middle is a continuous vector you can only interrogate by training probes
-    against it. Replace that vector with a nearest-neighbour lookup into a fixed table and the middle
-    becomes a symbol — a thing with an index, a frequency, and a list of everything it has ever fired on.
-    That is the entire trick, and it is what makes the rest of this page possible.
+    The middle of an ordinary
+    <button type="button" class="dfn" data-t="Transformer" data-d="The neural network design used by most current language models.">transformer</button>
+    is a continuous vector, and the only way to ask it what it is doing is to train a second model to
+    guess. Replace that vector with a lookup into a fixed table and the middle becomes a symbol: a
+    thing with a number, a count, and a list of everything it has ever fired on. That is the whole
+    trick, and it is what makes the two demos above possible.
   </p>
 
   <div class="panel" style="margin-top:26px">
-    <div class="panel-bar"><b>DiscreteCore</b> <span>character-level · 6.4M parameters · 6 layers · 6000 steps</span></div>
+    <div class="panel-bar"><b>DiscreteCore</b> <span>one character at a time · 6.4M parameters · 6 layers · 6000 training steps</span></div>
     <div class="scroller">
       <svg viewBox="0 0 900 132" width="900" height="132" role="img"
-           aria-label="Architecture: text into three encoder layers, then vector quantisation against a 1024-entry codebook, then three decoder layers, then next-character prediction."
+           aria-label="Architecture: text into three encoder layers, then a lookup into a 1024-entry table, then three decoder layers, then next-character prediction."
            style="min-width:820px;display:block;padding:14px 18px">
         <defs>
           <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -378,16 +563,16 @@ html{scroll-behavior:smooth}
           </g>
           <g>
             <rect x="150" y="34" width="108" height="36" rx="7" fill="var(--panel-2)" stroke="var(--line-2)"/>
-            <text x="204" y="57" text-anchor="middle" fill="var(--fg-2)">encoder ×3</text>
+            <text x="204" y="57" text-anchor="middle" fill="var(--fg-2)">3 layers</text>
           </g>
           <g>
             <rect x="304" y="22" width="132" height="60" rx="8" fill="color-mix(in srgb,var(--accent) 14%,transparent)" stroke="var(--accent)"/>
-            <text x="370" y="47" text-anchor="middle" fill="var(--fg)" font-weight="700">nearest code</text>
+            <text x="370" y="47" text-anchor="middle" fill="var(--fg)" font-weight="700">nearest symbol</text>
             <text x="370" y="65" text-anchor="middle" fill="var(--accent)">1 of 1024</text>
           </g>
           <g>
             <rect x="482" y="34" width="108" height="36" rx="7" fill="var(--panel-2)" stroke="var(--line-2)"/>
-            <text x="536" y="57" text-anchor="middle" fill="var(--fg-2)">decoder ×3</text>
+            <text x="536" y="57" text-anchor="middle" fill="var(--fg-2)">3 layers</text>
           </g>
           <g>
             <rect x="636" y="34" width="150" height="36" rx="7" fill="var(--panel-2)" stroke="var(--line-2)"/>
@@ -396,206 +581,154 @@ html{scroll-behavior:smooth}
         </g>
         <g font-family="var(--mono)" font-size="10.5" fill="var(--fg-3)">
           <text x="370" y="104" text-anchor="middle">the only place the state is forced to be a symbol</text>
-          <text x="370" y="120" text-anchor="middle" fill="var(--accent)">↑ everything below is measured here</text>
+          <text x="370" y="120" text-anchor="middle" fill="var(--accent)">↑ everything on this page is measured here</text>
         </g>
       </svg>
     </div>
     <div class="panel-note">
-      Quantisation is EMA vector-quantisation in a 32-dimensional projected space, with dead-code revival.
-      <strong>1015 of 1024 codes are live</strong> on the corpus — the bottleneck is being used, not collapsed.
+      The lookup is
+      <button type="button" class="dfn" data-t="Vector quantisation" data-d="Replacing a vector with the nearest entry from a fixed table of vectors.">vector quantisation</button>
+      in a 32-number space, with a rule that revives entries nothing has picked for a while.
+      <strong>1015 of the 1024 symbols are live</strong> on this text, so the table is being used
+      rather than collapsing onto a handful of entries.
     </div>
   </div>
 </div>
 </section>
 
-<!-- ==================================================== HONEST FRAMING -->
+<!-- ==================================================== WHAT THEY ARE -->
 <section>
 <div class="wrap sec rv">
-  <p class="eyebrow">Read this before the pretty parts</p>
-  <h2 class="big">The model cannot reason. That is not the point.</h2>
+  <p class="eyebrow">What we found in there</p>
+  <h2 class="big">The symbols are mostly classes of character, and they are nameable.</h2>
   <p class="lede">
-    This is a 6.4M-parameter character model trained for six minutes on 4,042 synthetic word problems.
-    It writes fluent, perfectly-formatted nonsense. Here is an unedited sample from the very checkpoint
-    this page analyses, at temperature 0.7:
+    We looked at all 1015 live symbols. The alphabet is largely about spelling and layout. The median
+    symbol puts <b>63%</b> of its firings on a single character, and <b>326 symbols are a single
+    character outright</b>. The rest are classes: one for a digit inside an arithmetic expression,
+    another for a consonant in the middle of a word, each conditioned on where in the line it falls.
+  </p>
+  <p class="lede">
+    You can write a name on a symbol and be right every time. Symbol 864 is the <b>A</b> of
+    <code>ANSWER:</code>. Symbol 470 is the closing bracket inside a citation. That is real
+    interpretability, and it is interpretability about format, which is what this model has learned.
+  </p>
+
+  <div class="scroller" style="margin-top:22px">
+  <table class="tbl">
+    <thead><tr><th>symbol</th><th>fires</th><th>where it lands</th><th>what it is</th></tr></thead>
+    <tbody>
+      <tr><td><b>864</b></td><td>4,038</td><td>100% answer</td><td>the <b>A</b> of <code>ANSWER:</code></td></tr>
+      <tr><td><b>396</b></td><td>3,222</td><td>100% answer</td><td>the <b>R</b> of <code>ANSWER:</code></td></tr>
+      <tr><td><b>470</b></td><td>977</td><td>100% working step</td><td>the <b>]</b> inside <code>from [1],[2]:</code></td></tr>
+      <tr><td><b>692</b></td><td>2,184</td><td>98% premise</td><td>the space after <code>[2]</code> at the start of an uncited line</td></tr>
+      <tr><td><b>988</b></td><td>1,059</td><td>58% working step</td><td>a full stop ending a step</td></tr>
+      <tr><td><b>410</b></td><td>328</td><td>81% working step</td><td>a digit, spread evenly over 0 to 9</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 style="margin-top:52px;font-size:clamp(19px,2.2vw,25px)">How much the symbols add, against the hardest control we could build</h3>
+  <p class="lede" style="margin-top:12px">
+    The measure is this: knowing which symbol fired, how well can you say whether that character sits
+    in a premise, a working step, or the answer? The weak control is a shuffled table, and the model
+    clears it. The strong control is to throw the model away and guess from the raw character, because
+    the layout of this text gives a lot of the answer away by itself.
+  </p>
+
+  <div class="grid g2" style="margin-top:24px">
+    <div class="card">
+      <span class="tag">this checkpoint, against a shuffled table</span>
+      <div class="purity" id="purity"></div>
+      <p class="mini" id="puritynote"></p>
+    </div>
+    <div class="card">
+      <span class="tag">the same question, three ways of answering it</span>
+      <table class="nums" style="margin-top:10px">
+        <tbody>
+          <tr><td>always say the commonest one</td><td><b>0.5801</b></td><td>the floor</td></tr>
+          <tr><td>the raw character, no model at all</td><td><b>0.6314</b></td><td>+0.051</td></tr>
+          <tr><td>which of the 1024 symbols fired</td><td><b>0.6640</b></td><td>+0.084</td></tr>
+        </tbody>
+      </table>
+      <p class="mini" style="margin-top:12px">
+        The symbols beat the raw character by <b>+0.033</b>. Sixty-one per cent of the gap over the
+        floor was the character rather than the symbol. Run
+        <code>experiments/06_discrete_core/leakage.py</code> on the codes=1024 checkpoint to get
+        these three numbers back.
+      </p>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:26px">
+    +0.033 is what a symbol adds beyond the character it fired on, and it comes from context: the
+    same character in a premise and in a working step gets different symbols. Legibility here is
+    cheap rather than free. Across sizes it grows with the alphabet, 64 symbols to 256 to 1024, and
+    so does accuracy, which is the opposite of the trade we expected to find.
+  </p>
+</div>
+</section>
+
+<!-- ==================================================== WHAT IT WRITES -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">What the model writes</p>
+  <h2 class="big">Perfect citations, wrong arithmetic.</h2>
+  <p class="lede">
+    This is 6.4M parameters trained for six minutes on 4,042 synthetic word problems. It cannot do
+    arithmetic and it cannot reason. What it can do is format, and it does that flawlessly. Here is
+    an unedited sample from the same checkpoint the demos above take apart.
   </p>
 
   <div class="panel" style="margin-top:22px">
     <div class="panel-bar"><b>codes1024.pt</b> <span>prompt: "[1] A train travels" · temperature 0.7 · unedited</span></div>
     <pre class="out" id="sample">loading…</pre>
     <div class="panel-note">
-      A train travels 120 miles and the time taken is 2.5 hours, so the speed is
-      <strong>6 minutes = 60 × 60 = 6/3 hours</strong>, and the answer is 7.5. Every quantity is wrong.
-      <strong>Every citation is right.</strong> Step [3] cites [1] and [2]; step [4] cites [3]; no step ever
-      cites one that does not exist; no premise pretends to cite. Form is learned long before content —
-      which is exactly the pathology this project exists to fix, reproduced inside our own architecture.
+      Every quantity in there is wrong. Every citation is right. Step [3] cites [1] and [2], step [4]
+      cites [3], no step cites one that does not exist, and no premise pretends to cite. Form is
+      learned long before content, which is finding 01 from this repository turning up again inside
+      our own architecture.
     </div>
   </div>
 
   <div class="grid g2" style="margin-top:26px">
     <div class="callout">
-      <h3>The claim is legibility, not capability.</h3>
+      <h3>Legibility is the claim. Capability is a separate question.</h3>
       <p>
-        You cannot open a dense 6.4M model and read off what its middle layer is doing. You can open this one
-        and list all 1015 things it can be doing, with counts. Whether the thing being done is <em>good</em>
-        is a separate question, and here the answer is plainly no.
+        You cannot open a dense 6.4M model and read off what its middle is doing. You can open this
+        one and list all 1015 things it can be doing, with counts, which is what the demos above are.
+        Whether the thing being done is any good is a different measurement, and here the answer is no.
       </p>
     </div>
     <div class="card">
-      <span class="tag">Role purity, against its own null</span>
+      <span class="tag">The next experiment</span>
       <p style="margin-top:0">
-        The legibility proxy: for each code, how well does it predict whether its character sits in a
-        <b>premise</b>, a <b>derived</b> step, or the <b>answer</b>? The majority class is 58% of the corpus,
-        so a codebook carrying no role information at all still scores 0.580.
+        The test that decides this is whether the structure is <b>load-bearing</b>: change premise [1]
+        and the symbols in step [3] should change with it. If they do not, the citation is decorative
+        and the alphabet is describing a typesetting convention. That run has not happened yet, and it
+        is the next one.
       </p>
-      <div class="purity" id="purity"></div>
-      <p class="mini" id="puritynote"></p>
     </div>
   </div>
 </div>
 </section>
 
-<!-- ==================================================== THE MAP -->
-<section>
+<!-- ==================================================== LIMITS -->
+<section id="limits">
 <div class="wrap sec rv">
-  <p class="eyebrow">All 1024 codes</p>
-  <h2 class="big">The codebook, on one screen.</h2>
-  <p class="lede">
-    Each dot is one code, placed by PCA of its 32-dimensional code vector, sized by how often it fires
-    across the 886,091-character corpus, and coloured by the reasoning-step role it sits in most often.
-    <b>Click any dot</b> to read what it actually fires on.
-  </p>
-
-  <div class="explorer" style="margin-top:26px">
-    <div class="panel">
-      <div class="panel-bar">
-        <b>PCA of the codebook</b>
-        <span id="pcavar"></span>
-        <span class="lab" style="margin-left:auto">
-          <span class="key k0"><i></i>premise</span>
-          <span class="key k1"><i></i>derived</span>
-          <span class="key k2"><i></i>answer</span>
-        </span>
-      </div>
-      <div class="mapwrap">
-        <svg id="map" viewBox="0 0 560 520" role="application"
-             aria-label="Scatter plot of 1024 discrete codes in the first two principal components. Click a dot to inspect that code."></svg>
-        <div class="tip" id="tip" aria-hidden="true"></div>
-      </div>
-      <div class="panel-note">
-        Dot area is proportional to firing count. The two components explain <span id="pcavar2"></span> of the
-        variance between code vectors, so this is a real projection of the codebook, not a decorative layout.
-      </div>
-    </div>
-
-    <div class="panel insp">
-      <div class="panel-bar">
-        <b>Inspector</b>
-        <span class="toggles" style="margin-left:auto">
-          <button class="tg" id="rand" type="button">random code</button>
-        </span>
-      </div>
-      <div style="padding:clamp(16px,2.4vw,22px)" id="insp">
-        <p class="mini">Select a code from the map or the trace below.</p>
-      </div>
-    </div>
-  </div>
-</div>
-</section>
-
-<!-- ==================================================== TRACE -->
-<section>
-<div class="wrap sec rv">
-  <p class="eyebrow">The alphabet, laid over real text</p>
-  <h2 class="big">One reasoning trace, every character tagged with its code.</h2>
-  <p class="lede">
-    This is a real example from the training corpus, run through the model. Every character below carries
-    the code that fired at that position. <b>Hover</b> to see which code; <b>click</b> to open it in the
-    inspector above. Colour by role to see the model's sense of reasoning structure, or by code identity to
-    see how finely the alphabet is chopped.
-  </p>
-
-  <div class="panel" style="margin-top:24px">
-    <div class="panel-bar">
-      <b id="tracemeta">trace</b>
-      <span class="toggles" style="margin-left:auto">
-        <button class="tg" id="mode-role" type="button" aria-pressed="true">colour by role</button>
-        <button class="tg" id="mode-code" type="button" aria-pressed="false">colour by code</button>
-        <button class="tg" id="mode-fill" type="button" aria-pressed="false">solid</button>
-      </span>
-    </div>
-    <div class="tracebox" id="trace">loading…</div>
-    <div class="panel-note" id="tracenote"></div>
-  </div>
-</div>
-</section>
-
-<!-- ==================================================== WHAT THEY MEAN -->
-<section>
-<div class="wrap sec rv">
-  <p class="eyebrow">The honest answer</p>
-  <h2 class="big">Mostly, the codes are surface character classes.</h2>
-  <p class="lede">
-    Having looked at all 1015 live codes: this alphabet is largely orthographic. The median code puts
-    <b>63%</b> of its firings on a single character, and <b>326 codes are a single character outright</b>.
-    The rest are character <em>classes</em> — one code for "a digit inside an arithmetic expression",
-    another for "a consonant in the middle of a word" — conditioned on where in the line they occur.
-  </p>
-  <p class="lede">
-    That also explains most of the +0.086 role excess, and it is worth being blunt about. The codes that
-    predict role best predict it because <em>the surface string gives the role away</em>:
-  </p>
-
-  <div class="scroller" style="margin-top:18px">
-  <table class="tbl">
-    <thead><tr><th>code</th><th>fires</th><th>role</th><th>what it actually is</th></tr></thead>
-    <tbody>
-      <tr><td><b>864</b></td><td>4,038</td><td>100% answer</td><td>the <b>A</b> of <code>ANSWER:</code></td></tr>
-      <tr><td><b>396</b></td><td>3,222</td><td>100% answer</td><td>the <b>R</b> of <code>ANSWER:</code></td></tr>
-      <tr><td><b>470</b></td><td>977</td><td>100% derived</td><td>the <b>]</b> inside <code>from [1],[2]:</code></td></tr>
-      <tr><td><b>692</b></td><td>2,184</td><td>98% premise</td><td>the space after <code>[2]</code> at the start of an uncited line</td></tr>
-      <tr><td><b>988</b></td><td>1,059</td><td>58% derived</td><td>a full stop ending a step line</td></tr>
-      <tr><td><b>410</b></td><td>328</td><td>81% derived</td><td>a digit — near-uniform over 0–9</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="grid g2" style="margin-top:28px">
-    <div class="scroll" style="margin-top:28px">
-<p><strong>How much of it is the character?</strong> The right control is not "could a codebook with no information score this", it is "could you score this without the codebook at all". You largely can, because the format leaks the label. Predicting the role from the raw character alone, no model involved:</p>
-<table style="margin:14px 0;border-collapse:collapse">
-<tr><td style="padding:4px 18px 4px 0">majority class</td><td style="padding:4px 0"><code>0.5801</code></td><td style="padding:4px 0 4px 18px;opacity:.7">&mdash;</td></tr>
-<tr><td style="padding:4px 18px 4px 0">the character alone, 140 of them</td><td style="padding:4px 0"><code>0.6314</code></td><td style="padding:4px 0 4px 18px;opacity:.7">+0.051</td></tr>
-<tr><td style="padding:4px 18px 4px 0">the 1024 codes</td><td style="padding:4px 0"><code>0.6640</code></td><td style="padding:4px 0 4px 18px;opacity:.7">+0.084</td></tr>
-</table>
-<p>So <strong>61% of the excess was the character, not the code</strong>. The codes beat the raw character by <code>+0.033</code>. That is the honest number, and it is real, because a code sees context and can separate the same character in a premise from one in a derived step. It is a third of what the headline sounded like. Reproduce it with <code>experiments/06_discrete_core/leakage.py</code>.</p>
-</div>
-<div class="card">
-      <span class="tag">So is the legibility fake?</span>
-      <p style="margin-top:0">
-        No, but it is smaller than "0.664 role purity" sounds. A code that fires on <code>]</code> genuinely
-        does predict "derived step", and it is genuinely nameable — you can write <em>"citation bracket"</em> on
-        it and be right every time. That is real interpretability. It is just interpretability about
-        <b>format</b>, and this model has learned format and nothing else, exactly as its generated samples show.
-      </p>
-    </div>
-    <div class="card">
-      <span class="tag">What would falsify it</span>
-      <p style="margin-top:0">
-        The test that matters is whether the structure is <b>load-bearing</b>: change premise [1], and step [3]'s
-        codes should change. If they do not, the citation is decorative and the codebook is describing a
-        typesetting convention. That experiment has not been run yet. It is the next one.
-      </p>
-    </div>
-  </div>
-
-  <div class="status" style="margin-top:30px">
-    <p class="eyebrow" style="margin-bottom:12px">Limitations that apply to every number above</p>
+  <p class="eyebrow">Limits, stated once</p>
+  <h2 class="big">What these numbers do not cover.</h2>
+  <div class="limits">
     <ul>
-      <li><span class="mk">—</span><span>One seed, one corpus, one teacher. <b>No error bars.</b></span></li>
-      <li><span class="mk">—</span><span>The corpus is synthetic and formulaic, which almost certainly makes this structure <b>far easier to encode than real text</b>.</span></li>
-      <li><span class="mk">—</span><span>Role purity is a <b>three-class proxy</b> for legibility. "A code predicts a role" is much less than "a human can name what a code means".</span></li>
-      <li><span class="mk">—</span><span>Codes are read at positions with at least 128 characters of left context, so this measures the model mid-sequence, <b>not at a cold start</b>.</span></li>
-      <li><span class="mk">—</span><span>The dense baseline has no bottleneck rather than a matched continuous one, so <b>some of the gap is regularisation</b>, not discreteness.</span></li>
+      <li><b>One seed, one corpus, one teacher.</b> There are no error bars on anything above.</li>
+      <li><b>The corpus is synthetic and formulaic</b>, which almost certainly makes its structure
+        easier to encode than real text would be.</li>
+      <li><b>Three classes is a weak stand-in for legibility.</b> "This symbol predicts a part of the
+        argument" is a good deal less than "a person can name what this symbol means", and the layout
+        of the text leaks part of the label, which is what the character baseline measures.</li>
+      <li><b>Symbols are read at positions with at least 128 characters in front of them</b>, so this
+        measures the model mid-sentence rather than at a cold start.</li>
+      <li><b>The dense comparison has no bottleneck at all</b> rather than a matched continuous one,
+        so some of the gap is the extra constraint acting as regularisation rather than discreteness.</li>
     </ul>
   </div>
 </div>
@@ -607,13 +740,15 @@ html{scroll-behavior:smooth}
   <p class="eyebrow">Reproduce it</p>
   <h2 class="big">Every number on this page comes out of one script.</h2>
   <p class="lede">
-    <code>export_viz.py</code> loads the checkpoint, forwards the corpus, and writes the JSON this page
-    fetches. No hand-entered figures, no cached summary — if you retrain, the page changes.
+    <code>export_viz.py</code> loads the checkpoint, runs the corpus through it, and writes the JSON
+    this page fetches. No figures were typed in by hand and nothing is cached. Retrain, and the page
+    changes.
   </p>
   <div class="panel" style="margin-top:22px">
     <div class="panel-bar"><b>shell</b></div>
-    <pre class="out">python experiments/06_discrete_core/sample.py       <span class="cite"># trains codes=1024, writes codes1024.pt (~6 min, GPU)</span>
-python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes site/codebook.json and web/codebook.json</span></pre>
+    <pre class="out">python experiments/06_discrete_core/sample.py       <span class="cite"># trains codes=1024, writes codes1024.pt (about 6 min on a GPU)</span>
+python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes site/codebook.json and web/codebook.json</span>
+python experiments/06_discrete_core/leakage.py      <span class="cite"># the three-way comparison above</span></pre>
     <div class="panel-note" id="prov">provenance loading…</div>
   </div>
 </div>
@@ -633,6 +768,7 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
       <b>Research</b>
       <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments">Experiments</a>
       <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/06_discrete_core/FINDINGS.md">This experiment</a>
+      <a href="#limits">Limits</a>
       <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/RESEARCH_LOG.md">Research log</a>
     </nav>
     <nav>
@@ -642,17 +778,19 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
     </nav>
     <p class="foot-note">
       Ralytable is the project and the model. Raly is the language and compiler. MIT licensed.
-      Nothing on this page is a product announcement — the model here is a 6.4M-parameter toy that
-      cannot reason. Every number is reproducible from the repository.
+      The model taken apart here has 6.4M parameters and cannot reason; the point of the page is that
+      you can see what it is doing. Every number is reproducible from the repository.
     </p>
   </div>
 </footer>
+
+<div id="dfn-pop" role="tooltip" aria-hidden="true"></div>
 
 <script>
 (function(){
   "use strict";
 
-  var ROLES = ["premise","derived","answer"];
+  var ROLES = ["premise","working step","answer"];
   var RVAR  = ["--r0","--r1","--r2"];
   var D = null;
   var byId = {};
@@ -695,7 +833,7 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
     .catch(function(e){
       var m = "could not load codebook.json (" + e.message + ")." +
               (location.protocol === "file:" ?
-                " This page fetches its data, so it needs to be served over HTTP — try: python -m http.server" : "");
+                " This page fetches its data, so it needs to be served over HTTP. Try: python -m http.server" : "");
       $("statline").innerHTML = "";
       var p = el("span","err"); p.textContent = m;
       $("statline").appendChild(p);
@@ -710,10 +848,10 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
     /* ---- hero statline */
     var sl = $("statline");
     sl.innerHTML = "";
-    [[num(s.live_codes) + "/" + m.n_codes, "live codes"],
-     [s.entropy_bits.toFixed(2), "bits of code entropy"],
+    [[num(s.live_codes) + "/" + m.n_codes, "symbols in use"],
+     [s.entropy_bits.toFixed(2), "bits of choice per character"],
      [num(m.chars_in_corpus), "characters analysed"],
-     [num(m.examples_in_corpus), "reasoning traces"],
+     [num(m.examples_in_corpus), "worked problems"],
      [(m.params/1e6).toFixed(1) + "M", "parameters"]].forEach(function(p){
       var sp = el("span");
       var b = el("b"); b.textContent = p[0];
@@ -741,17 +879,16 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
       pu.appendChild(row);
     });
     $("puritynote").innerHTML =
-      "Excess over the null: <b>+" + s.excess.toFixed(3) + "</b>. " +
-      "Real, measured, monotone in codebook size — and small. The axis above starts at 0.500, " +
-      "not 0, so the bar is not flattering it. Base rates in this corpus: premise " +
-      pct(s.role_base_rate[0]) + ", derived " + pct(s.role_base_rate[1]) +
-      ", answer " + pct(s.role_base_rate[2]) + ".";
+      "The symbols clear the shuffled table by <b>+" + s.excess.toFixed(3) + "</b>, and the gap grows " +
+      "with the size of the alphabet. The axis starts at 0.500, not 0. Base rates in this text: premise " +
+      pct(s.role_base_rate[0]) + ", working step " + pct(s.role_base_rate[1]) +
+      ", answer " + pct(s.role_base_rate[2]) + ". The stronger control is on the right.";
 
     /* ---- provenance */
     $("prov").innerHTML =
       "Generated by <strong>" + m.generated_by + "</strong> from <strong>" + m.checkpoint +
-      "</strong> — " + num(m.scored_positions) + " scored character positions, alphabet of " +
-      m.alphabet + ", context " + m.ctx + " with stride " + m.stride + ".";
+      "</strong>. " + num(m.scored_positions) + " scored character positions, an alphabet of " +
+      m.alphabet + " characters, " + m.ctx + " characters of context with a stride of " + m.stride + ".";
 
     D.codes.forEach(function(c){ byId[c.id] = c; });
 
@@ -764,7 +901,7 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
       $("insp").scrollIntoView({block:"nearest"});
     });
 
-    select(864);   /* the ANSWER code: the clearest thing in the whole codebook */
+    select(864);   /* the ANSWER symbol: the clearest thing in the whole alphabet */
   }
 
   /* -------------------------------------------------------------- sample */
@@ -837,14 +974,14 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
       dot.setAttribute("data-id", c.id);
       dot.setAttribute("tabindex","0");
       dot.setAttribute("role","button");
-      dot.setAttribute("aria-label", "code " + c.id + ", " + c.n + " firings");
+      dot.setAttribute("aria-label", "symbol " + c.id + ", " + c.n + " firings");
       dots.appendChild(dot);
     });
 
     var tip = $("tip");
     function showTip(c, ev){
       var box = svg.getBoundingClientRect();
-      tip.textContent = "code " + c.id + " · " + num(c.n) + "× · " +
+      tip.textContent = "symbol " + c.id + " · " + num(c.n) + "× · " +
                         (c.n ? ROLES[dominant(c.roles)] : "never fires");
       tip.style.left = (ev.clientX - box.left) + "px";
       tip.style.top  = (ev.clientY - box.top) + "px";
@@ -889,23 +1026,23 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
     host.innerHTML = "";
 
     var head = el("div","insp-head");
-    var h = el("h3"); h.textContent = "code " + c.id;
+    var h = el("h3"); h.textContent = "symbol " + c.id;
     var sub = el("span","sub");
-    sub.textContent = c.n ? num(c.n) + " firings · " + share(c.n / D.meta.scored_positions) + " of the corpus"
-                          : "never fires on this corpus";
+    sub.textContent = c.n ? num(c.n) + " firings · " + share(c.n / D.meta.scored_positions) + " of the text"
+                          : "never fires on this text";
     head.appendChild(h); head.appendChild(sub);
     host.appendChild(head);
 
     if(!c.n){
       var dead = el("p","mini");
       dead.innerHTML = "This is one of the <b>" + (D.meta.n_codes - D.stats.live_codes) +
-                       " dead codes</b>. It survived training without ever winning an assignment on this corpus.";
+                       " unused symbols</b>. It came through training without ever being picked on this text.";
       host.appendChild(dead);
       return;
     }
 
     /* role distribution */
-    var sh = el("p","subhead"); sh.textContent = "reasoning-step role";
+    var sh = el("p","subhead"); sh.textContent = "which part of the argument it lands in";
     host.appendChild(sh);
     var bar = el("div","rolebar");
     ROLES.forEach(function(_, i){
@@ -922,7 +1059,7 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
 
     /* character distribution */
     var sh2 = el("p","subhead");
-    sh2.textContent = "characters at its firing positions (" + c.nchars +
+    sh2.textContent = "characters it fired on (" + c.nchars +
                       " distinct" + (c.chars.length < c.nchars ? ", top " + c.chars.length : "") + ")";
     host.appendChild(sh2);
     var chars = el("div","chars");
@@ -937,7 +1074,7 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
 
     /* contexts */
     var sh3 = el("p","subhead");
-    sh3.textContent = c.ex.length + " sampled contexts (not cherry-picked)";
+    sh3.textContent = c.ex.length + " places it fired, sampled rather than chosen";
     host.appendChild(sh3);
     var list = el("div","exlist");
     c.ex.forEach(function(e){
@@ -973,7 +1110,7 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
       b.textContent = ch;
       b.setAttribute("data-c", cid);
       b.setAttribute("data-i", i);
-      b.setAttribute("title", "code " + cid + " · " + ROLES[t.roles[i]]);
+      b.setAttribute("title", "symbol " + cid + " · " + ROLES[t.roles[i]]);
       box.appendChild(b);
     }
     paintTrace();
@@ -985,13 +1122,13 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
       }
     });
 
-    $("tracemeta").textContent = "corpus example #" + t.example + " · " + t.text.length +
-                                 " characters · " + Object.keys(uniq).length + " distinct codes";
+    $("tracemeta").textContent = "example #" + t.example + " · " + t.text.length +
+                                 " characters · " + Object.keys(uniq).length + " distinct symbols";
     $("tracenote").innerHTML =
-      "Every character above was assigned its code by a real forward pass. " +
-      Object.keys(uniq).length + " distinct codes cover " + t.text.length +
-      " characters, so the alphabet is chopped finely — <strong>most codes are close to a single " +
-      "character in a particular position</strong>, not a concept.";
+      "Every character above got its symbol from a real forward pass. " +
+      Object.keys(uniq).length + " distinct symbols cover " + t.text.length +
+      " characters, so the alphabet is chopped finely: <strong>most symbols are close to a single " +
+      "character in a particular position</strong> rather than a concept.";
   }
   function paintTrace(){
     var t = D.trace;
@@ -1021,6 +1158,62 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
     paintTrace();
   });
 
+
+  /* ---- hover definitions ----
+     Positioned with position:fixed and clamped to the viewport, so a definition
+     near the edge of a 390px screen cannot push the page sideways. */
+  var pop = document.getElementById("dfn-pop");
+  var dopen = null;
+  var dpinned = false;   /* a tap pins the definition open; hover alone does not */
+  [].slice.call(document.querySelectorAll(".dfn")).forEach(function(t){
+    t.setAttribute("aria-expanded","false");
+    t.setAttribute("aria-describedby","dfn-pop");
+    t.addEventListener("mouseenter", function(){ dshow(t); });
+    t.addEventListener("mouseleave", function(){ if(dopen === t && !dpinned && document.activeElement !== t) dhide(); });
+    t.addEventListener("focus", function(){ dshow(t); });
+    t.addEventListener("blur", function(){ if(!dpinned) dhide(); });
+    t.addEventListener("click", function(ev){
+      ev.preventDefault();
+      if(dopen === t && dpinned){ dhide(); }
+      else { dshow(t); dpinned = true; }
+    });
+  });
+  function dshow(t){
+    if(dopen) dopen.setAttribute("aria-expanded","false");
+    dopen = t;
+    t.setAttribute("aria-expanded","true");
+    pop.innerHTML = "";
+    var b = document.createElement("b");
+    b.textContent = t.getAttribute("data-t");
+    pop.appendChild(b);
+    pop.appendChild(document.createTextNode(t.getAttribute("data-d")));
+    pop.classList.add("on");
+    pop.setAttribute("aria-hidden","false");
+    dplace(t);
+  }
+  function dhide(){
+    dpinned = false;
+    if(dopen) dopen.setAttribute("aria-expanded","false");
+    dopen = null;
+    pop.classList.remove("on");
+    pop.setAttribute("aria-hidden","true");
+  }
+  function dplace(t){
+    var r = t.getBoundingClientRect();
+    var w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = Math.max(12, Math.min(r.left + r.width/2 - w/2, window.innerWidth - w - 12));
+    var top = r.top - h - 9;
+    if(top < 8) top = r.bottom + 9;
+    pop.style.left = left + "px";
+    pop.style.top = top + "px";
+  }
+  window.addEventListener("resize", function(){ if(dopen) dplace(dopen); });
+  window.addEventListener("scroll", function(){ if(dopen) dplace(dopen); }, true);
+  document.addEventListener("keydown", function(ev){ if(ev.key === "Escape") dhide(); });
+  document.addEventListener("click", function(ev){
+    if(dopen && !ev.target.classList.contains("dfn")) dhide();
+  });
+
   /* ------------------------------------------------------------- reveal */
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var els = [].slice.call(document.querySelectorAll(".rv"));
@@ -1033,6 +1226,9 @@ python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes 
       });
     }, {rootMargin:"0px 0px -8% 0px", threshold:0.02});
     els.forEach(function(e){ io.observe(e); });
+    /* Fail-safe: nothing stays invisible, whatever the observer does.
+       Matters for print, full-page capture and any browser that never fires. */
+    setTimeout(function(){ els.forEach(function(e){ e.classList.add("in"); }); }, 3000);
   }
 })();
 </script>
