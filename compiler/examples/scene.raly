@@ -1,0 +1,133 @@
+// scene.raly -- a substantial, valid Raly program.
+//
+// It builds a small role-filler memory: scenes are encoded as a superposition
+// of role-bound fillers, stored in a bundle, and queried back out. Everything
+// the type system will need to check this is written in the source: the space
+// (hence family and dimension), the load of each superposition, and the role
+// schema of each bound vector.
+
+import std::codebook
+
+// One space fixes the family, the dimension and the codebook. Capacity is
+// derived from the dimension and is never written by hand.
+space Concepts = MAP[8192] where seed = 20260826, codebook = fixed
+
+// A second space, deliberately a different family. Nothing in this file mixes
+// the two, and the checker will be able to prove it.
+space Phases = FHRR[1024] where seed = 7
+
+role Subject, Verb, Object in Concepts
+role Time, Place in Concepts
+role Angle in Phases
+
+// A vector holding exactly the three scene roles, still clean.
+type Scene = Vec[Concepts; load 3; roles {Subject, Verb, Object}]
+
+// The same, with the two context roles folded in as well.
+type SituatedScene = Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}]
+
+// The residue of an unbind: similar to the right atom, but not yet an atom.
+type Recovered = Vec[Concepts; load 1; noisy]
+
+let default_shift: Int = 1
+
+// ---------------------------------------------------------------------------
+// Encoding
+// ---------------------------------------------------------------------------
+
+// n-ary bundling is the primitive. Written this way, the three bindings are
+// superposed simultaneously; there is no intermediate two-item bundle whose
+// normalization would have thrown away a count.
+fn encode(s: Sym[Concepts], v: Sym[Concepts], o: Sym[Concepts]) -> Scene {
+    bundle(
+        bind(Subject, s),
+        bind(Verb, v),
+        bind(Object, o),
+    )
+}
+
+fn situate(scene: Scene, t: Sym[Concepts], p: Sym[Concepts]) -> SituatedScene {
+    bundle(scene, bind(Time, t), bind(Place, p))
+}
+
+// The left-nested fold is a *different function* from n-ary bundle, and has to
+// be written differently. This is here to show the spelling, not because it is
+// preferable -- it is measurably worse, and the name says so.
+fn fold_three(a: Vec[Concepts], b: Vec[Concepts], c: Vec[Concepts]) -> Vec[Concepts; load 3] {
+    bundle.left(a, b, c)
+}
+
+// ---------------------------------------------------------------------------
+// Querying
+// ---------------------------------------------------------------------------
+
+// The pipeline reads in the order the data moves. The cleanup between the
+// unbind and any further access is not an optimisation: unbinding out of a
+// superposition returns a noisy vector, and nesting unbinds without an
+// intervening projection is how a model quietly degrades to chance.
+fn subject_of(scene: Scene) -> Sym[Concepts] {
+    scene |> unbind(Subject) |> cleanup(Concepts)
+}
+
+fn verb_of(scene: Scene) -> Sym[Concepts] {
+    cleanup(unbind(scene, Verb), Concepts)
+}
+
+// Returning the noisy residue explicitly, for a caller that wants to measure
+// the similarity itself rather than commit to an atom.
+fn object_residue(scene: Scene) -> Recovered {
+    unbind(scene, Object)
+}
+
+// ---------------------------------------------------------------------------
+// Order
+// ---------------------------------------------------------------------------
+
+// Binding is commutative in every family, so `bind(a, b)` and `bind(b, a)` are
+// the same vector and a bound pair cannot encode order on its own. Order has
+// to come from a permutation.
+fn ordered_pair(a: Sym[Concepts], b: Sym[Concepts]) -> Vec[Concepts; load 2] {
+    bundle(a, permute(b, default_shift))
+}
+
+fn sequence3(
+    a: Sym[Concepts],
+    b: Sym[Concepts],
+    c: Sym[Concepts],
+) -> Vec[Concepts; load 3] {
+    bundle(a, permute(b, 1), permute(c, 2))
+}
+
+// ---------------------------------------------------------------------------
+// Higher-order and scalar code
+// ---------------------------------------------------------------------------
+
+fn apply_twice(f: (Vec[Concepts]) -> Vec[Concepts], x: Vec[Concepts]) -> Vec[Concepts] {
+    f(f(x))
+}
+
+fn headroom(load: Int, capacity: Int) -> Int {
+    let used = load * 100 / capacity
+    let slack = 100 - used
+    if slack < 0 {
+        0
+    } else {
+        slack
+    }
+}
+
+fn describe(scene: Scene, verbose: Bool) -> Str {
+    if verbose {
+        return "a three-role scene in Concepts"
+    }
+    "scene"
+}
+
+// A tuple, a list, and a unit-returning function, so that the shapes a
+// collection can take are exercised too. A list of vectors is not a
+// superposition of them, and the difference is the point.
+fn candidates(a: Sym[Concepts], b: Sym[Concepts]) -> (Int, Str) {
+    let pool = [a, b, permute(a, 3)]
+    let best = bundle(a, b)
+    (2, "pool")
+}

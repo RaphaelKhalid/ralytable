@@ -1,10 +1,15 @@
 //! The `raly` compiler driver.
 //!
-//! Two subcommands exist today, both of which stop after lexing because there
-//! is no parser yet:
+//! Three subcommands exist today. All of them stop after parsing, because
+//! there is no type checker yet:
 //!
 //! * `raly lex <file>` — dump the spanned token stream.
-//! * `raly check <file>` — lex, render every diagnostic, exit non-zero on error.
+//! * `raly parse <file>` — dump the syntax tree.
+//! * `raly check <file>` — lex, parse, render every diagnostic, exit non-zero
+//!   on error.
+//!
+//! Lexing and parsing both recover, so one run reports every problem in the
+//! file rather than the first.
 //!
 //! Argument parsing is hand-rolled. The surface is four flags wide; a
 //! dependency would cost more to review than it saves, and `clap` can be
@@ -15,6 +20,7 @@ use std::process::ExitCode;
 
 use raly_diag::{codes, Diagnostic, Diagnostics, RenderConfig, Renderer, Severity, SourceMap};
 use raly_lexer::{lex, TokenKind};
+use raly_parse::{dump, parse};
 
 const USAGE: &str = "\
 raly — the Raly compiler
@@ -24,7 +30,8 @@ USAGE:
 
 COMMANDS:
     lex <file>      Tokenise a file and print each token with its span
-    check <file>    Tokenise a file and report any problems found
+    parse <file>    Parse a file and print the syntax tree
+    check <file>    Lex and parse a file, and report any problems found
 
 OPTIONS:
     --color         Force ANSI colour in diagnostics
@@ -53,6 +60,7 @@ fn main() -> ExitCode {
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Command {
     Lex,
+    Parse,
     Check,
 }
 
@@ -81,6 +89,7 @@ fn run() -> Result<ExitCode, String> {
             "--no-color" => config.color = false,
             "--explain" => config.explain_codes = true,
             "lex" if command.is_none() => command = Some(Command::Lex),
+            "parse" if command.is_none() => command = Some(Command::Parse),
             "check" if command.is_none() => command = Some(Command::Check),
             other if other.starts_with('-') => {
                 return Err(format!("unknown option `{other}`"));
@@ -90,7 +99,7 @@ fn run() -> Result<ExitCode, String> {
         }
     }
 
-    let command = command.ok_or("no command given; expected `lex` or `check`")?;
+    let command = command.ok_or("no command given; expected `lex`, `parse` or `check`")?;
     let path = path.ok_or("no input file given")?;
 
     let mut sources = SourceMap::new();
@@ -118,10 +127,18 @@ fn run() -> Result<ExitCode, String> {
 
     let lexed = lex(file, sources.get(file).text());
     diagnostics.extend(lexed.diagnostics);
+
+    // Parsing runs even when lexing found problems: error tokens are already
+    // reported and the parser steps over them, so one run surfaces both
+    // lexical and syntactic mistakes.
+    let parsed = parse(file, sources.get(file).text(), &lexed.tokens);
+    diagnostics.extend(parsed.diagnostics);
     diagnostics.sort_by_position();
 
-    if command == Command::Lex {
-        print_tokens(&sources, &lexed.tokens);
+    match command {
+        Command::Lex => print_tokens(&sources, &lexed.tokens),
+        Command::Parse => print!("{}", dump::dump(&parsed.ast)),
+        Command::Check => {}
     }
 
     let renderer = Renderer::with_config(&sources, config);

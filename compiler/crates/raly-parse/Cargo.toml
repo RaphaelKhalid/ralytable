@@ -1,16 +1,11 @@
 [package]
-name = "raly"
-description = "The Raly compiler driver."
+name = "raly-parse"
+description = "Hand-written recursive-descent parser for the Raly language."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-
-[[bin]]
-name = "raly"
-path = "src/main.rs"
 
 [dependencies]
 raly-diag.workspace = true
 raly-lexer.workspace = true
 raly-ast.workspace = true
-raly-parse.workspace = true

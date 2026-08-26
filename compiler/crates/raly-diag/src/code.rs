@@ -13,7 +13,7 @@
 //! |------------|------------------------------------------|
 //! | `0000-0999`| driver, CLI and I/O                      |
 //! | `1000-1999`| lexical analysis                         |
-//! | `2000-2999`| parsing / syntax        *(not yet built)*|
+//! | `2000-2999`| parsing / syntax                         |
 //! | `3000-3999`| name resolution         *(not yet built)*|
 //! | `4000-4999`| type checking           *(not yet built)*|
 //! | `5000-5999`| capacity and space checking *(not yet built)*|
@@ -76,6 +76,19 @@ codes! {
     UNTERMINATED_STRING => "RALY1002", "a string literal reaches end of line or end of file without a closing quote";
     INVALID_ESCAPE    => "RALY1003", "an unrecognised escape sequence inside a string literal";
     MALFORMED_NUMBER  => "RALY1004", "a numeric literal that cannot be interpreted";
+
+    // ---- syntax -----------------------------------------------------------
+    UNEXPECTED_TOKEN  => "RALY2001", "a token that cannot appear where it was written";
+    UNCLOSED_DELIMITER => "RALY2002", "an opening bracket with no matching close";
+    EMPTY_BUNDLE      => "RALY2003", "`bundle()` with no operands; superposition has no identity element";
+    BAD_OP_ARITY      => "RALY2004", "a VSA operation applied to the wrong number of operands";
+    UNKNOWN_OP_VARIANT => "RALY2005", "an operation variant that does not exist";
+    MISSING_PARAM_TYPE => "RALY2006", "a function parameter written without a type annotation";
+    UNIMPLEMENTED_CONSTRUCT => "RALY2007", "a reserved construct the parser recognises but does not implement yet";
+    UNKNOWN_TYPE_QUALIFIER => "RALY2008", "an unrecognised qualifier after `;` in a type argument list";
+    DUPLICATE_ROLE    => "RALY2009", "the same role named twice in one role schema";
+    BAD_SPACE_DECL    => "RALY2010", "a `space` declaration missing its family or its dimension";
+    EXPECTED_ITEM     => "RALY2011", "text at the top level that does not begin a declaration";
 }
 
 #[cfg(test)]
