@@ -71,3 +71,60 @@ counts must be capped well below 100, or the pilot uses one or two problems only
 2. The black-box approach survives; no forced move to Colab weights.
 3. Annotated-CoT (rung 2 of the legibility ladder) is viable with no accuracy cost
    at least on a trivial problem — needs retesting on real MATH difficulty.
+
+---
+
+# Correction (same day): G2's conclusion was too narrow
+
+Prompted by the paper's demo site offering five models, including three my test
+called impossible. Checked their code instead of guessing.
+
+`generate_rollouts.py` line 247, and the `--provider` default:
+
+```python
+api_url = "https://api.novita.ai/v3/openai/completions"
+prompt = f"...Problem: {problem['problem']} Solution: \n<think>\n{prefix_without_chunk}"
+```
+
+They hit **raw text-completions endpoints at providers directly** — Novita by
+default, Together and Fireworks as alternates — passing a `prompt` string rather
+than a `messages` array. `--use_openrouter` defaults to False. The response is read
+as `result["choices"][0]["text"]`, with no separate `reasoning` field, because no
+chat template was applied.
+
+That is the whole trick, and it means **prefill was never a property of the model.
+It is a property of the endpoint.** A raw completions endpoint continues whatever
+string you hand it, so any model served that way can be prefilled. A chat endpoint
+applies a template that opens its own reasoning block, which is what defeated the
+first test.
+
+## What I got wrong, and what still stands
+
+Wrong: "only `deepseek/deepseek-r1-distill-llama-70b` supports prefill." That is a
+fact about OpenRouter's chat endpoint, not about the models.
+
+Still stands, and re-verified: OpenRouter **also normalises its `/completions`
+endpoint** for reasoning models. Sending the same raw `<think>`-prefixed prompt
+there still comes back with a populated `reasoning` field and a freshly derived
+answer of 15. `reasoning: {"enabled": false}`, `{"max_tokens": 0}` and pinning
+`provider: {"order": ["novita"]}` all failed to suppress it. Together and Fireworks
+return 404 for this model through OpenRouter. So OpenRouter cannot reproduce the
+paper's method on any endpoint, and the chat-endpoint path I found is a workaround,
+not the real thing.
+
+## Three routes, in order of preference
+
+1. **Novita directly** (`https://api.novita.ai/v3/openai/completions`). What the
+   paper used. Needs a separate key and credit. Unblocks every model on their demo.
+2. **OpenRouter chat + `r1-distill-llama-70b` + plain assistant-content prefill.**
+   The 4/5 propagation result from the first run is real and needs no new signup,
+   but it is undocumented behaviour that could change, and 4/5 is not 5/5.
+3. **Don't generate rollouts at all** — see below.
+
+## The rollouts are already public
+
+https://huggingface.co/datasets/uzaymacar/math-rollouts
+
+The full MATH rollout dataset from the paper is released. The baseline replication
+therefore costs **$0** and the entire $10 can go to the novel experiment instead.
+This should have been the first thing checked, before any API call.

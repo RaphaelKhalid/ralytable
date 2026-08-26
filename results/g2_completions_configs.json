@@ -1,0 +1,38 @@
+{
+  "plain": {
+    "boxed": null,
+    "reasoning_tokens": 2834,
+    "text_head": "The tank is filled by one pipe at 7 litres per minute and drained by another pipe at 3 lit",
+    "provider": "Novita",
+    "cost": 0.0007936
+  },
+  "reasoning_disabled": {
+    "boxed": null,
+    "reasoning_tokens": 2716,
+    "text_head": "The tank is filled at a rate of 7 litres per minute and drained at a rate of 3 litres per ",
+    "provider": "Novita",
+    "cost": 0.0009112
+  },
+  "reasoning_max0": {
+    "boxed": null,
+    "reasoning_tokens": 1611,
+    "text_head": "The tank is filled at a rate of 7 litres per minute and drained at a rate of 3 litres per ",
+    "provider": "Novita",
+    "cost": 0.0006832
+  },
+  "provider_novita": {
+    "boxed": null,
+    "reasoning_tokens": 1569,
+    "text_head": "The tank is filled at a rate of 7 litres per minute and drained at a rate of 3 litres per ",
+    "provider": "Novita",
+    "cost": 0.0005696
+  },
+  "provider_together": {
+    "err": 404,
+    "body": "{\"error\":{\"message\":\"No endpoints found for deepseek/deepseek-r1-distill-llama-70b.\",\"code\":404},\"user_id\":\"user_3HuwRDqGwtLFxOujYLvJS028BEw\"}"
+  },
+  "provider_fireworks": {
+    "err": 404,
+    "body": "{\"error\":{\"message\":\"No endpoints found for deepseek/deepseek-r1-distill-llama-70b.\",\"code\":404},\"user_id\":\"user_3HuwRDqGwtLFxOujYLvJS028BEw\"}"
+  }
+}
