@@ -7,20 +7,28 @@
 //! own [`raly_diag::Renderer`], so the caret output in a browser is
 //! character-for-character what the CLI prints.
 //!
+//! # What runs
+//!
+//! [`analyze`] calls [`raly::compile`], the same function the `raly` binary
+//! runs for `raly check`. Lexing, parsing, name resolution and type checking
+//! all happen in one pass, and every diagnostic from every phase is reported
+//! together. Nothing here reimplements the driver, so the browser cannot drift
+//! away from the command line.
+//!
 //! # Stability
 //!
-//! The shape is designed so a parser can be slotted in later without any
-//! change to the API. `analyze` already reports a `phases` object naming each
-//! front-end phase and its status; when parsing lands it flips from
-//! `"not-implemented"` to `"ok"`, an `ast` field appears alongside `tokens`,
-//! and syntax diagnostics simply join the existing `diagnostics` array.
-//! Callers written against today's output keep working untouched.
+//! The JSON shape is the one the lexer-only build published, extended rather
+//! than redesigned: `tokens`, `diagnostics`, `counts`, `rendered` and `phases`
+//! all mean what they meant. `phases` now reports `ok` for all four phases
+//! because all four run, and an `items` array names the top-level
+//! declarations the parser built.
 
 #![deny(missing_debug_implementations)]
 
+use raly_ast::{Ast, ItemKind};
 use raly_diag::diagnostic::{LabelStyle, NoteKind, Severity};
-use raly_diag::{Diagnostic, Renderer, SourceMap, Span};
-use raly_lexer::{lex, Token, TokenKind};
+use raly_diag::{Diagnostic, RenderConfig, Renderer, SourceMap, Span};
+use raly_lexer::{Token, TokenKind};
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
@@ -28,18 +36,17 @@ use wasm_bindgen::prelude::*;
 const BUFFER_NAME: &str = "playground.raly";
 
 /// The version of the JSON shape returned by [`analyze`].
+///
+/// Still 1: every field the lexer-only build emitted is still emitted, with
+/// the same meaning. New fields were added; none were removed or repurposed.
 const API_VERSION: u32 = 1;
 
 /// Status of one front-end phase.
-///
-/// Present from day one so that adding `parse` later is not an API change.
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "kebab-case")]
 enum PhaseStatus {
     /// The phase ran to completion.
     Ok,
-    /// The phase exists as a plan but is not written yet. Nothing is faked.
-    NotImplemented,
 }
 
 #[derive(Serialize, Debug)]
@@ -51,12 +58,15 @@ struct Phases {
 }
 
 impl Phases {
-    fn lexed_only() -> Self {
+    /// Every front-end phase runs on every call, so every one reports `ok`.
+    /// Each phase recovers rather than bailing out, which is what makes that
+    /// true even for input full of errors.
+    fn all_ran() -> Self {
         Phases {
             lex: PhaseStatus::Ok,
-            parse: PhaseStatus::NotImplemented,
-            resolve: PhaseStatus::NotImplemented,
-            typecheck: PhaseStatus::NotImplemented,
+            parse: PhaseStatus::Ok,
+            resolve: PhaseStatus::Ok,
+            typecheck: PhaseStatus::Ok,
         }
     }
 }
@@ -136,6 +146,47 @@ fn class_of(kind: TokenKind) -> &'static str {
     }
 }
 
+/// One top-level declaration the parser built, so the page can show that a
+/// tree exists rather than only a token stream.
+#[derive(Serialize, Debug)]
+struct ItemJson {
+    /// `space`, `role`, `type`, `fn`, `let`, `import` or `error`.
+    kind: &'static str,
+    /// The declared name, or the names of a multi-name `role` joined with
+    /// `", "`. Empty for `import` and for recovery placeholders.
+    name: String,
+    span: SpanJson,
+}
+
+impl ItemJson {
+    fn all(sources: &SourceMap, ast: &Ast) -> Vec<ItemJson> {
+        ast.root
+            .iter()
+            .map(|id| {
+                let item = &ast.items[*id];
+                let name = |ident: &raly_ast::Ident| ast.names.resolve(ident.symbol).to_string();
+                let (kind, name) = match &item.kind {
+                    ItemKind::Import(_) => ("import", String::new()),
+                    ItemKind::Space(d) => ("space", name(&d.name)),
+                    ItemKind::Role(d) => (
+                        "role",
+                        d.names.iter().map(name).collect::<Vec<_>>().join(", "),
+                    ),
+                    ItemKind::TypeAlias(d) => ("type", name(&d.name)),
+                    ItemKind::Fn(d) => ("fn", name(&d.name)),
+                    ItemKind::Let(d) => ("let", name(&d.name)),
+                    ItemKind::Error => ("error", String::new()),
+                };
+                ItemJson {
+                    kind,
+                    name,
+                    span: SpanJson::new(sources, item.span),
+                }
+            })
+            .collect()
+    }
+}
+
 #[derive(Serialize, Debug)]
 struct LabelJson {
     /// `"primary"` (the fault site, drawn with `^`) or `"secondary"`
@@ -155,7 +206,7 @@ struct NoteJson {
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct DiagnosticJson {
-    /// Stable identifier, e.g. `"RALY1002"`.
+    /// Stable identifier, e.g. `"RALY5001"`.
     code: String,
     /// The registry's one-line explanation of that code.
     code_description: &'static str,
@@ -214,6 +265,8 @@ struct Counts {
     advice: usize,
     tokens: usize,
     lines: u32,
+    /// Top-level declarations the parser built.
+    items: usize,
 }
 
 /// Everything one call to [`analyze`] produces.
@@ -226,60 +279,53 @@ struct Analysis {
     phases: Phases,
     /// Every token in source order, including comments and the final `Eof`.
     tokens: Vec<TokenJson>,
-    /// Every problem found, in source order.
+    /// The top-level declarations, in source order.
+    items: Vec<ItemJson>,
+    /// Every problem found by every phase, in source order.
     diagnostics: Vec<DiagnosticJson>,
     counts: Counts,
-    /// All diagnostics plus the summary line, rendered by the compiler.
-    /// Empty when there are none.
+    /// All diagnostics plus the summary line, rendered by the compiler,
+    /// byte-for-byte as `raly check` prints them. Empty when there are none.
     rendered: String,
 }
 
 fn analyze_inner(source: &str) -> Analysis {
-    let mut sources = SourceMap::new();
-    let file = sources.add(BUFFER_NAME, source);
-    let text = sources.get(file).text().to_string();
-
-    let mut lexed = lex(file, &text);
-    lexed.diagnostics.sort_by_position();
-
-    let renderer = Renderer::new(&sources);
-    let errors = lexed.diagnostics.count(Severity::Error);
-    let warnings = lexed.diagnostics.count(Severity::Warning);
-    let advice = lexed.diagnostics.count(Severity::Advice);
-
-    let rendered = if lexed.diagnostics.is_empty() {
-        String::new()
-    } else {
-        let mut out = renderer.render_all(lexed.diagnostics.iter());
-        out.push_str(&renderer.summary(errors, warnings));
-        out
-    };
+    let compiled = raly::compile(BUFFER_NAME, source);
+    let sources = &compiled.sources;
+    let renderer = Renderer::new(sources);
 
     Analysis {
         api_version: API_VERSION,
-        phases: Phases::lexed_only(),
-        tokens: lexed
+        phases: Phases::all_ran(),
+        tokens: compiled
             .tokens
             .iter()
-            .map(|t| TokenJson::new(&sources, t))
+            .map(|t| TokenJson::new(sources, t))
             .collect(),
-        diagnostics: lexed
+        items: ItemJson::all(sources, &compiled.ast),
+        diagnostics: compiled
             .diagnostics
             .iter()
-            .map(|d| DiagnosticJson::new(&sources, &renderer, d))
+            .map(|d| DiagnosticJson::new(sources, &renderer, d))
             .collect(),
         counts: Counts {
-            errors,
-            warnings,
-            advice,
-            tokens: lexed.significant().count(),
-            lines: sources.get(file).line_count(),
+            errors: compiled.diagnostics.count(Severity::Error),
+            warnings: compiled.diagnostics.count(Severity::Warning),
+            advice: compiled.diagnostics.count(Severity::Advice),
+            tokens: compiled
+                .tokens
+                .iter()
+                .filter(|t| !t.is_trivia() && t.kind != TokenKind::Eof)
+                .count(),
+            lines: sources.get(compiled.file).line_count(),
+            items: compiled.ast.root.len(),
         },
-        rendered,
+        rendered: compiled.render(RenderConfig::plain()),
     }
 }
 
-/// Lex `source` and return the tokens and diagnostics as structured data.
+/// Run the whole front end over `source` and return tokens, declarations and
+/// diagnostics as structured data.
 ///
 /// Total: any input, including arbitrary bytes and empty text, produces a
 /// result rather than a panic or an exception.
@@ -321,19 +367,24 @@ mod tests {
 
     #[test]
     fn clean_source_has_no_diagnostics() {
-        let a = analyze_inner("let x = 1 |> f\n");
+        let a = analyze_inner("space S = MAP[1024]\nrole R in S\n");
         assert!(a.diagnostics.is_empty());
         assert!(a.rendered.is_empty());
         assert_eq!(a.tokens[0].class, "keyword");
-        assert_eq!(a.tokens[0].kind, "Let");
+        assert_eq!(a.tokens[0].kind, "Space");
+        assert_eq!(a.counts.items, 2);
+        assert_eq!(a.items[0].kind, "space");
+        assert_eq!(a.items[1].name, "R");
     }
 
     #[test]
     fn broken_source_reports_spans_and_notes() {
         let a = analyze_inner("fn main() {\n    let g = \"hello\n}\n");
-        assert_eq!(a.counts.errors, 1);
-        let d = &a.diagnostics[0];
-        assert_eq!(d.code, "RALY1002");
+        let d = a
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "RALY1002")
+            .expect("the unterminated string is still reported");
         assert!(d.labels.iter().any(|l| l.style == "primary"));
         assert!(d.notes.iter().any(|n| n.kind == "help"));
         assert_eq!(d.focus.as_ref().unwrap().line, 2);
@@ -346,6 +397,39 @@ mod tests {
         assert_eq!(a.counts.tokens, 0);
         assert_eq!(a.tokens.len(), 1);
         assert!(a.diagnostics.is_empty());
+        assert!(a.items.is_empty());
+    }
+
+    #[test]
+    fn the_capacity_error_reaches_the_browser() {
+        let a = analyze_inner(concat!(
+            "space Sentences = MAP[384] where effective = 111\n",
+            "\n",
+            "fn f(a: Sym[Sentences], b: Sym[Sentences],\n",
+            "     c: Sym[Sentences], d: Sym[Sentences]) -> Vec[Sentences] {\n",
+            "    bundle(a, b, c, d)\n",
+            "}\n",
+        ));
+        let d = a
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "RALY5001")
+            .expect("RALY5001 must be reachable from the playground");
+        assert!(d.message.contains("holds 3"), "{}", d.message);
+        assert!(d.rendered.contains('^'));
+        assert!(d.notes.iter().any(|n| n.kind == "help"));
+        assert!(a.rendered.contains("RALY5001"));
+    }
+
+    #[test]
+    fn every_phase_speaks_in_one_run() {
+        let a = analyze_inner(
+            "space S = MAP[1024]\nlet a = \"oops\nlet b = missing\nlet c: Int = true\n",
+        );
+        let codes: Vec<&str> = a.diagnostics.iter().map(|d| d.code.as_str()).collect();
+        assert!(codes.contains(&"RALY1002"), "{codes:?}");
+        assert!(codes.contains(&"RALY3001"), "{codes:?}");
+        assert!(codes.contains(&"RALY4006"), "{codes:?}");
     }
 
     #[test]
@@ -353,7 +437,8 @@ mod tests {
         let s = analyze_json("let x = 5 \u{d7} 3".to_string());
         assert!(s.contains("\"apiVersion\":1"));
         assert!(s.contains("RALY1001"));
-        assert!(s.contains("\"not-implemented\""));
         assert!(s.contains("\"endColumn\""));
+        assert!(!s.contains("not-implemented"));
+        assert!(s.contains("\"typecheck\":\"ok\""));
     }
 }
