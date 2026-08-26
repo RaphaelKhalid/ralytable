@@ -138,17 +138,38 @@ def absolute(rows, out):
     out.append("")
 
     # --- the sanity control that gates everything else ----------------------
-    hum = {c: mean_ci([s[c] for pr in fam["human"].values()
-                       for s in pr.values()])[0] for c in CRITERIA}
-    den = {c: mean_ci([s[c] for pr in fam["dense"].values()
-                       for s in pr.values()])[0] for c in CRITERIA}
-    dis = {c: mean_ci([s[c] for pr in fam["discrete"].values()
-                       for s in pr.values()])[0] for c in CRITERIA}
-    passed = all(hum[c] >= max(den[c], dis[c]) for c in ("grammar", "consistency"))
+    # The test is NOT "is the human mean the numerically largest" -- with a
+    # ceiling-heavy 1-10 scale and n in the hundreds, a 0.03 difference would
+    # fail that for no reason. The test is whether real human text is
+    # SIGNIFICANTLY WORSE than a model: human's within-prompt difference against
+    # each model family must not have a 95% CI lying entirely below zero.
+    stat = {}
+    for f in ("human", "dense", "discrete"):
+        stat[f] = {c: mean_ci([s[c] for pr in fam[f].values()
+                               for s in pr.values()]) for c in CRITERIA}
+    passed, detail = True, []
+    for f in ("dense", "discrete"):
+        for c in ("grammar", "consistency"):
+            d = []
+            for i in set(fam["human"]) & set(fam[f]):
+                h = [s[c] for s in fam["human"][i].values()]
+                q = [s[c] for s in fam[f][i].values()]
+                if h and q:
+                    d.append(sum(h) / len(h) - sum(q) / len(q))
+            m, lo, hi = mean_ci(d)
+            worse = hi < 0
+            passed = passed and not worse
+            detail.append(f"human - {f} on {c}: {fmt(m, lo, hi)}"
+                          + (" **(human significantly WORSE)**" if worse else ""))
     out.append(f"**Judge sanity control (real human TinyStories text):** "
-               f"{'PASS' if passed else 'FAIL'} -- real held-out text scores "
-               + ", ".join(f"{c} {hum[c]:.2f} vs dense {den[c]:.2f} / discrete "
-                           f"{dis[c]:.2f}" for c in CRITERIA) + ".\n")
+               f"{'PASS' if passed else 'FAIL'}. Means -- "
+               + "; ".join(f"{c}: human {stat['human'][c][0]:.2f}, dense "
+                           f"{stat['dense'][c][0]:.2f}, discrete "
+                           f"{stat['discrete'][c][0]:.2f}" for c in CRITERIA)
+               + ". Within-prompt differences -- " + "; ".join(detail)
+               + ". The control fails only if real human writing scores "
+               "significantly BELOW a model on grammar or consistency, which "
+               "would mean the instrument is not measuring writing quality.\n")
     return verdict, passed
 
 
