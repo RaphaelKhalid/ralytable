@@ -33,7 +33,7 @@ impl Code {
         self.0
     }
 
-    /// One-line explanation, for `raly explain <code>` once that exists.
+    /// One-line explanation, appended to each diagnostic under `--explain`.
     pub fn description(&self) -> &'static str {
         REGISTRY
             .iter()
@@ -111,6 +111,7 @@ codes! {
     BAD_ARGUMENT_COUNT => "RALY4009", "a call with the wrong number of arguments";
     RECURSIVE_TYPE    => "RALY4010", "a type alias defined in terms of itself";
     NOT_CALLABLE      => "RALY4011", "a call or pipeline stage that is not a function";
+    SILENT_BROADCAST  => "RALY4012", "two vectors of different shape combined elementwise, which a tensor library would broadcast";
 
     // ---- capacity ---------------------------------------------------------
     CAPACITY_EXCEEDED => "RALY5001", "a bundle of more items than its space can hold";

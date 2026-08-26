@@ -53,6 +53,7 @@ fn vsa_op_of(kind: TokenKind) -> Option<VsaOp> {
         TokenKind::Permute => VsaOp::Permute,
         TokenKind::Unbind => VsaOp::Unbind,
         TokenKind::Cleanup => VsaOp::Cleanup,
+        TokenKind::Broadcast => VsaOp::Broadcast,
         _ => return None,
     })
 }
@@ -632,6 +633,9 @@ fn arity_rationale(op: VsaOp, variant: Option<VsaVariant>) -> &'static str {
         (VsaOp::Cleanup, _) => {
             "`cleanup(v)` projects onto the value's own space; `cleanup(v, S)` names the codebook \
              explicitly"
+        }
+        (VsaOp::Broadcast, _) => {
+            "`broadcast(v, S)` takes the vector and the space to re-express it in"
         }
     }
 }

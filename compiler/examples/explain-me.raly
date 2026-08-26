@@ -1,0 +1,41 @@
+// A program worth explaining: a three-role scene memory over real sentence
+// embeddings.
+//
+// Try `raly explain examples/explain-me.raly`. Every sentence it prints is
+// derived from the types in this file and from nothing else -- including the
+// three facts nobody wrote down here: that `Scene` sits exactly at capacity,
+// that `residue_of` returns an approximate answer, and that `nested_subject`
+// goes two levels deep with no cleanup in between.
+
+space Sentences = MAP[384] where effective = 111, seed = 20260826
+
+role Subject, Verb, Object in Sentences
+
+type Scene = Vec[Sentences; load 3; roles {Subject, Verb, Object}]
+
+// Build a scene from three atoms, one per role.
+fn encode(s: Sym[Sentences], v: Sym[Sentences], o: Sym[Sentences]) -> Scene {
+    bundle(
+        bind(Subject, s),
+        bind(Verb, v),
+        bind(Object, o),
+    )
+}
+
+// Read one role back out, then match it against the codebook so the answer is
+// exact again.
+fn subject_of(scene: Scene) -> Sym[Sentences] {
+    scene |> unbind(Subject) |> cleanup(Sentences)
+}
+
+// The same read without the cleanup: what comes back is the subject plus the
+// crosstalk of everything else in the bundle.
+fn residue_of(scene: Scene) -> Vec[Sentences; load 1; noisy] {
+    scene |> unbind(Subject)
+}
+
+// A scene whose subject is itself a scene. Two unbinds with nothing matched
+// back in between is the documented footgun, and the type carries the depth.
+fn nested_subject(scene: Scene) -> Vec[Sentences; load 1; noisy] {
+    scene |> unbind(Subject) |> unbind(Verb)
+}

@@ -75,6 +75,7 @@ fn keywords_are_reserved_and_beat_identifiers() {
         ("permute", TokenKind::Permute),
         ("unbind", TokenKind::Unbind),
         ("cleanup", TokenKind::Cleanup),
+        ("broadcast", TokenKind::Broadcast),
         ("where", TokenKind::Where),
         ("mut", TokenKind::Mut),
         ("true", TokenKind::True),

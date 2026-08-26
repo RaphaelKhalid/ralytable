@@ -1,4 +1,4 @@
-error[RALY5001]: this type declares a load of 40 in a space that holds                      7
+error[RALY5001]: this type declares a load of 40 in a space that holds 7
  --> capacity-annotation.raly:5:16
   |
 5 | type TooMuch = Vec[Tiny; load 40]

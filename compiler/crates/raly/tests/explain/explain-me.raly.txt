@@ -1,0 +1,74 @@
+explain-me.raly
+This file declares 1 space, 1 role declaration, 1 named type and 4 functions.
+
+space Sentences = MAP[384]
+  A value of `Sentences` is a list of 384 numbers, where every position holds
+  either +1 or -1, and two of them are combined by multiplying position
+  against position. Nothing about that list means anything on its own; its
+  meaning is which other values it was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Sentences` that point is 3 items. It was measured at 95% retrieval, not
+  derived from a formula. That number comes from the measured effective width
+  of 111 this declaration records, not from the 384 written beside the family:
+  a real embedding space uses far fewer independent directions than its
+  nominal width suggests.
+  The declaration also records effective and seed.
+  ! The written width would suggest room for 10 items. The measured width says
+    3. Anything sized against the written number is about 3x too optimistic.
+
+role Subject, Verb, Object in Sentences
+  Subject, Verb and Object are fixed values of `Sentences`, used as keys:
+  attaching a value to one of them is how this program records which part that
+  value plays.
+  Which keys a value carries is a compile-time fact, tracked through every
+  operation, even though the values attached to them are not.
+
+type Scene = Vec[Sentences; load 3; roles {Subject, Verb, Object}]
+  `Scene` is a name for a value of `Sentences` carrying exactly the keys
+  Subject, Verb and Object, holding 3 of the 3 items `Sentences` can hold.
+  ! This is exactly at capacity: 3 of the 3 items `Sentences` can hold. One
+    more and asking for an item back starts returning a different one, with
+    nothing failing to say so.
+
+fn encode(s: Sym[Sentences], v: Sym[Sentences], o: Sym[Sentences]) -> Vec[Sentences; load 3; roles {Subject, Verb, Object}]
+  It takes three values, every one of them one single entry of `Sentences` —
+  one of its fixed values, not a combination of several.
+  It gives back a value of `Sentences` carrying exactly the keys Subject, Verb
+  and Object, holding 3 of the 3 items `Sentences` can hold.
+  ! This is exactly at capacity: 3 of the 3 items `Sentences` can hold. One
+    more and asking for an item back starts returning a different one, with
+    nothing failing to say so.
+
+fn subject_of(scene: Vec[Sentences; load 3; roles {Subject, Verb, Object}]) -> Sym[Sentences]
+  `scene` is a value of `Sentences` carrying exactly the keys Subject, Verb
+  and Object, holding 3 of the 3 items `Sentences` can hold.
+  It gives back one single entry of `Sentences` — one of its fixed values, not
+  a combination of several.
+
+fn residue_of(scene: Vec[Sentences; load 3; roles {Subject, Verb, Object}]) -> Vec[Sentences; load 1; noisy]
+  `scene` is a value of `Sentences` carrying exactly the keys Subject, Verb
+  and Object, holding 3 of the 3 items `Sentences` can hold.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding 1 of the 3 items `Sentences` can hold, and not yet matched back to
+  one of them.
+  ! Getting a value back out is only approximate: it returns what was asked
+    for plus a little of everything else that was combined with it. Matching
+    it against the space's own entries with `cleanup` is what makes it exact
+    again, and that has not happened here.
+
+fn nested_subject(scene: Vec[Sentences; load 3; roles {Subject, Verb, Object}]) -> Vec[Sentences; load 1; noisy]
+  `scene` is a value of `Sentences` carrying exactly the keys Subject, Verb
+  and Object, holding 3 of the 3 items `Sentences` can hold.
+  It gives back a value of `Sentences` whose keys the type does not pin down,
+  holding 1 of the 3 items `Sentences` can hold, and not yet matched back to
+  one of them.
+  ! Getting a value back out is only approximate: it returns what was asked
+    for plus a little of everything else that was combined with it. Matching
+    it against the space's own entries with `cleanup` is what makes it exact
+    again, and that has not happened here.
+  ! This is 2 levels of extraction deep with nothing matched back in between.
+    Measurement puts the usable depth at about two, so a `cleanup` belongs
+    between the levels.

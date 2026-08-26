@@ -1,0 +1,156 @@
+scene.raly
+This file declares 2 spaces, 3 role declarations, 3 named types and 12 functions.
+
+space Concepts = MAP[8192]
+  A value of `Concepts` is a list of 8192 numbers, where every position holds
+  either +1 or -1, and two of them are combined by multiplying position
+  against position. Nothing about that list means anything on its own; its
+  meaning is which other values it was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Concepts` that point is 352 items. It was measured at 95% retrieval,
+  not derived from a formula.
+  The declaration also records seed and codebook.
+
+space Phases = FHRR[1024]
+  A value of `Phases` is a list of 1024 numbers, where every position holds an
+  angle, and two of them are combined by adding their angles. Nothing about
+  that list means anything on its own; its meaning is which other values it
+  was built from.
+  Several values can be added together into a single one, which is what `load`
+  counts everywhere below. That only works up to a point. Past it, asking for
+  one of the items back returns a different item instead, and nothing fails
+  while it happens.
+  For `Phases` that point is 31 items. It was measured at 95% retrieval, not
+  derived from a formula.
+  The declaration also records seed.
+
+role Subject, Verb, Object in Concepts
+  Subject, Verb and Object are fixed values of `Concepts`, used as keys:
+  attaching a value to one of them is how this program records which part that
+  value plays.
+  Which keys a value carries is a compile-time fact, tracked through every
+  operation, even though the values attached to them are not.
+
+role Time, Place in Concepts
+  Time and Place are fixed values of `Concepts`, used as keys: attaching a
+  value to one of them is how this program records which part that value
+  plays.
+  Which keys a value carries is a compile-time fact, tracked through every
+  operation, even though the values attached to them are not.
+
+role Angle in Phases
+  Angle is a fixed value of `Phases`, used as a key: attaching a value to it
+  is how this program records which part that value plays.
+  Which keys a value carries is a compile-time fact, tracked through every
+  operation, even though the values attached to them are not.
+
+type Scene = Vec[Concepts; load 3; roles {Subject, Verb, Object}]
+  `Scene` is a name for a value of `Concepts` carrying exactly the keys
+  Subject, Verb and Object, holding 3 of the 352 items `Concepts` can hold.
+
+type SituatedScene = Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}]
+  `SituatedScene` is a name for a value of `Concepts` carrying exactly the
+  keys Subject, Verb, Object, Time and Place, holding 5 of the 352 items
+  `Concepts` can hold.
+
+type Recovered = Vec[Concepts; load 1; noisy]
+  `Recovered` is a name for a value of `Concepts` whose keys the type does not
+  pin down, holding 1 of the 352 items `Concepts` can hold, and not yet
+  matched back to one of them.
+  ! The set of keys is left open, so the compiler knows some of what this
+    carries but cannot prove any particular key is absent. Asking for a key
+    that was never attached returns noise, and nothing here can catch that.
+  ! Getting a value back out is only approximate: it returns what was asked
+    for plus a little of everything else that was combined with it. Matching
+    it against the space's own entries with `cleanup` is what makes it exact
+    again, and that has not happened here.
+
+fn encode(s: Sym[Concepts], v: Sym[Concepts], o: Sym[Concepts]) -> Vec[Concepts; load 3; roles {Subject, Verb, Object}]
+  It takes three values, every one of them one single entry of `Concepts` —
+  one of its fixed values, not a combination of several.
+  It gives back a value of `Concepts` carrying exactly the keys Subject, Verb
+  and Object, holding 3 of the 352 items `Concepts` can hold.
+
+fn situate(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}], t: Sym[Concepts], p: Sym[Concepts]) -> Vec[Concepts; load 5; roles {Subject, Verb, Object, Time, Place}]
+  `scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and
+  Object, holding 3 of the 352 items `Concepts` can hold.
+  `t` is one single entry of `Concepts` — one of its fixed values, not a
+  combination of several.
+  `p` is one single entry of `Concepts` — one of its fixed values, not a
+  combination of several.
+  It gives back a value of `Concepts` carrying exactly the keys Subject, Verb,
+  Object, Time and Place, holding 5 of the 352 items `Concepts` can hold.
+
+fn fold_three(a: Vec[Concepts], b: Vec[Concepts], c: Vec[Concepts]) -> Vec[Concepts; load 3]
+  It takes three values, every one of them a value of `Concepts` whose keys
+  the type does not pin down, holding at least 1 item.
+  It gives back a value of `Concepts` whose keys the type does not pin down,
+  holding 3 of the 352 items `Concepts` can hold.
+  ! The set of keys is left open, so the compiler knows some of what this
+    carries but cannot prove any particular key is absent. Asking for a key
+    that was never attached returns noise, and nothing here can catch that.
+
+fn subject_of(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]) -> Sym[Concepts]
+  `scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and
+  Object, holding 3 of the 352 items `Concepts` can hold.
+  It gives back one single entry of `Concepts` — one of its fixed values, not
+  a combination of several.
+
+fn verb_of(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]) -> Sym[Concepts]
+  `scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and
+  Object, holding 3 of the 352 items `Concepts` can hold.
+  It gives back one single entry of `Concepts` — one of its fixed values, not
+  a combination of several.
+
+fn object_residue(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}]) -> Vec[Concepts; load 1; noisy]
+  `scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and
+  Object, holding 3 of the 352 items `Concepts` can hold.
+  It gives back a value of `Concepts` whose keys the type does not pin down,
+  holding 1 of the 352 items `Concepts` can hold, and not yet matched back to
+  one of them.
+  ! Getting a value back out is only approximate: it returns what was asked
+    for plus a little of everything else that was combined with it. Matching
+    it against the space's own entries with `cleanup` is what makes it exact
+    again, and that has not happened here.
+
+fn ordered_pair(a: Sym[Concepts], b: Sym[Concepts]) -> Vec[Concepts; load 2]
+  It takes two values, every one of them one single entry of `Concepts` — one
+  of its fixed values, not a combination of several.
+  It gives back a value of `Concepts` whose keys the type does not pin down,
+  holding 2 of the 352 items `Concepts` can hold.
+
+fn sequence3(a: Sym[Concepts], b: Sym[Concepts], c: Sym[Concepts]) -> Vec[Concepts; load 3]
+  It takes three values, every one of them one single entry of `Concepts` —
+  one of its fixed values, not a combination of several.
+  It gives back a value of `Concepts` whose keys the type does not pin down,
+  holding 3 of the 352 items `Concepts` can hold.
+
+fn apply_twice(f: (Vec[Concepts]) -> Vec[Concepts], x: Vec[Concepts]) -> Vec[Concepts]
+  `f` is a function taking a value of `Concepts` whose keys the type does not
+  pin down, holding at least 1 item and giving back a value of `Concepts`
+  whose keys the type does not pin down, holding at least 1 item.
+  `x` is a value of `Concepts` whose keys the type does not pin down, holding
+  at least 1 item.
+  It gives back a value of `Concepts` whose keys the type does not pin down,
+  holding at least 1 item.
+  ! The set of keys is left open, so the compiler knows some of what this
+    carries but cannot prove any particular key is absent. Asking for a key
+    that was never attached returns noise, and nothing here can catch that.
+
+fn headroom(load: Int, capacity: Int) -> Int
+  It takes two values, every one of them a whole number.
+  It gives back a whole number.
+
+fn describe(scene: Vec[Concepts; load 3; roles {Subject, Verb, Object}], verbose: Bool) -> Str
+  `scene` is a value of `Concepts` carrying exactly the keys Subject, Verb and
+  Object, holding 3 of the 352 items `Concepts` can hold.
+  `verbose` is either true or false.
+  It gives back a piece of text.
+
+fn candidates(a: Sym[Concepts], b: Sym[Concepts]) -> (Int, Str)
+  It takes two values, every one of them one single entry of `Concepts` — one
+  of its fixed values, not a combination of several.
+  It gives back two values side by side: a whole number and a piece of text.

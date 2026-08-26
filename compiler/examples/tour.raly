@@ -10,6 +10,7 @@ fn describe(subject: Symbol, mut depth: Int) -> Str where depth >= 0 {
     let role = bind(subject, ROLE)
     let scene = bundle(role, permute(subject, 1))
     let recovered = unbind(scene, ROLE) |> cleanup
+    let widened = broadcast(recovered, S)
     let ratio = 0.75
     let mask = 0xFF ^ 0b1010
     match recovered {

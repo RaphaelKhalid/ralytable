@@ -1,7 +1,12 @@
-// RALY4001: MAP and FHRR vectors bundled together.
+// RALY4001: a MAP value where an FHRR one is wanted. Families are checked
+// before dimensions, so this reports the family even though the two spaces
+// also differ in nothing else.
+//
+// A family mismatch *inside* `bind` or `bundle` is RALY4012 instead: see
+// broadcast-family.raly.
 space Concepts = MAP[1024]
 space Phases = FHRR[1024]
 
-fn f(a: Sym[Concepts], b: Sym[Phases]) -> Vec[Concepts; load 2] {
-    bundle(a, b)
+fn as_phase(a: Sym[Concepts]) -> Sym[Phases] {
+    a
 }
