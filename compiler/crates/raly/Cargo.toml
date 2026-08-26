@@ -5,6 +5,10 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[lib]
+name = "raly"
+path = "src/lib.rs"
+
 [[bin]]
 name = "raly"
 path = "src/main.rs"
@@ -14,3 +18,5 @@ raly-diag.workspace = true
 raly-lexer.workspace = true
 raly-ast.workspace = true
 raly-parse.workspace = true
+raly-resolve.workspace = true
+raly-types.workspace = true

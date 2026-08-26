@@ -1,0 +1,16 @@
+error[RALY4005]: this superposes 3 items, but the type says 2
+ --> load-mismatch.raly:5:5
+  |
+5 |     bundle(a, b, c)
+  |     ^^^^^^^^^^^^^^^ load here is 3
+ ::: load-mismatch.raly:4:63
+  |
+4 | fn f(a: Sym[Concepts], b: Sym[Concepts], c: Sym[Concepts]) -> Vec[Concepts; load 2] {
+  |                                                               --------------------- the declared result type
+  |
+  = note: 31 is the capacity of `Concepts` at dimension 1024, measured at 95% retrieval in experiments/04_capacity
+  = note: this is the result of `f`, whose signature fixes its type
+  = note: load is tracked as an interval, so an annotation only has to name a value the expression could actually have
+  = help: change the annotation, or change how many items are bundled
+
+error: 1 error

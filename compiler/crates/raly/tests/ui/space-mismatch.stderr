@@ -1,0 +1,19 @@
+error[RALY4003]: `Verbs` and `Nouns` are different spaces
+ --> space-mismatch.raly:6:15
+  |
+6 |     bundle(a, b)
+  |               ^ this is in `Verbs`
+ ::: space-mismatch.raly:2:1
+  |
+2 | space Nouns = MAP[1024]
+  | ----------------------- `Nouns` declared here
+ ::: space-mismatch.raly:6:12
+  |
+6 |     bundle(a, b)
+  |            - the first operand is here
+  |
+  = note: they agree on family and dimension, but a space also fixes the codebook, and atoms of one codebook are noise to the other
+  = note: this is operand 2 of `bundle`
+  = help: use one space, or project across with an explicit `cleanup`
+
+error: 1 error

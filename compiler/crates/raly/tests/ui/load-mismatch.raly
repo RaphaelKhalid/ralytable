@@ -1,0 +1,6 @@
+// RALY4005: the annotation names a load the expression cannot have.
+space Concepts = MAP[1024]
+
+fn f(a: Sym[Concepts], b: Sym[Concepts], c: Sym[Concepts]) -> Vec[Concepts; load 2] {
+    bundle(a, b, c)
+}

@@ -1,0 +1,14 @@
+error[RALY3004]: `b` is used before it is defined
+ --> use-before-definition.raly:3:13
+  |
+3 |     let a = b + 1
+  |             ^ used here
+ ::: use-before-definition.raly:4:5
+  |
+4 |     let b = 2
+  |     --------- but defined here, further down
+  |
+  = note: a `let` comes into scope after its own statement, so that `let x = x` can refer to an outer `x`
+  = help: move the `let` above this use
+
+error: 1 error

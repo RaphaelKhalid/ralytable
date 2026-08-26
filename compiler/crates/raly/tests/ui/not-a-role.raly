@@ -1,0 +1,7 @@
+// RALY4008: an unbind key that is not a declared role.
+space Concepts = MAP[1024]
+role Subject in Concepts
+
+fn f(v: Vec[Concepts; roles {Subject}], k: Sym[Concepts]) -> Vec[Concepts] {
+    unbind(v, k)
+}

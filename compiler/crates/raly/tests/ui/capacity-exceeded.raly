@@ -1,0 +1,16 @@
+// RALY5001: the flagship error. Forty items superposed into a space that
+// measurement says holds thirty-one.
+space Small = MAP[1000]
+
+fn overload(
+    a: Sym[Small], b: Sym[Small], c: Sym[Small], d: Sym[Small],
+    e: Sym[Small], f: Sym[Small], g: Sym[Small], h: Sym[Small],
+) -> Vec[Small] {
+    bundle(
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+        a, b, c, d, e, f, g, h,
+    )
+}

@@ -1,0 +1,15 @@
+error[RALY5001]: this bundles 4 items into a space that holds 3
+ --> capacity-effective.raly:7:5
+  |
+7 |     bundle(a, b, c, d)
+  |     ^^^^^^^^^^^^^^^^^^ 4 items superposed here
+ ::: capacity-effective.raly:4:1
+  |
+4 | space Sentences = MAP[384] where effective = 111
+  | ------------------------------------------------ `Sentences` holds 3 items (from its measured effective dimension 111, not its nominal one)
+  |
+  = note: 3 is the capacity of `Sentences` at measured effective dimension 111, not the nominal one, measured at 95% retrieval in experiments/04_capacity
+  = note: past capacity, cleanup returns the wrong atom and accuracy degrades towards chance without anything failing at run time
+  = help: superpose fewer items, or declare `Sentences` at dimension 147, or 256 for a power of two
+
+error: 1 error

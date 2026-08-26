@@ -1,0 +1,43 @@
+warning[RALY5002]: this is 2 `unbind`s deep with no `cleanup` in between
+ --> nested-unbind.raly:6:5
+  |
+6 |     unbind(unbind(v, Outer), Inner)
+  |     ^^^^^^ this unbind is nested
+ ::: nested-unbind.raly:6:12
+  |
+6 |     unbind(unbind(v, Outer), Inner)
+  |            ---------------- and this is what it reads from, itself an unbind result
+  |
+  = note: noise is not additive across levels of nesting, it is multiplicative in SNR: each unbind carries forward the residue of everything bundled at that level
+  = note: measured usable depth without cleanup is about 2 at D=1000 (semantics §3), so depth 3 retrieves at close to chance
+  = help: insert `|> cleanup(<space>)` between the unbinds
+
+error[RALY5002]: this is 3 `unbind`s deep with no `cleanup` in between
+  --> nested-unbind.raly:10:5
+   |
+10 |     unbind(unbind(unbind(v, Outer), Inner), Deep)
+   |     ^^^^^^ this unbind is nested
+  ::: nested-unbind.raly:10:12
+   |
+10 |     unbind(unbind(unbind(v, Outer), Inner), Deep)
+   |            ------------------------------- and this is what it reads from, itself an unbind result
+   |
+   = note: noise is not additive across levels of nesting, it is multiplicative in SNR: each unbind carries forward the residue of everything bundled at that level
+   = note: measured usable depth without cleanup is about 2 at D=1000 (semantics §3), so depth 3 retrieves at close to chance
+   = help: insert `|> cleanup(<space>)` between the unbinds
+
+warning[RALY5002]: this is 2 `unbind`s deep with no `cleanup` in between
+  --> nested-unbind.raly:10:12
+   |
+10 |     unbind(unbind(unbind(v, Outer), Inner), Deep)
+   |            ^^^^^^ this unbind is nested
+  ::: nested-unbind.raly:10:19
+   |
+10 |     unbind(unbind(unbind(v, Outer), Inner), Deep)
+   |                   ---------------- and this is what it reads from, itself an unbind result
+   |
+   = note: noise is not additive across levels of nesting, it is multiplicative in SNR: each unbind carries forward the residue of everything bundled at that level
+   = note: measured usable depth without cleanup is about 2 at D=1000 (semantics §3), so depth 3 retrieves at close to chance
+   = help: insert `|> cleanup(<space>)` between the unbinds
+
+error: 1 error, 2 warnings

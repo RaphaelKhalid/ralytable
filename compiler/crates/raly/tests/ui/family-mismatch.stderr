@@ -1,0 +1,20 @@
+error[RALY4001]: `Phases` is a FHRR space and `Concepts` is a MAP space
+ --> family-mismatch.raly:6:15
+  |
+6 |     bundle(a, b)
+  |               ^ this is in `Phases`, but `Concepts` is wanted
+ ::: family-mismatch.raly:2:1
+  |
+2 | space Concepts = MAP[1024]
+  | -------------------------- `Concepts` declared here
+ ::: family-mismatch.raly:6:12
+  |
+6 |     bundle(a, b)
+  |            - the first operand is here
+  |
+  = note: FHRR is unit-modulus complex vectors bound by phase addition
+  = note: MAP is bipolar vectors bound by elementwise product
+  = note: this is operand 2 of `bundle`
+  = help: families have different binding operations and different vector alphabets; there is no conversion between them
+
+error: 1 error

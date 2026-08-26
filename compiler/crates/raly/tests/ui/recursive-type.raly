@@ -1,0 +1,7 @@
+// RALY4010: a type alias defined in terms of itself.
+type Loop = Ring
+type Ring = Loop
+
+fn f(x: Loop) -> Int {
+    1
+}

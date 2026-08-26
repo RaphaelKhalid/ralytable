@@ -1,0 +1,6 @@
+// RALY4011: calling something that is not a function.
+space Concepts = MAP[1024]
+
+fn f(x: Sym[Concepts]) -> Int {
+    x(1)
+}

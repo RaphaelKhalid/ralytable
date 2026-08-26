@@ -14,9 +14,9 @@
 //! | `0000-0999`| driver, CLI and I/O                      |
 //! | `1000-1999`| lexical analysis                         |
 //! | `2000-2999`| parsing / syntax                         |
-//! | `3000-3999`| name resolution         *(not yet built)*|
-//! | `4000-4999`| type checking           *(not yet built)*|
-//! | `5000-5999`| capacity and space checking *(not yet built)*|
+//! | `3000-3999`| name resolution                          |
+//! | `4000-4999`| type checking                            |
+//! | `5000-5999`| capacity and space checking              |
 
 use std::fmt;
 
@@ -89,6 +89,33 @@ codes! {
     DUPLICATE_ROLE    => "RALY2009", "the same role named twice in one role schema";
     BAD_SPACE_DECL    => "RALY2010", "a `space` declaration missing its family or its dimension";
     EXPECTED_ITEM     => "RALY2011", "text at the top level that does not begin a declaration";
+
+    // ---- name resolution --------------------------------------------------
+    UNRESOLVED_NAME   => "RALY3001", "a name with no definition in scope";
+    UNRESOLVED_TYPE   => "RALY3002", "a type name with no definition in scope";
+    DUPLICATE_DEFINITION => "RALY3003", "two definitions of the same name in one scope";
+    USE_BEFORE_DEFINITION => "RALY3004", "a local binding used above the `let` that defines it";
+    UNKNOWN_FAMILY    => "RALY3005", "a `space` declared with a VSA family that does not exist";
+    ROLE_NOT_IN_SPACE => "RALY3006", "a `role` declared in something that is not a space";
+    SHADOWS_DECLARATION => "RALY3007", "a local binding that hides a `role` or `space` declaration";
+
+    // ---- types ------------------------------------------------------------
+    FAMILY_MISMATCH   => "RALY4001", "two vectors from different VSA families combined";
+    DIMENSION_MISMATCH => "RALY4002", "two vectors of different dimension combined";
+    SPACE_MISMATCH    => "RALY4003", "two vectors from different codebooks combined";
+    NON_CONSTANT_DIMENSION => "RALY4004", "a `space` dimension that is not a compile-time constant";
+    LOAD_MISMATCH     => "RALY4005", "a declared superposition load the expression cannot have";
+    TYPE_MISMATCH     => "RALY4006", "an expression whose type is not the one required here";
+    ROLE_NOT_BOUND    => "RALY4007", "unbinding a role the vector does not carry";
+    NOT_A_ROLE        => "RALY4008", "a binding key that is not a declared role";
+    BAD_ARGUMENT_COUNT => "RALY4009", "a call with the wrong number of arguments";
+    RECURSIVE_TYPE    => "RALY4010", "a type alias defined in terms of itself";
+    NOT_CALLABLE      => "RALY4011", "a call or pipeline stage that is not a function";
+
+    // ---- capacity ---------------------------------------------------------
+    CAPACITY_EXCEEDED => "RALY5001", "a bundle of more items than its space can hold";
+    UNCLEANED_NESTING => "RALY5002", "nested `unbind` with no `cleanup` in between";
+    LOSSY_FOLD        => "RALY5003", "a left-nested bundle fold, which is not the n-ary primitive";
 }
 
 #[cfg(test)]

@@ -1,0 +1,9 @@
+error[RALY4009]: `add` takes 2 arguments but 1 was given
+ --> bad-argument-count.raly:7:5
+  |
+7 |     add(1)
+  |     ^^^^^^ 1 argument here
+  |
+  = help: check the call against the signature
+
+error: 1 error
