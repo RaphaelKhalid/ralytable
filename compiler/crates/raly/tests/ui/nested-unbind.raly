@@ -1,0 +1,11 @@
+// RALY5002: unbinding twice, and three times, with no cleanup between.
+space Concepts = MAP[1024]
+role Outer, Inner, Deep in Concepts
+
+fn two(v: Vec[Concepts]) -> Vec[Concepts] {
+    unbind(unbind(v, Outer), Inner)
+}
+
+fn three(v: Vec[Concepts]) -> Vec[Concepts] {
+    unbind(unbind(unbind(v, Outer), Inner), Deep)
+}

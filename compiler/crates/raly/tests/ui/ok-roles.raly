@@ -1,0 +1,14 @@
+// No diagnostics. A role schema built by `bind`, read back by `unbind`, and
+// projected by `cleanup` — every one of the four properties satisfied.
+space Concepts = MAP[2048]
+role Subject, Verb, Object in Concepts
+
+type Scene = Vec[Concepts; load 3; roles {Subject, Verb, Object}]
+
+fn encode(s: Sym[Concepts], v: Sym[Concepts], o: Sym[Concepts]) -> Scene {
+    bundle(bind(Subject, s), bind(Verb, v), bind(Object, o))
+}
+
+fn subject_of(scene: Scene) -> Sym[Concepts] {
+    scene |> unbind(Subject) |> cleanup(Concepts)
+}

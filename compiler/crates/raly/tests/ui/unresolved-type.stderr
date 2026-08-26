@@ -1,0 +1,17 @@
+error[RALY3002]: cannot find type `Concept` in this scope
+ --> unresolved-type.raly:4:13
+  |
+4 | fn f(x: Sym[Concept]) -> Sym[Concept] {
+  |             ^^^^^^^ not found in this scope
+  |
+  = help: did you mean `Concepts`?
+
+error[RALY3002]: cannot find type `Concept` in this scope
+ --> unresolved-type.raly:4:30
+  |
+4 | fn f(x: Sym[Concept]) -> Sym[Concept] {
+  |                              ^^^^^^^ not found in this scope
+  |
+  = help: did you mean `Concepts`?
+
+error: 2 errors

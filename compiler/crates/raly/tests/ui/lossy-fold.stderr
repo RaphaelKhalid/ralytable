@@ -1,0 +1,10 @@
+warning[RALY5003]: `bundle.left` folds 3 operands pairwise, which is not the vector `bundle` would produce
+ --> lossy-fold.raly:5:5
+  |
+5 |     bundle.left(a, b, c)
+  |     ^^^^^^ the left-nested fold
+  |
+  = note: normalised bundling is not associative in any VSA family, so the fold renormalises after each pair and gives the earlier operands less weight
+  = help: use the n-ary `bundle(a, b, c)` unless the nesting is deliberate
+
+warning: 1 warning

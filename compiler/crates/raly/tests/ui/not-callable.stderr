@@ -1,0 +1,9 @@
+error[RALY4011]: `x` is not something you can call
+ --> not-callable.raly:5:5
+  |
+5 |     x(1)
+  |     ^ this is `Sym[Concepts]`
+  |
+  = help: only functions and function-typed parameters can be called
+
+error: 1 error

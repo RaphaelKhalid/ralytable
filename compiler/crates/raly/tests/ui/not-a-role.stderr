@@ -1,0 +1,11 @@
+error[RALY4008]: the key of an `unbind` must be a declared role
+ --> not-a-role.raly:6:15
+  |
+6 |     unbind(v, k)
+  |               ^ this is `Sym[Concepts]`
+  |
+  = note: `unbind` takes the vector first and the role it was bound with second
+  = note: roles are static: the compiler tracks which roles a vector carries, and only a declared role can be looked up
+  = help: declare it with `role <name> in <space>`
+
+error: 1 error

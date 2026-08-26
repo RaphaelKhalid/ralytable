@@ -1,0 +1,14 @@
+warning[RALY3007]: `Subject` shadows a role
+ --> shadows-declaration.raly:6:9
+  |
+6 |     let Subject = 1
+  |         ^^^^^^^ this binding hides a role of the same name
+ ::: shadows-declaration.raly:3:6
+  |
+3 | role Subject in Concepts
+  |      ------- declared here
+  |
+  = note: a role is a codebook atom, so hiding one silently changes what every `bind` and `unbind` naming it computes
+  = help: rename the local binding
+
+warning: 1 warning

@@ -1,0 +1,27 @@
+error[RALY4006]: mismatched types
+ --> type-mismatch.raly:6:17
+  |
+6 | let flag: Int = true
+  |                 ^^^^ expected `Int`, found `Bool`
+ ::: type-mismatch.raly:6:11
+  |
+6 | let flag: Int = true
+  |           --- declared here
+  |
+  = note: `flag` was annotated, and the initialiser has to match
+
+error[RALY4006]: mismatched types
+ --> type-mismatch.raly:9:5
+  |
+9 |     unbind(v, Subject)
+  |     ^^^^^^^^^^^^^^^^^^ expected `Sym[Concepts]`, found `Vec[Concepts; load 1; roles {}; noisy]`
+ ::: type-mismatch.raly:8:44
+  |
+8 | fn f(v: Vec[Concepts; roles {Subject}]) -> Sym[Concepts] {
+  |                                            ------------- the declared result type
+  |
+  = note: this is the result of `f`, whose signature fixes its type
+  = note: a bundled or unbound vector is not a codebook atom; only `cleanup` projects one back onto the codebook
+  = help: wrap it in `cleanup(..)`
+
+error: 2 errors

@@ -1,0 +1,14 @@
+error[RALY3003]: `twice` is defined twice in this scope
+ --> duplicate-definition.raly:8:4
+  |
+8 | fn twice(y: Int) -> Int {
+  |    ^^^^^ redefined here as a function
+ ::: duplicate-definition.raly:4:4
+  |
+4 | fn twice(x: Int) -> Int {
+  |    ----- first defined here as a function
+  |
+  = note: two definitions of one name in one scope leave every use ambiguous
+  = help: rename one of them
+
+error: 1 error
