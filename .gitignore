@@ -12,3 +12,4 @@ results/*.jsonl
 .DS_Store
 data/math-rollouts/
 compiler/target/
+compiler/crates/raly-wasm/target/
