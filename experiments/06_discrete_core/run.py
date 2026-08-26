@@ -109,6 +109,9 @@ def parse(text):
     return out
 
 
+SPEND = [0.0]
+
+
 def build_corpus(target, api_key, workers=12):
     have = []
     if CORPUS.exists():
@@ -124,11 +127,15 @@ def build_corpus(target, api_key, workers=12):
             with cf.ThreadPoolExecutor(workers) as ex:
                 for text, cost in ex.map(lambda a: call(*a), jobs):
                     spend += cost
+                    SPEND[0] = spend
                     for ex_ in parse(text):
                         have.append(ex_)
                         f.write(json.dumps(ex_) + "\n")
             f.flush()
-            print(f"    {len(have)}/{target}  ${spend:.4f}  {time.time()-t0:.0f}s", flush=True)
+            progress("corpus", len(have), target, t0, 0.0, spend)
+            if stop_requested():
+                print("\n  STOP file found; ending generation early")
+                break
             if spend > 3.0:
                 print("    stopping: $3 generation cap reached")
                 break
@@ -152,6 +159,34 @@ def render(ex):
     return "".join(parts), roles
 
 
+
+STOP = HERE / "STOP"
+
+
+def bar(done, total, width=32):
+    f = int(width * done / max(total, 1))
+    return "[" + "#" * f + "-" * (width - f) + "]"
+
+
+def hms(sec):
+    sec = int(max(sec, 0))
+    return f"{sec//3600}h{(sec%3600)//60:02d}m{sec%60:02d}s"
+
+
+def progress(tag, step, total, t0, loss, spend, extra=""):
+    el = time.time() - t0
+    eta = el / max(step, 1) * (total - step)
+    sys.stdout.write(
+        f"\r  {tag:<10} {bar(step, total)} {step:>5}/{total}  "
+        f"loss {loss:6.3f}  elapsed {hms(el)}  eta {hms(eta)}  "
+        f"${spend:.3f} {extra}   ")
+    sys.stdout.flush()
+
+
+def stop_requested():
+    return STOP.exists()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true", help="tiny run to prove it works")
@@ -169,10 +204,16 @@ def main():
                 ("codes=256", True, 256), ("codes=1024", True, 1024)])
     dim, depth, ctx, bs = (128, 2, 128, 16) if a.smoke else (256, 6, 256, 32)
 
-    print("=" * 66)
-    print(f"{'SMOKE' if a.smoke else 'OVERNIGHT'} RUN   "
+    est = 0.35 if not a.smoke else 0.01
+    print("=" * 74)
+    print(f"  {'SMOKE' if a.smoke else 'OVERNIGHT'} RUN   "
           f"{len(configs)} configs x {steps} steps")
-    print("=" * 66)
+    print(f"  estimated API spend: ~${est:.2f}   hard cap: $3.00 (generation only;")
+    print(f"                       training is free, it runs on your GPU)")
+    print(f"  to stop early and keep results:  create the file")
+    print(f"      {STOP}")
+    print(f"  results stream to {RESULTS.name} as each config finishes.")
+    print("=" * 74, flush=True)
 
     data = build_corpus(n_corpus, api_key)
     if len(data) < 10:
@@ -198,7 +239,7 @@ def main():
         r = torch.stack([roles[j:j + ctx] for j in i])
         return x, y, r
 
-    for name, use_vq, n_codes in configs:
+    for ci, (name, use_vq, n_codes) in enumerate(configs):
         t0 = time.time()
         torch.manual_seed(0)
         model = build(len(vocab), device=dev, compile_model=not a.smoke,
@@ -219,8 +260,12 @@ def main():
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
-            if st % max(1, steps // 6) == 0:
-                print(f"    step {st:>5}  loss {loss.item():.3f}", flush=True)
+            if st % 10 == 0 or st == steps - 1:
+                progress(name, st + 1, steps, t0, loss.item(), SPEND[0],
+                         f"| {ci+1}/{len(configs)} configs")
+            if st % 200 == 0 and stop_requested():
+                print(f"\n  STOP file found; ending {name} early at step {st}")
+                break
 
         # ---- evaluate: capability, and whether codes mean anything
         model.eval()
@@ -263,7 +308,7 @@ def main():
                "smoke": a.smoke}
         with RESULTS.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec) + "\n")
-        print(f"    -> val_loss {vl:.3f} | acc {acc:.3f} | live {live}/{n_codes} "
+        print(f"\n    -> val_loss {vl:.3f} | acc {acc:.3f} | live {live}/{n_codes} "
               f"| entropy {ent:.2f} bits | role purity {purity:.3f} "
               f"| {time.time()-t0:.0f}s", flush=True)
 
