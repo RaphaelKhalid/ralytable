@@ -24,6 +24,10 @@ Importance looks like it decays with depth, and that turns out not to be a measu
 
 VSA capacity at D=1000 is about 31 items, not the 10 a literature summary suggested (`experiments/04_capacity`). I measured it rather than citing it.
 
+Averaging embedded chunks costs real retrieval accuracy, not just recoverability in an artificial task. On BEIR scifact recall drops 0.877 to 0.619 with realistic grouping, and 70 to 76 percent of that loss is the averaging itself rather than coarser granularity (`experiments/07_retrieval_cost`). mpnet has twice MiniLM's nominal dimension, the same effective dimension, and the same cost, so nominal dimension predicts nothing.
+
+A discrete bottleneck costs about 3 points of top-1 accuracy at matched parameters and buys role legibility 8.3 points above a chance baseline, and bigger codebooks got more capable and more legible together (`experiments/06_discrete_core`). One datapoint at toy scale, but it points the opposite way to the tradeoff I feared.
+
 ## What nobody has done
 
 Checked properly in `docs/prior-art.md`, and the honest answer is narrower than I hoped. A typed language where the gradient carrying model is the symbolic program is open. A legibility versus capability curve that spans architecture families is open; one lab has published a curve inside a single family, nobody has done it across families. A small alphabet discrete reasoning core built from scratch is open.
@@ -55,8 +59,8 @@ A typed VSA DSL that catches what PyTorch can't see.
 - [x] Capacity types, so `Vec[Concepts; load 3]` and overstuffing is a compile error
 - [x] Role schema types, so the type knows which roles are bound in even though the values are runtime; unbinding a role the vector doesn't carry won't compile
 - [x] Static nesting depth checks that force a `cleanup` before retrieval degrades
-- [ ] Differentiable end to end
-- [ ] Error messages good enough to be the reason people use it
+- [ ] Differentiable end to end (needs the IR and a backend)
+- [x] Error messages good enough to be the reason people use it (179 tests, rustc-style UI tests)
 - [x] Browser playground (`playground/`), the compiler as wasm
 
 Gate: one VSA experiment that is visibly easier in Raly than in fifty lines of `jax.numpy`. If I can't produce that, the language is a cathedral and I stop.
@@ -84,6 +88,8 @@ Small, local, legible.
 
 Gate: the reasoning core is readable and the model isn't useless. Both, or the thesis is wrong and I'll say so.
 
+The bar got sharper after the first toy model. It emits perfect dependency citations (`[3] from [1],[2]`) while producing arithmetic nonsense, which is finding 01 reproduced inside our own architecture: structure that is present but decorative. So the real gate is that the structure must be LOAD-BEARING. Change step 1 and step 3 has to change. The resampling method from `experiments/01` is how you test that, pointed at our own model, and nobody has run it on an architecture built to pass it.
+
 ### Phase 4, legible RLHF
 
 This is the part I'm most excited about.
@@ -105,6 +111,17 @@ Gate: process supervised Ralytable beats outcome supervised Ralytable on held ou
 - [ ] Does the legibility tax shrink with scale or grow
 - [ ] Raly as infrastructure other people build on
 - [ ] Be the obvious default when interpretability stops being optional
+
+## What's next
+
+In order, cheapest and most decision-relevant first.
+
+1. **Is the structure load-bearing?** Resample a step in our own model's output and see whether the steps that cite it actually change. This is the sharpest open question in the project and it is about a day's work on data we already have.
+2. **Look inside the codebook.** I measured that codes carry role information and never once looked at what an individual code responds to. Cheap, and it is the difference between a number and an explanation.
+3. **Codebook provenance in the type system.** A learned codebook invalidates every capacity number the checker uses and it currently cannot tell. That is risk 2 below, and it is now a concrete missing feature rather than a worry.
+4. **Phase 2 properly.** Multiple seeds, real text rather than synthetic problems, a matched continuous bottleneck as a fairer control, and more than one architecture family. Last night was one family with one knob turned.
+5. **An IR and a backend**, so Raly programs run instead of only type-checking.
+6. **Then Phase 4**, which is the one worth being excited about.
 
 ## How I work
 

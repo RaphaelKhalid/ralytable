@@ -26,6 +26,7 @@ That is the real Rust compiler cross-compiled to WebAssembly, 102KB. Type Raly, 
 | Browser playground | done |
 | Name resolution | done, scopes, two namespaces, suggestions |
 | Type system | done, all four properties, 179 tests, zero warnings |
+| A first model | a 6.4M toy that cannot reason; see finding 06 |
 | IR, codegen | not built |
 | The model | not built |
 
@@ -99,6 +100,16 @@ site/          landing page
 docs/          semantics, prior art, compiler architecture, language precedent
 experiments/   every experiment, with its findings and the code to reproduce
 ```
+
+## What's next
+
+1. **Is the structure load-bearing?** The toy model emits perfect dependency citations while producing arithmetic nonsense, which is finding 01 reproduced inside my own architecture. Structure that is present but decorative. Resampling a step and checking whether the steps citing it actually change is the sharpest open question here, and it is a day's work.
+2. **Look inside the codebook.** I measured that codes carry role information and never looked at what any single code responds to.
+3. **Codebook provenance in the type system.** A learned codebook invalidates every capacity number the checker uses and it cannot currently tell.
+4. **Phase 2 properly:** more seeds, real text, a matched continuous control, more than one architecture family.
+5. **An IR and a backend**, so Raly programs run rather than only type-check.
+
+Full plan in [ROADMAP.md](ROADMAP.md).
 
 ## How I work
 
