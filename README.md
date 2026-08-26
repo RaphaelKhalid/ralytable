@@ -94,7 +94,7 @@ Everything here was measured, not cited, and independently re-derived before I b
 ## Repo
 
 ```
-compiler/      the Raly compiler (Rust workspace, 4 crates)
+compiler/      the Raly compiler (7 crates in the workspace, plus a wasm crate)
 playground/    browser playground, wasm
 site/          landing page
 docs/          semantics, prior art, compiler architecture, language precedent

@@ -560,7 +560,16 @@ html{scroll-behavior:smooth}
   </div>
 
   <div class="grid g2" style="margin-top:28px">
-    <div class="card">
+    <div class="scroll" style="margin-top:28px">
+<p><strong>How much of it is the character?</strong> The right control is not "could a codebook with no information score this", it is "could you score this without the codebook at all". You largely can, because the format leaks the label. Predicting the role from the raw character alone, no model involved:</p>
+<table style="margin:14px 0;border-collapse:collapse">
+<tr><td style="padding:4px 18px 4px 0">majority class</td><td style="padding:4px 0"><code>0.5801</code></td><td style="padding:4px 0 4px 18px;opacity:.7">&mdash;</td></tr>
+<tr><td style="padding:4px 18px 4px 0">the character alone, 140 of them</td><td style="padding:4px 0"><code>0.6314</code></td><td style="padding:4px 0 4px 18px;opacity:.7">+0.051</td></tr>
+<tr><td style="padding:4px 18px 4px 0">the 1024 codes</td><td style="padding:4px 0"><code>0.6640</code></td><td style="padding:4px 0 4px 18px;opacity:.7">+0.084</td></tr>
+</table>
+<p>So <strong>61% of the excess was the character, not the code</strong>. The codes beat the raw character by <code>+0.033</code>. That is the honest number, and it is real, because a code sees context and can separate the same character in a premise from one in a derived step. It is a third of what the headline sounded like. Reproduce it with <code>experiments/06_discrete_core/leakage.py</code>.</p>
+</div>
+<div class="card">
       <span class="tag">So is the legibility fake?</span>
       <p style="margin-top:0">
         No, but it is smaller than "0.664 role purity" sounds. A code that fires on <code>]</code> genuinely
