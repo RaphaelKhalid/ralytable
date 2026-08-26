@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ralytable — a compiler that knows what a vector holds</title>
-<meta name="description" content="PyTorch sees a vector as a list of numbers. Raly's type system knows which space it is in, how full it is, and which roles are bound into it — so overstuffing one is a compile error instead of a silent accuracy loss.">
+<title>Ralytable, a compiler that knows what a vector holds</title>
+<meta name="description" content="Two demos: the Raly compiler running in your browser, and every one of the 1024 symbols a trained model learned, pulled out of the checkpoint and made clickable.">
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Ralytable">
-<meta property="og:description" content="A compiler that knows what a vector holds.">
+<meta property="og:description" content="A compiler that knows what a vector holds. Two live demos.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -163,7 +163,7 @@ pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 }
 .panel-note strong{color:var(--fg-2);font-weight:500}
 
-/* diagnostic colouring — matches raly-diag's ASCII layout exactly */
+/* diagnostic colouring, matching raly-diag's ASCII layout exactly */
 .d-err{color:var(--err);font-weight:700}
 .d-code{color:var(--err);font-weight:700}
 .d-msg{color:var(--fg);font-weight:700}
@@ -283,18 +283,107 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--fg-3);fo
 }
 html{scroll-behavior:smooth}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* ------------------------------------------------------- hover definitions */
+/* A definition is a dictionary entry and nothing else. The trigger is a real
+   button so it is reachable by Tab and works on a tap, not only on hover. */
+.dfn{
+  font:inherit;color:inherit;background:none;padding:0;margin:0;
+  border:0;border-bottom:1px dotted var(--accent);
+  cursor:help;line-height:inherit;
+}
+.dfn:hover{border-bottom-style:solid}
+.dfn[aria-expanded="true"]{border-bottom-style:solid;color:var(--accent)}
+#dfn-pop{
+  position:fixed;z-index:200;max-width:min(300px,calc(100vw - 24px));
+  background:var(--panel-2);color:var(--fg);
+  border:1px solid var(--line-2);border-radius:8px;
+  padding:11px 13px;font-size:13.5px;line-height:1.5;
+  box-shadow:0 16px 40px -18px rgba(0,0,0,.7);
+  opacity:0;visibility:hidden;transition:opacity .12s;
+  pointer-events:none;
+}
+#dfn-pop.on{opacity:1;visibility:visible}
+#dfn-pop b{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:5px;font-weight:500}
+
+/* ------------------------------------------------------------- live demo */
+.frame{
+  border:1px solid var(--line-2);border-radius:12px;background:var(--panel);
+  overflow:hidden;box-shadow:0 30px 70px -34px rgba(0,0,0,.8);
+}
+.frame-bar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);background:var(--panel-2);padding:10px 14px;
+  font-family:var(--mono);font-size:11.5px;color:var(--fg-2);
+}
+.frame-bar .pip{color:var(--accent)}
+.frame-bar a{margin-left:auto;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)}
+.frame-bar a:hover{border-bottom-color:var(--accent)}
+.frame iframe{
+  display:block;width:100%;border:0;background:var(--bg);
+  height:clamp(430px,64vh,640px);
+}
+
+/* --------------------------------------------------------------- demo tiles */
+.tiles{display:grid;gap:clamp(16px,2.2vw,22px);margin-top:34px}
+@media(min-width:900px){.tiles{grid-template-columns:1fr 1fr}}
+a.tile{
+  display:block;text-decoration:none;color:inherit;
+  border:1px solid var(--line-2);border-radius:12px;background:var(--panel);
+  padding:clamp(22px,3vw,30px);transition:border-color .16s,transform .16s;
+}
+a.tile:hover{border-color:var(--accent);transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){a.tile:hover{transform:none}}
+a.tile .tno{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:14px;
+}
+a.tile h3{font-size:clamp(19px,2.2vw,25px);letter-spacing:-.02em}
+a.tile p{color:var(--fg-2);font-size:15px;margin-top:11px;max-width:44ch}
+a.tile .go{
+  display:inline-block;margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--accent);
+}
+.tile-art{
+  margin-top:20px;border:1px solid var(--line);border-radius:8px;background:var(--bg-2);
+  padding:14px;overflow:hidden;
+}
+.tile-art .dots{display:flex;flex-wrap:wrap;gap:4px}
+.tile-art .dots i{width:7px;height:7px;border-radius:50%;display:block}
+.tile-art pre{margin:0;font-size:11.5px;line-height:1.6;color:var(--fg-2);white-space:pre;overflow-x:auto}
+
+/* ------------------------------------------------------------ number table */
+.nums{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:8px}
+.nums th,.nums td{text-align:left;padding:9px 14px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.nums th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3);font-weight:400}
+.nums td{color:var(--fg-2)}
+.nums td b{color:var(--fg);font-family:var(--mono);font-weight:500}
+.nums tr:last-child td{border-bottom:0}
+
+/* ----------------------------------------------------------------- limits */
+.limits{
+  border:1px solid var(--line-2);border-radius:12px;background:var(--panel);
+  padding:clamp(22px,3vw,32px);margin-top:32px;
+}
+.limits ul{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:13px}
+.limits li{display:flex;gap:12px;font-size:15px;color:var(--fg-2);align-items:flex-start}
+.limits li::before{content:"·";font-family:var(--mono);color:var(--fg-3);flex:none}
+.limits li b{color:var(--fg);font-weight:600}
+.scroller{overflow-x:auto}
+.scroller::-webkit-scrollbar{height:9px}
+.scroller::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 </style>
 </head>
 <body>
-
 <header class="nav">
   <div class="wrap nav-in">
     <a class="brand" href="#top"><span class="dot"></span>Ralytable<small>/ raly</small></a>
     <nav class="nav-links">
+      <a href="#demos">Demos</a>
+      <a class="hide-s" href="#error">The error</a>
       <a class="hide-s" href="#how">How it works</a>
-      <a class="hide-s" href="#why">Why types</a>
-      <a href="#status">Status</a>
-      <a class="hide-s" href="#findings">Findings</a>
+      <a class="hide-s" href="#measured">What we measured</a>
+      <a href="#limits">Limits</a>
       <a class="ghost" href="https://github.com/RaphaelKhalid/ralytable">GitHub</a>
     </nav>
   </div>
@@ -305,72 +394,190 @@ html{scroll-behavior:smooth}
 <!-- ==================================================== HERO -->
 <div class="hero">
   <div class="wrap hero-in">
+    <h1>A compiler that knows <em>what a vector holds</em>.</h1>
+    <p class="sub">
+      Machine learning tools see a
+      <button type="button" class="dfn" data-t="Vector" data-d="A fixed-length list of numbers.">vector</button>
+      as a list of numbers and check that the lengths match. They cannot see that the list is a bag
+      that holds thirty-one things and already has seven in it. Put a thirty-second one in and nothing
+      throws, nothing crashes, and the model quietly gets worse.
+    </p>
+    <p class="sub"><b>Raly</b> puts the count in the type. Overfill the bag and the program does not compile.</p>
+    <div class="cta">
+      <a class="btn primary" href="#demos">Try the compiler <span class="arr">↓</span></a>
+      <a class="btn" href="./interpretability.html">Look inside a trained model <span class="arr">→</span></a>
+    </div>
+    <div class="statline">
+      <span><b>179</b> tests</span>
+      <span><b>0</b> warnings</span>
+      <span><b>8</b> Rust crates</span>
+      <span><b>102KB</b> of it runs in your browser</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================================== DEMO 1: PLAYGROUND -->
+<section id="demos">
+  <div class="wrap sec" style="padding-bottom:clamp(30px,4vw,44px)">
+    <p class="eyebrow">Demo one, live on this page</p>
+    <h2 class="big">Type into the box. The compiler answers.</h2>
+    <p class="lede">
+      This is the compiler's front door, built to
+      <button type="button" class="dfn" data-t="WebAssembly" data-d="A binary program format that web browsers run at close to native speed.">WebAssembly</button>
+      and running inside this page. Nothing is sent anywhere. Edit the code and the errors redraw
+      on every keystroke, squiggles under the exact characters at fault, click a message to jump to it.
+    </p>
+    <p class="lede">
+      This build carries the part that reads characters and the part that draws errors, which is the
+      same code the command line uses and is why the carets line up identically. The parser and the
+      type checker are written and tested in the repository and are not in this build yet, so the
+      mistakes it can catch here are spelling-level ones: a string that never closes, a lookalike
+      character pasted out of a document, a malformed number.
+    </p>
+
+    <div class="frame rv" style="margin-top:30px">
+      <div class="frame-bar">
+        <span class="pip">◆</span> raly, 102KB, running in this tab
+        <a href="./playground/" id="pg">open full size ↗</a>
+      </div>
+      <iframe src="./playground/" title="The Raly compiler playground" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== DEMO 2 -->
+<section>
+  <div class="wrap sec" style="padding-top:clamp(34px,5vw,60px)">
+    <p class="eyebrow">Demo two</p>
+    <h2 class="big">Every symbol a trained model learned, in a list you can click.</h2>
+    <p class="lede">
+      We trained a small model whose middle layer has to pick one of 1024 fixed symbols at every
+      character. That makes the inside of the model countable. We pulled all 1024 out of the saved
+      checkpoint and put them on a page.
+    </p>
+
+    <div class="tiles">
+      <a class="tile rv" href="./interpretability.html" id="interp">
+        <span class="tno">Inside the model</span>
+        <h3>All 1024 symbols, clickable.</h3>
+        <p>Click any symbol to see what it fires on, how often, and where it lands in a real reasoning trace.</p>
+        <div class="tile-art" aria-hidden="true">
+          <div class="dots">
+            <i style="background:#5aa9e6"></i><i style="background:#c7625c"></i><i style="background:#4ad493"></i><i style="background:#5aa9e6;opacity:.7"></i><i style="background:#c7625c;opacity:.5"></i><i style="background:#4ad493;opacity:.8"></i><i style="background:#5aa9e6;opacity:.4"></i><i style="background:#c7625c;opacity:.9"></i><i style="background:#4ad493;opacity:.3"></i><i style="background:#5aa9e6;opacity:.8"></i><i style="background:#c7625c;opacity:.6"></i><i style="background:#4ad493;opacity:.5"></i><i style="background:#5aa9e6;opacity:.9"></i><i style="background:#c7625c;opacity:.35"></i><i style="background:#4ad493;opacity:.7"></i><i style="background:#5aa9e6;opacity:.55"></i><i style="background:#c7625c;opacity:.8"></i><i style="background:#4ad493;opacity:.45"></i><i style="background:#5aa9e6;opacity:.65"></i><i style="background:#c7625c;opacity:.3"></i><i style="background:#4ad493;opacity:.9"></i><i style="background:#5aa9e6;opacity:.5"></i><i style="background:#c7625c;opacity:.7"></i><i style="background:#4ad493;opacity:.6"></i>
+          </div>
+        </div>
+        <span class="go">interpretability.html →</span>
+      </a>
+
+      <a class="tile rv" href="./playground/">
+        <span class="tno">The compiler, full size</span>
+        <h3>Eight sample files, most of them broken.</h3>
+        <p>Load one and read a real error before you write a line, then edit it and watch the message move.</p>
+        <div class="tile-art" aria-hidden="true">
+<pre><span class="d-src">let greeting = "hello</span>
+<span class="d-caret">               ^</span> <span class="d-err">never closed</span>
+<span class="d-help">help: add a closing `"`</span></pre>
+        </div>
+        <span class="go">playground/ →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== THE ERROR -->
+<section id="error">
+  <div class="wrap sec">
     <div class="grid split">
       <div>
-        <h1>A compiler that knows <em>what a vector holds</em>.</h1>
-        <p class="sub">
-          PyTorch sees a list of numbers and checks that the shapes line up. It cannot know that a
-          vector is a bag already holding 7 things with room for 31 more — so overstuffing it throws
-          nothing, crashes nothing, and just quietly makes the model worse.
+        <p class="eyebrow">What it catches</p>
+        <h2 class="big">Forty things into a bag that holds thirty-one.</h2>
+        <p class="lede">
+          Adding vectors together is how these systems store several things in one place. There is a
+          hard limit on how many, and past it you can still read something out; it is just the wrong
+          thing. No exception, no crash, correct shapes throughout. The accuracy falls and the code
+          looks fine.
         </p>
-        <p class="sub"><b>Raly</b> puts that in the type. Overstuff it, and it does not compile.</p>
-        <div class="cta">
-          <a class="btn primary" href="./playground/" id="pg">Try the compiler <span class="arr">↗</span></a>
-          <a class="btn" href="#how">How it works</a>
-          <a class="btn" href="#status">What actually works</a>
-        </div>
-        <div class="statline">
-          <span><b>179</b> tests</span>
-          <span><b>0</b> warnings</span>
-          <span><b>8</b> Rust crates</span>
-          <span><b>102KB</b> wasm playground</span>
-        </div>
+        <p class="lede">
+          Raly counts. The compiler knows the bag holds thirty-one because we measured thirty-one,
+          and it prints the number, where it came from, and the width you would need instead.
+        </p>
+        <p class="lede" style="font-size:15px;color:var(--fg-3)">
+          The block on the right is copied from
+          <code>compiler/crates/raly/tests/ui/capacity-exceeded.stderr</code>, which is checked
+          character for character on every build. It comes from <code>raly check</code> at the command
+          line, not from the browser build above.
+        </p>
       </div>
 
       <div class="rv in">
         <div class="panel">
-          <div class="panel-bar"><span class="pip">◆</span> raly check capacity-effective.raly</div>
-<pre class="code"><span class="d-err">error</span>[<span class="d-code">RALY5001</span>]: <span class="d-msg">this bundles 4 items into a space that holds 3</span>
-<span class="d-loc"> --&gt; capacity-effective.raly:7:5</span>
+          <div class="panel-bar"><span class="pip">◆</span> raly check capacity-exceeded.raly</div>
+<pre class="code"><span class="d-err">error</span>[<span class="d-code">RALY5001</span>]: <span class="d-msg">this bundles 40 items into a space that holds 31</span>
+<span class="d-loc"> --&gt; capacity-exceeded.raly:9:5</span>
 <span class="d-gut">  |</span>
-<span class="d-gut">7 |</span> <span class="d-src">    bundle(a, b, c, d)</span>
-<span class="d-gut">  |</span>     <span class="d-caret">^^^^^^^^^^^^^^^^^^</span> <span class="d-err">4 items superposed here</span>
-<span class="d-loc"> ::: capacity-effective.raly:4:1</span>
+<span class="d-gut">9 |</span> <span class="d-src">    bundle(</span>
+<span class="d-gut">  |</span> <span class="d-src">    </span><span class="d-caret">^^^^^^^</span> <span class="d-err">40 items superposed here</span>
+<span class="d-gut">  |</span> <span class="d-loc">...continues to line 15</span>
+<span class="d-loc"> ::: capacity-exceeded.raly:3:1</span>
 <span class="d-gut">  |</span>
-<span class="d-gut">4 |</span> <span class="d-src">space Sentences = MAP[384] where effective = 111</span>
-<span class="d-gut">  |</span> <span class="d-dash">-------</span> <span class="d-2">`Sentences` holds 3 items (from its measured</span>
-<span class="d-gut">  |</span>         <span class="d-2">effective dimension 111, not its nominal one)</span>
+<span class="d-gut">3 |</span> <span class="d-src">space Small = MAP[1000]</span>
+<span class="d-gut">  |</span> <span class="d-dash">-----------------------</span> <span class="d-2">`Small` holds 31 items</span>
 <span class="d-gut">  |</span>
+<span class="d-gut">  =</span> <span class="d-note">note: 31 is the capacity of `Small` at dimension 1000,</span>
+<span class="d-gut">   </span> <span class="d-note">      measured at 95% retrieval in experiments/04_capacity</span>
 <span class="d-gut">  =</span> <span class="d-note">note: past capacity, cleanup returns the wrong atom and</span>
 <span class="d-gut">   </span> <span class="d-note">      accuracy degrades towards chance without anything</span>
 <span class="d-gut">   </span> <span class="d-note">      failing at run time</span>
-<span class="d-gut">  =</span> <span class="d-help">help: superpose fewer items, or declare `Sentences` at</span>
-<span class="d-gut">   </span> <span class="d-help">      dimension 147</span>
+<span class="d-gut">  =</span> <span class="d-help">help: superpose fewer items, or declare `Small` at</span>
+<span class="d-gut">   </span> <span class="d-help">      dimension 1247, or 2048 for a power of two</span>
+
+<span class="d-err">error</span>: 1 error
 </pre>
           <div class="panel-note">
-            <strong>The 3 is not a guess.</strong> Capacity comes from
-            <code>experiments/04_capacity</code>, measured rather than cited. The
-            <code>effective</code> override comes from <code>experiments/07_retrieval_cost</code>,
-            which found nominal dimension predicts nothing.
+            <strong>The 31 is measured.</strong> It comes from
+            <code>experiments/04_capacity</code>, where retrieval stays above 95% at thirty-one
+            items and falls below it at thirty-two. A literature summary put the figure near ten.
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- ==================================================== THE TYPE -->
 <section id="type">
   <div class="wrap sec">
-    <p class="eyebrow">The type</p>
-    <h2 class="big">One annotation, three things a tensor throws away.</h2>
+    <p class="eyebrow">The annotation</p>
+    <h2 class="big">One line that says what a vector is carrying.</h2>
 
     <div class="tsig rv" style="margin-top:34px"><span class="ty">Vec</span>[<u>Concepts</u>; <span class="k">load</span> <u>3</u>; <span class="k">roles</span> <u>{Subject, Verb, Object}</u>]</div>
     <ul class="tkey rv">
-      <li><b>Concepts</b><span>Which space. That fixes the VSA family, the dimension and the codebook — atoms of a different codebook are noise here.</span></li>
-      <li><b>load 3</b><span>How full it is, against a capacity the checker derives from the space. Superposition load is counted, not hoped for.</span></li>
-      <li><b>roles {…}</b><span><em>Which</em> roles are bound in is static. <em>What</em> is bound to them stays runtime.</span></li>
+      <li><b>Concepts</b><span>Which space this vector belongs to. That fixes its width and its
+        <button type="button" class="dfn" data-t="VSA" data-d="Vector symbolic architecture. A family of methods that represent symbols as long vectors and combine them with addition and multiplication.">VSA</button>
+        family, so vectors from a different space cannot be mixed in by accident.</span></li>
+      <li><b>load 3</b><span>How full it is. Three things are in the bag, and the compiler knows the
+        bag's limit, so it can tell you when a fourth will not fit.</span></li>
+      <li><b>roles {…}</b><span><em>Which</em> slots are filled is fixed at compile time. <em>What</em>
+        goes in each slot is decided when the program runs.</span></li>
     </ul>
+
+    <p class="lede" style="margin-top:34px">
+      The second half is the reason this is a language and not a library. If the type lists the slots,
+      then the signature of a function tells you what it represents, and you can read that without
+      running the model, training a probe, or digging through weights.
+    </p>
+    <p class="lede">
+      Two things this is not. Checking dimensions at compile time is not new; Dex, Futhark and F#
+      have done it for years, and our claim is narrower, that no machine learning tool people
+      actually use has checks like these. Building models that explain themselves is not a new field
+      either; concept bottleneck models, weight-sparse transformers and KANs all exist. What is
+      unusual here is putting the explanation in the
+      <button type="button" class="dfn" data-t="Type system" data-d="The part of a compiler that works out what kind of value each expression produces, and rejects programs where the kinds do not fit together.">type system</button>.
+    </p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/compiler/GRAMMAR.md">Read the grammar</a>
+      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/prior-art.md">Prior art</a>
+    </div>
   </div>
 </section>
 
@@ -378,30 +585,32 @@ html{scroll-behavior:smooth}
 <section id="how">
   <div class="wrap sec">
     <p class="eyebrow">How it works</p>
-    <h2 class="big">Four phases, one run, every error at once.</h2>
+    <h2 class="big">Four passes, one run, every error at once.</h2>
     <p class="lede">
-      <code>raly check</code> runs every phase every time. No phase returns a <code>Result</code>;
-      each returns a value <em>plus</em> diagnostics, so a syntax error does not silence name
-      resolution and an unresolved name does not silence the type checker.
+      <code>raly check</code> runs every pass every time. No pass is allowed to stop the next one, so
+      a typo does not hide an unknown name and an unknown name does not hide a capacity error. You
+      get the whole list on the first try.
     </p>
 
     <div class="pipe rv">
       <div class="stage src"><b>source</b><span>a <code>.raly</code> file</span></div>
       <div class="arw">→</div>
-      <div class="stage"><b>lex</b><span>total: any bytes yield tokens, and never a panic</span></div>
+      <div class="stage"><b>lex</b><span>any bytes at all become tokens, and it never panics</span></div>
       <div class="arw">→</div>
-      <div class="stage"><b>parse</b><span>recursive descent that recovers; the tree covers the whole input</span></div>
+      <div class="stage"><b>parse</b><span>hand-written, recovers from bad syntax, covers the whole file</span></div>
       <div class="arw">→</div>
-      <div class="stage"><b>resolve</b><span>two namespaces, scopes, a <code>DefId</code> for every reference</span></div>
+      <div class="stage"><b>resolve</b><span>works out which definition every name points at</span></div>
       <div class="arw">→</div>
-      <div class="stage"><b>typecheck</b><span>four properties, four small decidable solvers</span></div>
+      <div class="stage"><b>typecheck</b><span>four properties, four small solvers</span></div>
     </div>
 
     <p class="pipe-note">
-      <b>dimension</b> — abelian-group unification (Kennedy's units of measure), so a mismatch prints a concrete residual rather than "unification failed"<br>
-      <b>VSA family</b> — a finite enum; <code>MAP[1024]</code> and <code>FHRR[1024]</code> stop being the same type<br>
-      <b>capacity / load</b> — natural-number intervals over measured capacity: <code>bundle</code> adds, <code>bind</code> multiplies, <code>cleanup</code> collapses to one<br>
-      <b>role schema</b> — row polymorphism with scoped labels (Leijen); unbinding a role a closed row does not carry will not compile
+      <b>width</b> tracked as a unit of measure, so a mismatch prints the leftover ratio instead of the words "unification failed"<br>
+      <b>family</b> is a short fixed list, so <code>MAP[1024]</code> and <code>FHRR[1024]</code> stop being the same type<br>
+      <b>how full</b> is a range of whole numbers over measured capacity: <code>bundle</code> adds, <code>bind</code> multiplies, <code>cleanup</code> drops back to one<br>
+      <b>slots</b> use
+      <button type="button" class="dfn" data-t="Row polymorphism" data-d="A typing technique that lets a type name some of a record's fields while staying open about the rest.">row polymorphism</button>,
+      so taking out a slot the vector never had is a compile error
     </p>
 
     <div class="cmp rv" style="margin-top:46px">
@@ -415,11 +624,11 @@ codebook = torch.<span class="fn">sign</span>(torch.<span class="fn">randn</span
 
 scene = torch.<span class="fn">zeros</span>(D)
 <span class="k">for</span> i <span class="k">in</span> item_ids:          <span class="cm"># 40 of them</span>
-    scene += codebook[i]    <span class="cm"># bundle</span>
+    scene += codebook[i]    <span class="cm"># add it to the bag</span>
 
-<span class="cm"># No exception. Correct shapes throughout.</span>
-<span class="cm"># The retrieved set is simply no longer the</span>
-<span class="cm"># set you put in, and nothing can tell you.</span>
+<span class="cm"># No exception. Shapes correct throughout.</span>
+<span class="cm"># What you read back is no longer what you</span>
+<span class="cm"># put in, and nothing anywhere says so.</span>
 </pre>
         </div>
       </div>
@@ -435,8 +644,8 @@ scene = torch.<span class="fn">zeros</span>(D)
 <span class="d-err">error</span>[<span class="d-code">RALY5001</span>]: <span class="d-msg">this bundles 40 items</span>
 <span class="d-msg">into a space that holds 31</span>
 
-<span class="cm">// Real output: `raly check examples/capacity.raly`</span>
-<span class="cm">// is a golden test, asserted byte for byte.</span>
+<span class="cm">// This is a golden test. The exact text</span>
+<span class="cm">// above is asserted on every build.</span>
 </pre>
         </div>
       </div>
@@ -444,112 +653,127 @@ scene = torch.<span class="fn">zeros</span>(D)
   </div>
 </section>
 
-<!-- ==================================================== WHY TYPES -->
-<section id="why">
-  <div class="wrap sec">
-    <p class="eyebrow">Why a compiler is the right shape</p>
-    <h2 class="big">If the type knows which roles a vector carries, the signature <em>is</em> the documentation.</h2>
-    <p class="lede">
-      You can read what a function represents without running it, without a probe, and without an
-      archaeology pass over trained weights. That is the second half of the pitch, and it is the
-      half that made this a language rather than a library.
-    </p>
-    <p class="lede">
-      Interpretable-by-construction is not a new field — concept bottleneck models, weight-sparse
-      transformers and KANs all exist. Compile-time dimension checking is not new either; Dex,
-      Futhark and F# have had it for years. Two narrower claims are what is left: interpretability
-      living in the <em>type system</em>, and that no ML tool people actually use has checks like
-      these.
-    </p>
-    <div class="cta">
-      <a class="btn" href="./interpretability.html" id="interp">Interpretability in the type system <span class="arr">→</span></a>
-      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/compiler/GRAMMAR.md">Read the grammar</a>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================== STATUS -->
-<section id="status">
-  <div class="wrap sec">
-    <div class="grid split">
-      <div>
-        <p class="eyebrow">What works today</p>
-        <h2 class="big">The front end is done. The back end is not.</h2>
-        <p class="lede">
-          Nothing on the "not built" list is stubbed or half-written. It is absent. A project pitched
-          on catching what other tools hide should not begin by hiding what it has not built.
-        </p>
-      </div>
-
-      <div class="status rv">
-        <ul>
-          <li><span class="mk yes">✓</span><span><b>Diagnostics</b> — byte-offset spans, primary and secondary labels, separate <code>note:</code> and <code>help:</code> channels, stable greppable codes, output asserted character-for-character.</span></li>
-          <li><span class="mk yes">✓</span><span><b>Lexer</b> — total: any input, including arbitrary bytes, yields a token stream and never panics.</span></li>
-          <li><span class="mk yes">✓</span><span><b>Parser</b> — hand-written recursive descent with error recovery; the tree is total over the input.</span></li>
-          <li><span class="mk yes">✓</span><span><b>Name resolution</b> — two namespaces, scopes, use-before-definition as its own diagnostic, suggestions that err towards silence.</span></li>
-          <li><span class="mk yes">✓</span><span><b>Type system</b> — all four properties: dimension, VSA family, capacity/load, role schema. <b>179 tests, zero warnings.</b></span></li>
-          <li><span class="mk yes">✓</span><span><b>Browser playground</b> — the real Rust compiler as wasm, 102KB. Live errors and inline squiggles, no install.</span></li>
-          <li><span class="mk no">·</span><span><b>IR and codegen</b> — do not exist. <code>raly</code> cannot produce an executable and does not pretend to.</span></li>
-          <li><span class="mk no">·</span><span><b>The model</b> — Ralytable-1 is not built. What exists is a 6.4M-parameter toy whose citation structure is flawless and which cannot reason.</span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================== FINDINGS -->
-<section id="findings">
+<!-- ==================================================== MEASURED -->
+<section id="measured">
   <div class="wrap sec">
     <p class="eyebrow">Measured, not cited</p>
-    <h2 class="big">The numbers in the compiler came out of experiments in this repo.</h2>
+    <h2 class="big">The numbers the compiler prints came out of experiments in this repository.</h2>
     <p class="lede">
-      Kill criteria were written before the runs, every headline number was re-derived
-      independently, and several results are negative — which is the point rather than an
-      embarrassment.
+      We wrote down what would count as failure before each run, reported every result next to what
+      you would get with no model at all, and re-derived each headline number a second way. Some of
+      the results are negative and they ship the same as the rest.
     </p>
 
     <div class="grid g4" style="margin-top:38px">
       <div class="card rv">
         <span class="tag">04 · capacity</span>
-        <h3>31 items at D=1000.</h3>
-        <p>Roughly 3× what a literature summary implied. This is the number the checker prints, reproduced exactly at four measured points and interpolated between them.</p>
+        <h3>Thirty-one items at width 1000.</h3>
+        <p>Retrieval holds above 95% up to thirty-one items bundled into one vector of width 1000, roughly three times what a literature summary implied. Four widths measured, and this is the number the compiler prints.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/04_capacity/FINDINGS.md">experiments/04 →</a>
       </div>
       <div class="card rv">
         <span class="tag">07 · retrieval cost</span>
-        <h3>Averaging chunks costs a quarter of retrieval accuracy.</h3>
-        <p>On BEIR scifact, mean-pooling 8 passages into one document vector drops hit-rate from .877 to .619 with realistic grouping — and 70–76% of that is the averaging itself, not the coarser granularity. mpnet has twice MiniLM's nominal dimension and the same cost: nominal D predicts nothing.</p>
+        <h3>Averaging passages into one vector costs a quarter of search accuracy.</h3>
+        <p>On a standard search benchmark, mean-pooling eight passages into a single document vector drops the hit-rate from 0.877 to 0.619 with topically coherent groups. About 76% of that loss is the averaging itself, isolated with a max-scoring control. A model with twice the width paid the same cost.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/07_retrieval_cost/FINDINGS.md">experiments/07 →</a>
       </div>
       <div class="card rv">
         <span class="tag">06 · discrete core</span>
-        <h3>A discrete bottleneck costs about 3 points of accuracy.</h3>
-        <p>At matched parameters, and it buys 8 points of role legibility above chance. Cross-entropy actually improves. Bigger alphabets got more capable <em>and</em> more legible together, the opposite of the tradeoff expected. One datapoint at toy scale, not a curve.</p>
+        <h3>Legibility costs about three points of accuracy.</h3>
+        <p>Forcing the middle of the model through 1024 fixed symbols moved top-1 accuracy from 0.8383 to 0.8065 at matched parameters, and made the model <em>less</em> surprised by its own text, not more. Bigger alphabets got more capable and more legible together, which is the opposite of what we expected.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/06_discrete_core/FINDINGS.md">experiments/06 →</a>
       </div>
       <div class="card rv">
         <span class="tag">01 · claimed vs causal</span>
         <h3>A model's account of its own reasoning is not the causal graph.</h3>
-        <p>Every graph-derived predictor correlates with measured causal importance at |ρ| ≤ 0.09; raw position correlates at −0.45. Structure has to be built in, not requested.</p>
+        <p>Across 6,955 steps, the dependency graph a model writes out correlates with what actually mattered at +0.203, and at +0.015 once you account for how far into the answer each step sits. Position alone gets -0.551. Structure has to be built in, not asked for.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/01_claimed_vs_causal/FINDINGS.md">experiments/01 →</a>
       </div>
     </div>
 
+    <h3 style="margin-top:52px;font-size:clamp(19px,2.2vw,24px)">What the 1024 symbols bought, against every control we could think of</h3>
+    <p class="lede" style="margin-top:12px">
+      We measured how well a symbol predicts whether the character it fired on belongs to a premise,
+      a working step, or the answer. Three ways of guessing, on the same text:
+    </p>
+    <div class="scroller">
+      <table class="nums">
+        <thead><tr><th>how you guess the role</th><th>gets it right</th><th>over the floor</th></tr></thead>
+        <tbody>
+          <tr><td>always say the commonest one</td><td><b>0.5801</b></td><td>the floor</td></tr>
+          <tr><td>look at the raw character, no model</td><td><b>0.6314</b></td><td>+0.051</td></tr>
+          <tr><td>look at which of the 1024 symbols fired</td><td><b>0.6640</b></td><td>+0.084</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:16px">
+      So the symbols beat the raw character by <b>+0.033</b>. That is the number, and it is real,
+      because a symbol sees context and can tell the same character apart in a premise and in a
+      working step. Reproduce it with <code>experiments/06_discrete_core/leakage.py</code>.
+    </p>
+
     <p class="lede" style="margin-top:28px">
-      Three more are in the repo, including a negative result on this project's own idea.
+      Three more findings are in the repository, including a negative result on this project's own idea.
       <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)">All seven findings →</a>
     </p>
+  </div>
+</section>
+
+<!-- ==================================================== STATUS + LIMITS -->
+<section id="limits">
+  <div class="wrap sec">
+    <div class="grid split">
+      <div>
+        <p class="eyebrow">What exists</p>
+        <h2 class="big">The front end is finished. The back end is not started.</h2>
+        <p class="lede">
+          Nothing on the second list is stubbed or half-written. It is absent.
+        </p>
+      </div>
+
+      <div class="status rv">
+        <ul>
+          <li><span class="mk yes">✓</span><span><b>Errors</b> that point at exact byte ranges, with a primary and secondary location, separate note and help lines, and stable codes you can grep for. The text is asserted character for character.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Lexer</b> that turns any input at all, including arbitrary bytes, into tokens without panicking.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Parser</b> written by hand, recovers from bad syntax, and produces a tree that covers the whole file.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Name resolution</b> with two namespaces and proper scopes. Using a name before it is defined gets its own message. Suggestions stay quiet unless they are confident.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Type checking</b> for all four properties: width, family, how full, and which slots. <b>179 tests, zero warnings.</b></span></li>
+          <li><span class="mk yes">✓</span><span><b>Browser playground</b>: the real compiler as 102KB of WebAssembly, live errors, no install.</span></li>
+          <li><span class="mk no">·</span><span><b>Code generation</b> does not exist. <code>raly</code> checks programs; it cannot run them.</span></li>
+          <li><span class="mk no">·</span><span><b>Ralytable itself</b> is not built. What exists is the 6.4M-parameter model the second demo takes apart.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="limits rv">
+      <p class="eyebrow" style="margin-bottom:0">Limits, stated once</p>
+      <ul>
+        <li><b>The model in the second demo cannot reason.</b> It is 6.4M parameters trained for six
+          minutes on 4,042 synthetic word problems. It writes correctly formatted arithmetic nonsense.
+          The demo is about seeing what it is doing, not about what it can do.</li>
+        <li><b>One seed per configuration, one corpus, one teacher.</b> There are no error bars on
+          finding 06.</li>
+        <li><b>That corpus is synthetic and formulaic</b>, which almost certainly makes its structure
+          easier to encode than real text would be.</li>
+        <li><b>The capacity numbers come from random codebooks.</b> A codebook learned by gradient
+          descent has no pressure to stay spread out, and whether the numbers survive training is the
+          open question that gates the whole idea.</li>
+        <li><b>Findings 05 and 07 cover four small encoders on three datasets</b>, all English, all
+          short passages, all mean pooling. They are claims about those models on that data.</li>
+        <li><b>Nothing here runs.</b> There is no code generator, so Raly programs type-check and stop.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
 <!-- ==================================================== CTA -->
 <section>
   <div class="wrap sec" style="padding-bottom:clamp(44px,7vw,80px)">
-    <h2 class="big" style="max-width:20ch">Everything is in the open, including what does not work.</h2>
+    <h2 class="big" style="max-width:20ch">All of it is in the open, including the parts that did not work.</h2>
     <div class="cta" style="margin-top:28px">
       <a class="btn primary" href="https://github.com/RaphaelKhalid/ralytable">github.com/RaphaelKhalid/ralytable <span class="arr">→</span></a>
-      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap &amp; risks</a>
-      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/prior-art.md">Prior art</a>
+      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap and risks</a>
+      <a class="btn" href="./interpretability.html">Inside the model</a>
     </div>
   </div>
 </section>
@@ -568,21 +792,23 @@ scene = torch.<span class="fn">zeros</span>(D)
       <b>Research</b>
       <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments">Experiments</a>
       <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/prior-art.md">Prior art</a>
-      <a href="./interpretability.html">Interpretability</a>
+      <a href="./interpretability.html">Inside the model</a>
     </nav>
     <nav>
       <b>Project</b>
       <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap</a>
-      <a href="#status">Status</a>
+      <a href="#limits">Limits</a>
       <a href="#how">How it works</a>
     </nav>
     <p class="foot-note">
       Ralytable is the project and the model. Raly is the language and compiler. MIT licensed.
-      The front end compiles and type-checks; there is no code generator and no trained model yet.
-      Every number on this page is reproducible from the repository.
+      The compiler checks programs and cannot yet run them, and the trained model is a 6.4M-parameter
+      one that cannot reason. Every number on this page is reproducible from the repository.
     </p>
   </div>
 </footer>
+
+<div id="dfn-pop" role="tooltip" aria-hidden="true"></div>
 
 <script>
 (function(){
@@ -605,7 +831,66 @@ scene = torch.<span class="fn">zeros</span>(D)
     setTimeout(function(){ els.forEach(function(e){ e.classList.add("in"); }); }, 3000);
   }
 
-  /* ---- links that must not break if their target is not built yet ---- */
+  /* ---- hover definitions ----
+     Positioned with position:fixed and clamped to the viewport, so a definition
+     near the edge of a 390px screen cannot push the page sideways. */
+  var pop = document.getElementById("dfn-pop");
+  var open = null;
+  var dpinned = false;   /* a tap pins the definition open; hover alone does not */
+  var terms = [].slice.call(document.querySelectorAll(".dfn"));
+
+  terms.forEach(function(t, i){
+    t.setAttribute("aria-expanded","false");
+    t.setAttribute("aria-describedby","dfn-pop");
+    t.addEventListener("mouseenter", function(){ show(t); });
+    t.addEventListener("mouseleave", function(){ if(open === t && !dpinned && document.activeElement !== t) hide(); });
+    t.addEventListener("focus", function(){ show(t); });
+    t.addEventListener("blur", function(){ if(!dpinned) hide(); });
+    t.addEventListener("click", function(ev){
+      ev.preventDefault();
+      if(open === t && dpinned){ hide(); }
+      else { show(t); dpinned = true; }
+    });
+  });
+
+  function show(t){
+    if(open) open.setAttribute("aria-expanded","false");
+    open = t;
+    t.setAttribute("aria-expanded","true");
+    pop.innerHTML = "";
+    var b = document.createElement("b");
+    b.textContent = t.getAttribute("data-t");
+    pop.appendChild(b);
+    pop.appendChild(document.createTextNode(t.getAttribute("data-d")));
+    pop.classList.add("on");
+    pop.setAttribute("aria-hidden","false");
+    place(t);
+  }
+  function hide(){
+    dpinned = false;
+    if(open) open.setAttribute("aria-expanded","false");
+    open = null;
+    pop.classList.remove("on");
+    pop.setAttribute("aria-hidden","true");
+  }
+  function place(t){
+    var r = t.getBoundingClientRect();
+    var w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = r.left + r.width/2 - w/2;
+    left = Math.max(12, Math.min(left, window.innerWidth - w - 12));
+    var top = r.top - h - 9;
+    if(top < 8) top = r.bottom + 9;
+    pop.style.left = left + "px";
+    pop.style.top = top + "px";
+  }
+  window.addEventListener("resize", function(){ if(open) place(open); });
+  window.addEventListener("scroll", function(){ if(open) place(open); }, true);
+  document.addEventListener("keydown", function(ev){ if(ev.key === "Escape") hide(); });
+  document.addEventListener("click", function(ev){
+    if(open && !ev.target.classList.contains("dfn")) hide();
+  });
+
+  /* ---- links that must not break if their target is not deployed yet ---- */
   function guard(id, fallback, label){
     var el = document.getElementById(id);
     if(!el || !window.fetch || location.protocol.indexOf("http") !== 0) return;
