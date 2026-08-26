@@ -1,42 +1,0 @@
-==============================================================================
-  TinyStories: dense vs discrete bottleneck at matched parameters
-==============================================================================
-wandb: WARNING The anonymous parameter to wandb.login() has no effect and will be removed in future versions.
-wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from C:\Users\rapha\_netrc.
-wandb: Currently logged in as: raphaelbahadurkhan (raphaelk) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
-  cache hit: 466,762,900 train / 4,691,098 val tokens, vocab 8192
-  data check OK: 466,762,900 train / 4,691,098 val tokens, vocab 8192, round-trip exact
-  first 200 chars of the training memmap, decoded:
-    | One day, a little girl named Lily found a needle in her room. She knew it was difficult to play with it because it was sharp. Lily wanted to share the needle with her mom, so she could sew a button on
-
-  PARAMETER MATCH (must be within 1%)
-    dense           29,497,856 params   +0.000% vs dense
-    codes=512       29,563,392 params   +0.222% vs dense
-    -> matched within 1%: YES
-  measured step time: 133 ms (62k tokens/s)
-
-  COMPUTE BUDGET
-    2 configs x 3 seeds = 6 runs
-    11,926 steps x batch 32 x ctx 256 = 98M tokens per run
-    3.3 tokens/param; Chinchilla-optimal is 20 (0.17x of it)
-    estimated wall clock: 2h59m59s
-
-  to stop cleanly, keeping everything already written:
-      create the file C:\Users\rapha\AppData\Local\Temp\claude\wt-tinystories\experiments\08_tinystories\STOP
-  tailable log: C:\Users\rapha\AppData\Local\Temp\claude\wt-tinystories\experiments\08_tinystories\train.log
-  per-eval json: metrics.jsonl   final results: results.jsonl
-  wandb: authenticated, mirroring to project 'ralytable'
-
-  live dashboard: http://localhost:7777
-
-
-  [1/6] dense  seed 0
-wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
-wandb: Tracking run with wandb version 0.28.2
-wandb: Run data is saved locally in C:\Users\rapha\AppData\Local\Temp\claude\wt-tinystories\experiments\08_tinystories\wandb\run-20260826_131017-lga7gk7a
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run dense-s0
-wandb:  View project at https://wandb.ai/raphaelk/ralytable
-wandb:  View run at https://wandb.ai/raphaelk/ralytable/runs/lga7gk7a
-  wandb: https://wandb.ai/raphaelk/ralytable/runs/lga7gk7a
-  dense_s0        [----------------------------]     20/11926  ce  7.719  commit 0.00e+00   53.2k tok/s  0h00m03s  eta 0h30m33s  run 1/6     dense_s0        [----------------------------]     40/11926  ce  6.329  commit 0.00e+00   55.0k tok/s  0h00m05s  eta 0h29m30s  run 1/6     dense_s0        [----------------------------]     60/11926  ce  5.519  commit 0.00e+00   54.9k tok/s  0h00m08s  eta 0h29m30s  run 1/6     dense_s0        [----------------------------]     80/11926  ce  4.794  commit 0.00e+00   54.2k tok/s  0h00m12s  eta 0h29m48s  run 1/6     dense_s0        [----------------------------]    100/11926  ce  4.587  commit 0.00e+00   53.5k tok/s  0h00m15s  eta 0h30m09s  run 1/6     dense_s0        [----------------------------]    120/11926  ce  4.280  commit 0.00e+00   53.2k tok/s  0h00m18s  eta 0h30m18s  run 1/6     dense_s0        [----------------------------]    140/11926  ce  3.940  commit 0.00e+00   52.8k tok/s  0h00m21s  eta 0h30m27s  run 1/6     dense_s0        [----------------------------]    160/11926  ce  3.862  commit 0.00e+00   52.7k tok/s  0h00m24s  eta 0h30m29s  run 1/6     dense_s0        [----------------------------]    180/11926  ce  3.822  commit 0.00e+00   52.4k tok/s  0h00m28s  eta 0h30m35s  run 1/6     dense_s0        [----------------------------]    200/11926  ce  3.639  commit 0.00e+00   52.3k tok/s  0h00m31s  eta 0h30m35s  run 1/6     dense_s0        [----------------------------]    220/11926  ce  3.650  commit 0.00e+00   51.9k tok/s  0h00m34s  eta 0h30m46s  run 1/6     dense_s0        [----------------------------]    240/11926  ce  3.436  commit 0.00e+00   51.8k tok/s  0h00m37s  eta 0h30m48s  run 1/6     dense_s0        [----------------------------]    260/11926  ce  3.468  commit 0.00e+00   51.6k tok/s  0h00m41s  eta 0h30m53s  run 1/6     dense_s0        [----------------------------]    280/11926  ce  3.450  commit 0.00e+00   51.3k tok/s  0h00m44s  eta 0h30m58s  run 1/6     dense_s0        [----------------------------]    300/11926  ce  3.315  commit 0.00e+00   51.0k tok/s  0h00m48s  eta 0h31m06s  run 1/6     dense_s0        [----------------------------]    320/11926  ce  3.119  commit 0.00e+00   50.8k tok/s  0h00m51s  eta 0h31m12s  run 1/6     dense_s0        [----------------------------]    340/11926  ce  3.071  commit 0.00e+00   50.7k tok/s  0h00m54s  eta 0h31m13s  run 1/6     dense_s0        [----------------------------]    360/11926  ce  3.067  commit 0.00e+00   50.5k tok/s  0h00m58s  eta 0h31m17s  run 1/6     dense_s0        [----------------------------]    380/11926  ce  3.111  commit 0.00e+00   50.3k tok/s  0h01m01s  eta 0h31m21s  run 1/6     dense_s0        [----------------------------]    400/11926  ce  3.091  commit 0.00e+00   50.1k tok/s  0h01m05s  eta 0h31m23s  run 1/6     dense_s0        [----------------------------]    420/11926  ce  2.994  commit 0.00e+00   49.9k tok/s  0h01m09s  eta 0h31m30s  run 1/6     dense_s0        [#---------------------------]    440/11926  ce  2.869  commit 0.00e+00   49.7k tok/s  0h01m12s  eta 0h31m33s  run 1/6     dense_s0        [#---------------------------]    460/11926  ce  3.002  commit 0.00e+00   49.6k tok/s  0h01m15s  eta 0h31m34s  run 1/6     dense_s0        [#---------------------------]    480/11926  ce  2.832  commit 0.00e+00   49.4k tok/s  0h01m19s  eta 0h31m37s  run 1/6     dense_s0        [#---------------------------]    500/11926  ce  2.976  commit 0.00e+00   49.3k tok/s  0h01m23s  eta 0h31m39s  run 1/6     dense_s0        [#---------------------------]    520/11926  ce  2.842  commit 0.00e+00   48.4k tok/s  0h01m28s  eta 0h32m11s  run 1/6     dense_s0        [#---------------------------]    540/11926  ce  2.867  commit 0.00e+00   48.3k tok/s  0h01m31s  eta 0h32m12s  run 1/6   
