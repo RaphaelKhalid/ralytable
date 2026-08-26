@@ -37,52 +37,90 @@ torch.backends.cudnn.allow_tf32 = True
 
 
 class VQ(nn.Module):
-    """Vector quantiser: EMA updates, cosine distance, low-dim codes, dead-code revival."""
+    """Vector quantiser with the three fixes that actually stop collapse.
 
-    def __init__(self, n_codes=512, dim=256, code_dim=32, decay=0.99, revive_after=50):
+    The first two attempts collapsed to 11/64 and then 1/64 live codes. The bug
+    was in the EMA: unused codes have an ema_sum decaying to zero, and
+    normalising a near-zero vector yields noise, so dead codes were re-randomised
+    every step and could never win anything. Fixes:
+
+      1. Codes = ema_sum / cluster_size (the standard VQ-VAE EMA), and codes with
+         no assignments are LEFT ALONE rather than recomputed from noise.
+      2. Data-dependent init: seed the codebook from the first batch's encoder
+         outputs, so codes start where the data actually is instead of on a
+         random sphere the encoder never visits.
+      3. Dead-code revival targets the HIGHEST-ERROR encoder outputs, not random
+         ones, so a revived code lands somewhere currently badly served.
+    """
+
+    def __init__(self, n_codes=512, dim=256, code_dim=32, decay=0.99, revive_after=25):
         super().__init__()
         self.n_codes, self.code_dim, self.decay = n_codes, code_dim, decay
-        self.revive_after = revive_after
+        self.revive_after, self.eps = revive_after, 1e-5
         self.proj_in = nn.Linear(dim, code_dim, bias=False)
         self.proj_out = nn.Linear(code_dim, dim, bias=False)
-        self.register_buffer("codes", F.normalize(torch.randn(n_codes, code_dim), dim=-1))
-        self.register_buffer("cluster_size", torch.zeros(n_codes))
+        self.register_buffer("codes", torch.randn(n_codes, code_dim) * 0.1)
+        self.register_buffer("cluster_size", torch.ones(n_codes))
         self.register_buffer("ema_sum", self.codes.clone())
         self.register_buffer("idle", torch.zeros(n_codes))
+        self.register_buffer("inited", torch.zeros((), dtype=torch.bool))
+
+    @torch.no_grad()
+    def _init_from_data(self, flat):
+        pick = torch.randperm(flat.size(0), device=flat.device)[: self.n_codes]
+        if pick.numel() < self.n_codes:                      # pad by resampling
+            extra = torch.randint(0, flat.size(0),
+                                  (self.n_codes - pick.numel(),), device=flat.device)
+            pick = torch.cat([pick, extra])
+        self.codes.copy_(flat[pick])
+        self.ema_sum.copy_(flat[pick])
+        self.cluster_size.fill_(1.0)
+        self.inited.fill_(True)
 
     @torch.no_grad()
     def _ema_update(self, flat, idx):
+        flat = flat.float()          # buffers are fp32; autocast hands us bf16
         onehot = F.one_hot(idx, self.n_codes).type(flat.dtype)
         n = onehot.sum(0)
         self.cluster_size.mul_(self.decay).add_(n, alpha=1 - self.decay)
         self.ema_sum.mul_(self.decay).add_(onehot.T @ flat, alpha=1 - self.decay)
-        self.codes.copy_(F.normalize(self.ema_sum, dim=-1))
+        # only recompute codes that have mass; leave the rest where they are
+        live = self.cluster_size > self.eps
+        self.codes[live] = self.ema_sum[live] / self.cluster_size[live].unsqueeze(-1)
 
-        # dead-code revival: re-seed codes nothing has claimed recently
         self.idle.add_(1)
         self.idle[n > 0] = 0
         dead = self.idle > self.revive_after
         if dead.any():
-            pick = torch.randint(0, flat.size(0), (int(dead.sum()),), device=flat.device)
-            self.codes[dead] = flat[pick]
-            self.ema_sum[dead] = flat[pick]
-            self.cluster_size[dead] = 1.0
-            self.idle[dead] = 0
+            # revive onto the worst-reconstructed inputs, not random ones
+            err = (flat - self.codes[idx]).pow(2).sum(-1)
+            worst = err.topk(min(int(dead.sum()), flat.size(0))).indices
+            tgt = flat[worst]
+            slots = dead.nonzero(as_tuple=True)[0][: tgt.size(0)]
+            self.codes[slots] = tgt
+            self.ema_sum[slots] = tgt
+            self.cluster_size[slots] = 1.0
+            self.idle[slots] = 0
 
     def forward(self, h):
-        z = F.normalize(self.proj_in(h), dim=-1)          # cosine space
+        z = self.proj_in(h)
         flat = z.reshape(-1, self.code_dim)
-        idx = (flat @ self.codes.T).argmax(-1)            # cosine distance
-        q = self.codes[idx].view_as(z)
+        if self.training and not bool(self.inited):
+            self._init_from_data(flat.detach().float())
+        d = (flat.pow(2).sum(-1, keepdim=True)
+             - 2 * flat @ self.codes.T
+             + self.codes.pow(2).sum(-1))
+        idx = d.argmin(-1)
+        q = self.codes[idx].view_as(z).to(z.dtype)
         if self.training:
             self._ema_update(flat.detach(), idx)
-        commit = F.mse_loss(z, q.detach())                # encoder -> codebook only
-        q = z + (q - z).detach()                          # straight-through
+        commit = F.mse_loss(z, q.detach())
+        q = z + (q - z).detach()
         return self.proj_out(q), commit, idx.view(h.shape[:-1])
 
     @torch.no_grad()
     def live_codes(self):
-        return int((self.cluster_size > 1e-3).sum())
+        return int((self.cluster_size > self.eps).sum())
 
 
 class Block(nn.Module):

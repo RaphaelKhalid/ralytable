@@ -69,7 +69,11 @@ def key():
 
 
 def call(topic, k, api_key):
-    body = {"model": MODEL, "temperature": 0.9,
+    # reasoning OFF: this model thinks by default and will spend the entire
+    # token budget on reasoning, returning empty content. We want output, not
+    # deliberation, and turning it off is faster and cheaper too.
+    body = {"model": MODEL, "temperature": 0.9, "max_tokens": 4000,
+            "reasoning": {"enabled": False},
             "messages": [{"role": "user",
                           "content": GEN_PROMPT.format(k=k, topic=topic)}]}
     req = urllib.request.Request(
@@ -78,7 +82,9 @@ def call(topic, k, api_key):
     try:
         with urllib.request.urlopen(req, timeout=180) as r:
             d = json.load(r)
-        return (d["choices"][0]["message"].get("content") or "",
+        m = d["choices"][0]["message"]
+        # fall back to the reasoning channel if content came back empty
+        return (m.get("content") or m.get("reasoning") or "",
                 float((d.get("usage") or {}).get("cost") or 0))
     except Exception as e:
         return "", 0.0
