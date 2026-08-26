@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = ["crates/raly-diag", "crates/raly-lexer", "crates/raly-ast", "crates/raly"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+raly-diag = { path = "crates/raly-diag" }
+raly-lexer = { path = "crates/raly-lexer" }
+raly-ast = { path = "crates/raly-ast" }
