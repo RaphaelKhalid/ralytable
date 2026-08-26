@@ -23,12 +23,13 @@
   --fg:#e8ecf1;
   --fg-2:#a7b0bd;
   --fg-3:#6d7683;
-  --accent:#ffb020;
-  --accent-dim:#8a5f0f;
-  --accent-ink:#0a0a0a;
+  --accent:#c83000;
+  --accent-text:#ff7a4d;
+  --accent-dim:#6c1a00;
+  --accent-ink:#ffffff;
   --err:#ff6b5b;
   --ok:#4ad493;
-  --sel:rgba(255,176,32,.24);
+  --sel:rgba(200,48,0,.24);
 
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
   --disp:"Space Grotesk",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
@@ -42,16 +43,16 @@
   --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
   --line:#e2ded6; --line-2:#cfc9be;
   --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-  --accent:#9a5b00; --accent-dim:#e8c98d; --accent-ink:#ffffff;
-  --err:#c2341f; --ok:#1c7a4f; --sel:rgba(154,91,0,.16);
+  --accent:#c83000; --accent-text:#c83000; --accent-dim:#f4d6cc; --accent-ink:#ffffff;
+  --err:#c2341f; --ok:#1c7a4f; --sel:rgba(200,48,0,.16);
 }
 @media (prefers-color-scheme:light){
   :root:not([data-theme="dark"]){
     --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
     --line:#e2ded6; --line-2:#cfc9be;
     --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-    --accent:#9a5b00; --accent-dim:#e8c98d; --accent-ink:#ffffff;
-    --err:#c2341f; --ok:#1c7a4f; --sel:rgba(154,91,0,.16);
+    --accent:#c83000; --accent-text:#c83000; --accent-dim:#f4d6cc; --accent-ink:#ffffff;
+    --err:#c2341f; --ok:#1c7a4f; --sel:rgba(200,48,0,.16);
   }
 }
 
@@ -78,7 +79,7 @@ section{border-top:1px solid var(--line)}
 .sec{padding:clamp(56px,9vw,104px) 0}
 .eyebrow{
   font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--accent);margin:0 0 18px;display:flex;align-items:center;gap:10px;
+  color:var(--accent-text);margin:0 0 18px;display:flex;align-items:center;gap:10px;
 }
 .eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);opacity:.6;flex:none}
 h2.big{font-size:clamp(28px,4.4vw,46px);max-width:22ch}
@@ -105,7 +106,7 @@ header.nav{
 .nav-links a{color:var(--fg-2);text-decoration:none;transition:color .15s}
 .nav-links a:hover{color:var(--fg)}
 .nav-links a.ghost{border:1px solid var(--line-2);padding:5px 12px;border-radius:6px;color:var(--fg)}
-.nav-links a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.nav-links a.ghost:hover{border-color:var(--accent);color:var(--accent-text)}
 @media(max-width:640px){.nav-links .hide-s{display:none}}
 
 /* ------------------------------------------------------------------- hero */
@@ -152,7 +153,7 @@ h1 em{font-style:normal;color:var(--accent)}
 }
 .tab:hover{color:var(--fg-2)}
 .tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
-.tab .pip{color:var(--accent)}
+.tab .pip{color:var(--accent-text)}
 .panel-file{
   margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--fg-3);
   padding:0 10px;display:none;
@@ -185,7 +186,7 @@ pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 .d-note{color:var(--fg-2)}
 .d-note b{color:var(--fg);font-weight:600}
 .d-help{color:var(--ok)}
-.k{color:var(--accent)}
+.k{color:var(--accent-text)}
 .ty{color:#7fd0ff}
 .cm{color:var(--fg-3);font-style:normal}
 .st{color:#c7e08a}
@@ -212,7 +213,7 @@ pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 }
 .card a.more{
   display:inline-block;margin-top:14px;font-family:var(--mono);font-size:11.5px;
-  color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim);padding-bottom:1px;
+  color:var(--accent-text);text-decoration:none;border-bottom:1px solid var(--accent-dim);padding-bottom:1px;
 }
 .card a.more:hover{border-bottom-color:var(--accent)}
 .num{font-family:var(--disp);font-size:clamp(30px,3.6vw,42px);font-weight:700;letter-spacing:-.03em;color:var(--fg);line-height:1}
@@ -261,7 +262,7 @@ pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
   background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 6%,transparent),transparent 60%);
   margin:26px 0;
 }
-.phase.hi .pn{color:var(--accent)}
+.phase.hi .pn{color:var(--accent-text)}
 .phase.hi h3{font-size:clamp(21px,2.6vw,27px)}
 .phase.hi p{color:var(--fg-2);font-size:15.5px}
 
@@ -271,7 +272,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--fg-3);fo
 .foot-grid nav{display:flex;flex-direction:column;gap:7px}
 .foot-grid nav b{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--fg-3);margin-bottom:4px;font-weight:400}
 .foot-grid nav a{color:var(--fg-2);text-decoration:none}
-.foot-grid nav a:hover{color:var(--accent)}
+.foot-grid nav a:hover{color:var(--accent-text)}
 .foot-note{max-width:44ch;margin-left:auto;font-size:12.5px;line-height:1.65}
 
 /* --------------------------------------------------------------- reveal */
@@ -370,7 +371,7 @@ html{scroll-behavior:smooth}
           <div class="panel-note" id="note-cap">
             <strong>This error does not exist yet.</strong> The renderer, the span machinery and the
             note/help channels are built and tested; the type system that would raise RALY5001 is not.
-            The <code>5xxx</code> range is reserved for it. <a href="#status" style="color:var(--accent)">See the honest status →</a>
+            The <code>5xxx</code> range is reserved for it. <a href="#status" style="color:var(--accent-text)">See the honest status →</a>
           </div>
           <div class="panel-note" id="note-lex" hidden>
             <strong>Real output.</strong> Character-for-character what
