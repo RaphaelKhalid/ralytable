@@ -15,3 +15,5 @@ data/hf_cache/
 experiments/05_real_embeddings/cache/
 compiler/target/
 compiler/crates/raly-wasm/target/
+experiments/06_discrete_core/corpus.jsonl
+experiments/06_discrete_core/STOP
