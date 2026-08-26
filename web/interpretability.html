@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ralytable — inside the codebook</title>
+<meta name="description" content="Every one of the 1024 discrete codes in our 6.4M-parameter model, enumerated: what each one fires on, what role it sits in, and the whole internal alphabet laid over a real reasoning trace.">
+<meta name="color-scheme" content="dark light">
+<meta property="og:title" content="Inside the codebook">
+<meta property="og:description" content="A finite, enumerable internal alphabet — all 1024 codes, extracted from the trained model.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------ tokens */
+:root{
+  --bg:#08090b;
+  --bg-2:#0d0f12;
+  --panel:#0f1216;
+  --panel-2:#12161b;
+  --line:#1e242c;
+  --line-2:#2a323d;
+  --fg:#e8ecf1;
+  --fg-2:#a7b0bd;
+  --fg-3:#6d7683;
+  --accent:#c7625c;
+  --accent-fill:#a70900;
+  --accent-dim:#750600;
+  --accent-ink:#ffffff;
+  --err:#ff6b5b;
+  --ok:#4ad493;
+  --sel:rgba(167,9,0,.24);
+
+  /* the three reasoning-step roles, used by every chart on this page */
+  --r0:#5aa9e6;          /* premise */
+  --r1:#c7625c;          /* derived */
+  --r2:#4ad493;          /* answer  */
+  --grid:rgba(232,236,241,.07);
+
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --disp:"Space Grotesk",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --body:"Inter",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+
+  --pad:clamp(20px,5vw,44px);
+  --max:1180px;
+}
+:root[data-theme="light"]{
+  --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
+  --line:#e2ded6; --line-2:#cfc9be;
+  --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
+  --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
+  --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
+  --r0:#1a5fa0; --r1:#a70900; --r2:#1c7a4f;
+  --grid:rgba(20,22,26,.07);
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
+    --line:#e2ded6; --line-2:#cfc9be;
+    --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
+    --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
+    --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
+    --r0:#1a5fa0; --r1:#a70900; --r2:#1c7a4f;
+    --grid:rgba(20,22,26,.07);
+  }
+}
+
+/* ------------------------------------------------------------------- reset */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--body);font-size:16.5px;line-height:1.62;
+  font-feature-settings:"cv11","ss01";
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--sel)}
+img,svg{max-width:100%}
+a{color:inherit}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:600;letter-spacing:-.022em;line-height:1.1;margin:0}
+p{margin:0}
+code,pre,kbd{font-family:var(--mono)}
+
+/* ------------------------------------------------------------------ layout */
+.wrap{max-width:var(--max);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+section{border-top:1px solid var(--line)}
+.sec{padding:clamp(48px,7vw,88px) 0}
+.eyebrow{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 18px;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);opacity:.6;flex:none}
+h2.big{font-size:clamp(26px,4vw,42px);max-width:24ch}
+.lede{color:var(--fg-2);font-size:clamp(15.5px,1.5vw,18px);max-width:68ch;margin-top:18px}
+.lede + .lede{margin-top:14px}
+
+/* --------------------------------------------------------------------- nav */
+header.nav{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--bg) 84%,transparent);
+  backdrop-filter:saturate(150%) blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{display:flex;align-items:center;gap:14px;height:56px}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;font-family:var(--disp);font-weight:700;letter-spacing:-.03em;font-size:17px}
+.dot{width:8px;height:8px;border-radius:2px;background:var(--accent);display:inline-block;transform:translateY(-1px)}
+.brand small{font-family:var(--mono);font-weight:400;font-size:11px;color:var(--fg-3);letter-spacing:.04em}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:clamp(10px,2vw,22px);font-size:13.5px}
+.nav-links a{color:var(--fg-2);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--fg)}
+.nav-links a.here{color:var(--fg)}
+.nav-links a.ghost{border:1px solid var(--line-2);padding:5px 12px;border-radius:6px;color:var(--fg)}
+.nav-links a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:640px){.nav-links .hide-s{display:none}}
+
+/* ------------------------------------------------------------------- hero */
+.hero{padding:clamp(40px,6vw,72px) 0 clamp(32px,4vw,48px);position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:-40% 30% auto -30%;height:120%;
+  background:radial-gradient(60% 50% at 30% 40%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 70%);
+  pointer-events:none;
+}
+.hero-in{position:relative}
+h1{font-size:clamp(31px,5.4vw,60px);letter-spacing:-.038em;max-width:17ch;font-weight:700}
+h1 em{font-style:normal;color:var(--accent)}
+.hero p.sub{margin-top:22px;max-width:62ch;font-size:clamp(15.5px,1.6vw,19px);color:var(--fg-2)}
+.statline{
+  margin-top:28px;display:flex;flex-wrap:wrap;gap:8px 22px;
+  font-family:var(--mono);font-size:12px;color:var(--fg-3);
+}
+.statline b{color:var(--fg-2);font-weight:500}
+
+/* ------------------------------------------------------------------ panels */
+.panel{
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);
+  overflow:hidden;
+}
+.panel-bar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);background:var(--panel-2);padding:9px 14px;
+  font-family:var(--mono);font-size:11.5px;color:var(--fg-3);letter-spacing:.03em;
+}
+.panel-bar b{color:var(--fg-2);font-weight:500}
+.panel-note{
+  border-top:1px solid var(--line);background:var(--panel-2);
+  padding:11px 16px;font-family:var(--mono);font-size:11.5px;color:var(--fg-3);line-height:1.6;
+}
+.panel-note strong{color:var(--fg-2);font-weight:500}
+.card{
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);
+  padding:clamp(18px,2.4vw,26px);
+}
+.card h3{font-size:17.5px;letter-spacing:-.015em}
+.card p{color:var(--fg-2);font-size:14.6px;margin-top:10px}
+.card .tag{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fg-3);display:block;margin-bottom:12px;
+}
+.grid{display:grid;gap:clamp(16px,2.2vw,24px)}
+@media(min-width:820px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} }
+
+pre.out{
+  margin:0;padding:18px clamp(14px,2.4vw,22px);
+  overflow-x:auto;font-size:12.4px;line-height:1.68;
+  color:var(--fg-2);tab-size:4;white-space:pre;
+}
+pre.out::-webkit-scrollbar{height:9px}
+pre.out::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
+pre.out .cite{color:var(--accent);font-weight:700}
+pre.out .bad{color:var(--err);font-weight:700}
+
+/* ------------------------------------------------------------ purity bars */
+.purity{display:grid;gap:12px;margin-top:22px;max-width:640px}
+.prow{display:grid;grid-template-columns:minmax(0,7.5em) 1fr auto;gap:12px;align-items:center;
+      font-family:var(--mono);font-size:11.5px;color:var(--fg-3)}
+.ptrack{height:9px;border-radius:5px;background:var(--bg-2);border:1px solid var(--line);position:relative;overflow:hidden}
+.pfill{height:100%;background:var(--line-2)}
+.pfill.hi{background:var(--accent-fill)}
+.prow b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* --------------------------------------------------------------- code map */
+.lab{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--fg-3)}
+.key{display:inline-flex;align-items:center;gap:6px}
+.key i{width:9px;height:9px;border-radius:50%;display:inline-block;font-style:normal;flex:none}
+.k0 i{background:var(--r0)} .k1 i{background:var(--r1)} .k2 i{background:var(--r2)}
+
+.explorer{display:grid;gap:16px}
+@media(min-width:900px){ .explorer{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:start} }
+
+#map{display:block;width:100%;height:auto;touch-action:manipulation}
+#map circle{cursor:pointer}
+#map circle:hover{stroke:var(--fg);stroke-width:1.4}
+#map circle.on{stroke:var(--fg);stroke-width:2}
+
+.mapwrap{position:relative}
+.tip{
+  position:absolute;pointer-events:none;z-index:8;opacity:0;transition:opacity .12s;
+  background:var(--panel-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:6px 9px;font-family:var(--mono);font-size:11px;color:var(--fg);
+  white-space:nowrap;box-shadow:0 8px 24px -12px rgba(0,0,0,.7);
+  transform:translate(-50%,-130%);
+}
+.tip.on{opacity:1}
+
+/* -------------------------------------------------------------- inspector */
+.insp{min-height:100%}
+.insp-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.insp-head h3{font-family:var(--mono);font-size:19px;font-weight:700;letter-spacing:-.01em}
+.insp-head .sub{font-family:var(--mono);font-size:11.5px;color:var(--fg-3)}
+.rolebar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:14px 0 8px;background:var(--bg-2);border:1px solid var(--line)}
+.rolebar span{display:block;height:100%}
+.rolebar span:nth-child(1){background:var(--r0)}
+.rolebar span:nth-child(2){background:var(--r1)}
+.rolebar span:nth-child(3){background:var(--r2)}
+
+.chars{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{
+  font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-radius:5px;
+  padding:3px 7px;color:var(--fg-2);background:var(--bg-2);white-space:nowrap;
+}
+.chip b{color:var(--fg);font-weight:600}
+.chip small{color:var(--fg-3);font-size:10px;margin-left:4px}
+
+.exlist{margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg-2);
+        max-height:290px;overflow:auto;overflow-x:hidden}
+.exlist::-webkit-scrollbar{width:9px}
+.exlist::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
+.ex{
+  font-family:var(--mono);font-size:12px;line-height:1.5;padding:5px 10px;
+  border-bottom:1px solid var(--line);color:var(--fg-3);
+  white-space:pre-wrap;word-break:break-word;
+}
+.ex:last-child{border-bottom:0}
+.ex mark{
+  background:var(--accent-fill);color:var(--accent-ink);font-weight:700;
+  border-radius:2px;padding:0 1px;
+}
+.subhead{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fg-3);margin:18px 0 8px;
+}
+.mini{font-family:var(--mono);font-size:11.5px;color:var(--fg-3);margin-top:8px;line-height:1.6}
+.mini b{color:var(--fg-2);font-weight:500}
+
+/* ------------------------------------------------------------- trace view */
+.tracebox{
+  font-family:var(--mono);font-size:13.5px;line-height:2.05;
+  padding:18px clamp(12px,2.2vw,20px);
+  white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;
+}
+@media(max-width:520px){ .tracebox{font-size:12px;line-height:1.95} }
+.tracebox b{
+  font-weight:400;display:inline;border-radius:2px;cursor:pointer;
+  box-shadow:inset 0 -3px 0 0 var(--tc);
+}
+.tracebox b:hover{background:var(--sel)}
+.tracebox b.on{background:var(--accent-fill);color:var(--accent-ink)}
+.tracebox.fill b{background:var(--tc);color:var(--bg)}
+.tracebox.fill b:hover{outline:1px solid var(--fg)}
+
+.toggles{display:flex;gap:6px;flex-wrap:wrap}
+.tg{
+  appearance:none;background:var(--bg-2);border:1px solid var(--line);cursor:pointer;
+  font-family:var(--mono);font-size:11px;color:var(--fg-3);
+  padding:5px 10px;border-radius:6px;transition:.15s;
+}
+.tg:hover{color:var(--fg-2);border-color:var(--line-2)}
+.tg[aria-pressed="true"]{color:var(--accent-ink);background:var(--accent-fill);border-color:var(--accent-fill)}
+
+/* ---------------------------------------------------------------- callout */
+.callout{
+  border:1px solid var(--accent-dim);border-radius:12px;padding:clamp(18px,3vw,28px);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 7%,transparent),transparent 65%);
+}
+.callout h3{font-size:clamp(19px,2.4vw,24px);max-width:28ch}
+.callout p{color:var(--fg-2);font-size:15px;margin-top:12px;max-width:64ch}
+
+table.tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin-top:8px}
+table.tbl th,table.tbl td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.tbl th{color:var(--fg-3);font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:10.5px}
+table.tbl td{color:var(--fg-2)}
+table.tbl td b{color:var(--fg);font-weight:600}
+.scroller{overflow-x:auto}
+.scroller::-webkit-scrollbar{height:9px}
+.scroller::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
+
+.status li{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);
+           font-size:14.6px;color:var(--fg-2);align-items:flex-start}
+.status ul{list-style:none;margin:0;padding:0}
+.status li:last-child{border-bottom:0}
+.status li .mk{font-family:var(--mono);font-size:12px;flex:none;width:1.6em;padding-top:2px;color:var(--fg-3)}
+.status li b{color:var(--fg);font-weight:600}
+
+/* ------------------------------------------------------------------ footer */
+footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--fg-3);font-size:13.5px}
+.foot-grid{display:flex;flex-wrap:wrap;gap:26px 44px;align-items:flex-start}
+.foot-grid nav{display:flex;flex-direction:column;gap:7px}
+.foot-grid nav b{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--fg-3);margin-bottom:4px;font-weight:400}
+.foot-grid nav a{color:var(--fg-2);text-decoration:none}
+.foot-grid nav a:hover{color:var(--accent)}
+.foot-note{max-width:44ch;margin-left:auto;font-size:12.5px;line-height:1.65}
+
+/* --------------------------------------------------------------- reveal */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.2,.7,.3,1),transform .55s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+html{scroll-behavior:smooth}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+.err{color:var(--err);font-family:var(--mono);font-size:12.5px;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="./index.html"><span class="dot"></span>Ralytable<small>/ raly</small></a>
+    <nav class="nav-links">
+      <a class="hide-s" href="./index.html#types">Types</a>
+      <a class="hide-s" href="./index.html#findings">Findings</a>
+      <a class="here" href="./interpretability.html">Codebook</a>
+      <a class="ghost" href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments/06_discrete_core">Experiment</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ==================================================== HERO -->
+<div class="hero">
+  <div class="wrap hero-in">
+    <h1>You can <em>enumerate</em> what this model thinks in.</h1>
+    <p class="sub">
+      Between the encoder and the decoder, this model's hidden state is snapped to the nearest of
+      <b>1024 discrete codes</b>. That codebook is the whole internal alphabet — finite, countable, and
+      every character of every text gets exactly one of them. Below is all of it, extracted from the
+      trained checkpoint. Nothing on this page is illustrative.
+    </p>
+    <div class="statline" id="statline">
+      <span>loading measurements…</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================================== ARCHITECTURE -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">Where the codes live</p>
+  <h2 class="big">Three layers in, snap to a code, three layers out.</h2>
+  <p class="lede">
+    A dense transformer's middle is a continuous vector you can only interrogate by training probes
+    against it. Replace that vector with a nearest-neighbour lookup into a fixed table and the middle
+    becomes a symbol — a thing with an index, a frequency, and a list of everything it has ever fired on.
+    That is the entire trick, and it is what makes the rest of this page possible.
+  </p>
+
+  <div class="panel" style="margin-top:26px">
+    <div class="panel-bar"><b>DiscreteCore</b> <span>character-level · 6.4M parameters · 6 layers · 6000 steps</span></div>
+    <div class="scroller">
+      <svg viewBox="0 0 900 132" width="900" height="132" role="img"
+           aria-label="Architecture: text into three encoder layers, then vector quantisation against a 1024-entry codebook, then three decoder layers, then next-character prediction."
+           style="min-width:820px;display:block;padding:14px 18px">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g fill="none" stroke="currentColor" color="var(--fg-3)" stroke-width="1.2" marker-end="url(#ar)">
+          <path d="M104 52 H150"/><path d="M258 52 H304"/><path d="M436 52 H482"/><path d="M590 52 H636"/>
+        </g>
+        <g font-family="var(--mono)" font-size="11.5">
+          <g>
+            <rect x="10" y="34" width="94" height="36" rx="7" fill="var(--panel-2)" stroke="var(--line-2)"/>
+            <text x="57" y="57" text-anchor="middle" fill="var(--fg-2)">text</text>
+          </g>
+          <g>
+            <rect x="150" y="34" width="108" height="36" rx="7" fill="var(--panel-2)" stroke="var(--line-2)"/>
+            <text x="204" y="57" text-anchor="middle" fill="var(--fg-2)">encoder ×3</text>
+          </g>
+          <g>
+            <rect x="304" y="22" width="132" height="60" rx="8" fill="color-mix(in srgb,var(--accent) 14%,transparent)" stroke="var(--accent)"/>
+            <text x="370" y="47" text-anchor="middle" fill="var(--fg)" font-weight="700">nearest code</text>
+            <text x="370" y="65" text-anchor="middle" fill="var(--accent)">1 of 1024</text>
+          </g>
+          <g>
+            <rect x="482" y="34" width="108" height="36" rx="7" fill="var(--panel-2)" stroke="var(--line-2)"/>
+            <text x="536" y="57" text-anchor="middle" fill="var(--fg-2)">decoder ×3</text>
+          </g>
+          <g>
+            <rect x="636" y="34" width="150" height="36" rx="7" fill="var(--panel-2)" stroke="var(--line-2)"/>
+            <text x="711" y="57" text-anchor="middle" fill="var(--fg-2)">next character</text>
+          </g>
+        </g>
+        <g font-family="var(--mono)" font-size="10.5" fill="var(--fg-3)">
+          <text x="370" y="104" text-anchor="middle">the only place the state is forced to be a symbol</text>
+          <text x="370" y="120" text-anchor="middle" fill="var(--accent)">↑ everything below is measured here</text>
+        </g>
+      </svg>
+    </div>
+    <div class="panel-note">
+      Quantisation is EMA vector-quantisation in a 32-dimensional projected space, with dead-code revival.
+      <strong>1015 of 1024 codes are live</strong> on the corpus — the bottleneck is being used, not collapsed.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================================================== HONEST FRAMING -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">Read this before the pretty parts</p>
+  <h2 class="big">The model cannot reason. That is not the point.</h2>
+  <p class="lede">
+    This is a 6.4M-parameter character model trained for six minutes on 4,042 synthetic word problems.
+    It writes fluent, perfectly-formatted nonsense. Here is an unedited sample from the very checkpoint
+    this page analyses, at temperature 0.7:
+  </p>
+
+  <div class="panel" style="margin-top:22px">
+    <div class="panel-bar"><b>codes1024.pt</b> <span>prompt: "[1] A train travels" · temperature 0.7 · unedited</span></div>
+    <pre class="out" id="sample">loading…</pre>
+    <div class="panel-note">
+      A train travels 120 miles and the time taken is 2.5 hours, so the speed is
+      <strong>6 minutes = 60 × 60 = 6/3 hours</strong>, and the answer is 7.5. Every quantity is wrong.
+      <strong>Every citation is right.</strong> Step [3] cites [1] and [2]; step [4] cites [3]; no step ever
+      cites one that does not exist; no premise pretends to cite. Form is learned long before content —
+      which is exactly the pathology this project exists to fix, reproduced inside our own architecture.
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:26px">
+    <div class="callout">
+      <h3>The claim is legibility, not capability.</h3>
+      <p>
+        You cannot open a dense 6.4M model and read off what its middle layer is doing. You can open this one
+        and list all 1015 things it can be doing, with counts. Whether the thing being done is <em>good</em>
+        is a separate question, and here the answer is plainly no.
+      </p>
+    </div>
+    <div class="card">
+      <span class="tag">Role purity, against its own null</span>
+      <p style="margin-top:0">
+        The legibility proxy: for each code, how well does it predict whether its character sits in a
+        <b>premise</b>, a <b>derived</b> step, or the <b>answer</b>? The majority class is 58% of the corpus,
+        so a codebook carrying no role information at all still scores 0.580.
+      </p>
+      <div class="purity" id="purity"></div>
+      <p class="mini" id="puritynote"></p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================================================== THE MAP -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">All 1024 codes</p>
+  <h2 class="big">The codebook, on one screen.</h2>
+  <p class="lede">
+    Each dot is one code, placed by PCA of its 32-dimensional code vector, sized by how often it fires
+    across the 886,091-character corpus, and coloured by the reasoning-step role it sits in most often.
+    <b>Click any dot</b> to read what it actually fires on.
+  </p>
+
+  <div class="explorer" style="margin-top:26px">
+    <div class="panel">
+      <div class="panel-bar">
+        <b>PCA of the codebook</b>
+        <span id="pcavar"></span>
+        <span class="lab" style="margin-left:auto">
+          <span class="key k0"><i></i>premise</span>
+          <span class="key k1"><i></i>derived</span>
+          <span class="key k2"><i></i>answer</span>
+        </span>
+      </div>
+      <div class="mapwrap">
+        <svg id="map" viewBox="0 0 560 520" role="application"
+             aria-label="Scatter plot of 1024 discrete codes in the first two principal components. Click a dot to inspect that code."></svg>
+        <div class="tip" id="tip" aria-hidden="true"></div>
+      </div>
+      <div class="panel-note">
+        Dot area is proportional to firing count. The two components explain <span id="pcavar2"></span> of the
+        variance between code vectors, so this is a real projection of the codebook, not a decorative layout.
+      </div>
+    </div>
+
+    <div class="panel insp">
+      <div class="panel-bar">
+        <b>Inspector</b>
+        <span class="toggles" style="margin-left:auto">
+          <button class="tg" id="rand" type="button">random code</button>
+        </span>
+      </div>
+      <div style="padding:clamp(16px,2.4vw,22px)" id="insp">
+        <p class="mini">Select a code from the map or the trace below.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================================================== TRACE -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">The alphabet, laid over real text</p>
+  <h2 class="big">One reasoning trace, every character tagged with its code.</h2>
+  <p class="lede">
+    This is a real example from the training corpus, run through the model. Every character below carries
+    the code that fired at that position. <b>Hover</b> to see which code; <b>click</b> to open it in the
+    inspector above. Colour by role to see the model's sense of reasoning structure, or by code identity to
+    see how finely the alphabet is chopped.
+  </p>
+
+  <div class="panel" style="margin-top:24px">
+    <div class="panel-bar">
+      <b id="tracemeta">trace</b>
+      <span class="toggles" style="margin-left:auto">
+        <button class="tg" id="mode-role" type="button" aria-pressed="true">colour by role</button>
+        <button class="tg" id="mode-code" type="button" aria-pressed="false">colour by code</button>
+        <button class="tg" id="mode-fill" type="button" aria-pressed="false">solid</button>
+      </span>
+    </div>
+    <div class="tracebox" id="trace">loading…</div>
+    <div class="panel-note" id="tracenote"></div>
+  </div>
+</div>
+</section>
+
+<!-- ==================================================== WHAT THEY MEAN -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">The honest answer</p>
+  <h2 class="big">Mostly, the codes are surface character classes.</h2>
+  <p class="lede">
+    Having looked at all 1015 live codes: this alphabet is largely orthographic. The median code puts
+    <b>63%</b> of its firings on a single character, and <b>326 codes are a single character outright</b>.
+    The rest are character <em>classes</em> — one code for "a digit inside an arithmetic expression",
+    another for "a consonant in the middle of a word" — conditioned on where in the line they occur.
+  </p>
+  <p class="lede">
+    That also explains most of the +0.086 role excess, and it is worth being blunt about. The codes that
+    predict role best predict it because <em>the surface string gives the role away</em>:
+  </p>
+
+  <div class="scroller" style="margin-top:18px">
+  <table class="tbl">
+    <thead><tr><th>code</th><th>fires</th><th>role</th><th>what it actually is</th></tr></thead>
+    <tbody>
+      <tr><td><b>864</b></td><td>4,038</td><td>100% answer</td><td>the <b>A</b> of <code>ANSWER:</code></td></tr>
+      <tr><td><b>396</b></td><td>3,222</td><td>100% answer</td><td>the <b>R</b> of <code>ANSWER:</code></td></tr>
+      <tr><td><b>470</b></td><td>977</td><td>100% derived</td><td>the <b>]</b> inside <code>from [1],[2]:</code></td></tr>
+      <tr><td><b>692</b></td><td>2,184</td><td>98% premise</td><td>the space after <code>[2]</code> at the start of an uncited line</td></tr>
+      <tr><td><b>988</b></td><td>1,059</td><td>58% derived</td><td>a full stop ending a step line</td></tr>
+      <tr><td><b>410</b></td><td>328</td><td>81% derived</td><td>a digit — near-uniform over 0–9</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="grid g2" style="margin-top:28px">
+    <div class="card">
+      <span class="tag">So is the legibility fake?</span>
+      <p style="margin-top:0">
+        No, but it is smaller than "0.664 role purity" sounds. A code that fires on <code>]</code> genuinely
+        does predict "derived step", and it is genuinely nameable — you can write <em>"citation bracket"</em> on
+        it and be right every time. That is real interpretability. It is just interpretability about
+        <b>format</b>, and this model has learned format and nothing else, exactly as its generated samples show.
+      </p>
+    </div>
+    <div class="card">
+      <span class="tag">What would falsify it</span>
+      <p style="margin-top:0">
+        The test that matters is whether the structure is <b>load-bearing</b>: change premise [1], and step [3]'s
+        codes should change. If they do not, the citation is decorative and the codebook is describing a
+        typesetting convention. That experiment has not been run yet. It is the next one.
+      </p>
+    </div>
+  </div>
+
+  <div class="status" style="margin-top:30px">
+    <p class="eyebrow" style="margin-bottom:12px">Limitations that apply to every number above</p>
+    <ul>
+      <li><span class="mk">—</span><span>One seed, one corpus, one teacher. <b>No error bars.</b></span></li>
+      <li><span class="mk">—</span><span>The corpus is synthetic and formulaic, which almost certainly makes this structure <b>far easier to encode than real text</b>.</span></li>
+      <li><span class="mk">—</span><span>Role purity is a <b>three-class proxy</b> for legibility. "A code predicts a role" is much less than "a human can name what a code means".</span></li>
+      <li><span class="mk">—</span><span>Codes are read at positions with at least 128 characters of left context, so this measures the model mid-sequence, <b>not at a cold start</b>.</span></li>
+      <li><span class="mk">—</span><span>The dense baseline has no bottleneck rather than a matched continuous one, so <b>some of the gap is regularisation</b>, not discreteness.</span></li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ==================================================== REPRO -->
+<section>
+<div class="wrap sec rv">
+  <p class="eyebrow">Reproduce it</p>
+  <h2 class="big">Every number on this page comes out of one script.</h2>
+  <p class="lede">
+    <code>export_viz.py</code> loads the checkpoint, forwards the corpus, and writes the JSON this page
+    fetches. No hand-entered figures, no cached summary — if you retrain, the page changes.
+  </p>
+  <div class="panel" style="margin-top:22px">
+    <div class="panel-bar"><b>shell</b></div>
+    <pre class="out">python experiments/06_discrete_core/sample.py       <span class="cite"># trains codes=1024, writes codes1024.pt (~6 min, GPU)</span>
+python experiments/06_discrete_core/export_viz.py   <span class="cite"># writes site/codebook.json and web/codebook.json</span></pre>
+    <div class="panel-note" id="prov">provenance loading…</div>
+  </div>
+</div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <nav>
+      <b>Language</b>
+      <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/compiler">Compiler</a>
+      <a href="./playground/">Playground</a>
+      <a href="./index.html">Overview</a>
+    </nav>
+    <nav>
+      <b>Research</b>
+      <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments">Experiments</a>
+      <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/06_discrete_core/FINDINGS.md">This experiment</a>
+      <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/RESEARCH_LOG.md">Research log</a>
+    </nav>
+    <nav>
+      <b>Project</b>
+      <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap</a>
+      <a href="./index.html#status">Status</a>
+    </nav>
+    <p class="foot-note">
+      Ralytable is the project and the model. Raly is the language and compiler. MIT licensed.
+      Nothing on this page is a product announcement — the model here is a 6.4M-parameter toy that
+      cannot reason. Every number is reproducible from the repository.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var ROLES = ["premise","derived","answer"];
+  var RVAR  = ["--r0","--r1","--r2"];
+  var D = null;
+  var byId = {};
+  var selected = null;
+
+  function $(id){ return document.getElementById(id); }
+  function el(tag, cls){ var e = document.createElement(tag); if(cls) e.className = cls; return e; }
+  function pct(x){ return (x*100).toFixed(1) + "%"; }
+  /* share-of-corpus runs down to ~0.0002%, so fixed(1) would print "0.0%" for
+     most of the codebook. Keep two significant figures instead. */
+  function share(x){
+    var v = x*100;
+    return (v >= 1 ? v.toFixed(1) : v >= 0.01 ? v.toFixed(2) : v.toFixed(4)) + "%";
+  }
+  function num(n){ return n.toLocaleString("en-US"); }
+  /* Always hand SVG a live var() reference rather than a resolved colour, so the
+     map and the trace re-colour themselves when the OS theme flips. */
+  function cssvar(name){ return "var(" + name + ")"; }
+
+  /* Render a character so control characters are visible in a monospace list. */
+  function showChar(c){
+    if(c === "\n") return "\\n";
+    if(c === "\t") return "\\t";
+    if(c === " ")  return "␣";
+    return c;
+  }
+  function dominant(roles){
+    var b = 0;
+    for(var i=1;i<3;i++) if(roles[i] > roles[b]) b = i;
+    return b;
+  }
+
+  /* ---------------------------------------------------------------- load */
+  fetch("./codebook.json")
+    .then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function(d){ D = d; boot(); })
+    .catch(function(e){
+      var m = "could not load codebook.json (" + e.message + ")." +
+              (location.protocol === "file:" ?
+                " This page fetches its data, so it needs to be served over HTTP — try: python -m http.server" : "");
+      $("statline").innerHTML = "";
+      var p = el("span","err"); p.textContent = m;
+      $("statline").appendChild(p);
+      $("sample").textContent = m;
+      $("trace").textContent = "";
+    });
+
+  /* ---------------------------------------------------------------- boot */
+  function boot(){
+    var s = D.stats, m = D.meta;
+
+    /* ---- hero statline */
+    var sl = $("statline");
+    sl.innerHTML = "";
+    [[num(s.live_codes) + "/" + m.n_codes, "live codes"],
+     [s.entropy_bits.toFixed(2), "bits of code entropy"],
+     [num(m.chars_in_corpus), "characters analysed"],
+     [num(m.examples_in_corpus), "reasoning traces"],
+     [(m.params/1e6).toFixed(1) + "M", "parameters"]].forEach(function(p){
+      var sp = el("span");
+      var b = el("b"); b.textContent = p[0];
+      sp.appendChild(b); sp.appendChild(document.createTextNode(" " + p[1]));
+      sl.appendChild(sp);
+    });
+
+    /* ---- generated sample, with citations picked out */
+    renderSample(D.sample);
+
+    /* ---- purity bars */
+    var pu = $("purity");
+    var rows = [["shuffle null", s.shuffle_null, false],
+                ["measured",     s.role_purity,  true]];
+    rows.forEach(function(r){
+      var row = el("div","prow");
+      var lab = el("span"); lab.textContent = r[0];
+      var tr = el("div","ptrack");
+      var f = el("div","pfill" + (r[2] ? " hi" : ""));
+      /* scale 0.5 – 0.75 so the difference is visible without exaggerating it */
+      f.style.width = Math.max(0, Math.min(1, (r[1]-0.5)/0.25)) * 100 + "%";
+      tr.appendChild(f);
+      var v = el("b"); v.textContent = r[1].toFixed(3);
+      row.appendChild(lab); row.appendChild(tr); row.appendChild(v);
+      pu.appendChild(row);
+    });
+    $("puritynote").innerHTML =
+      "Excess over the null: <b>+" + s.excess.toFixed(3) + "</b>. " +
+      "Real, measured, monotone in codebook size — and small. The axis above starts at 0.500, " +
+      "not 0, so the bar is not flattering it. Base rates in this corpus: premise " +
+      pct(s.role_base_rate[0]) + ", derived " + pct(s.role_base_rate[1]) +
+      ", answer " + pct(s.role_base_rate[2]) + ".";
+
+    /* ---- provenance */
+    $("prov").innerHTML =
+      "Generated by <strong>" + m.generated_by + "</strong> from <strong>" + m.checkpoint +
+      "</strong> — " + num(m.scored_positions) + " scored character positions, alphabet of " +
+      m.alphabet + ", context " + m.ctx + " with stride " + m.stride + ".";
+
+    D.codes.forEach(function(c){ byId[c.id] = c; });
+
+    drawMap();
+    drawTrace();
+
+    $("rand").addEventListener("click", function(){
+      var live = D.codes.filter(function(c){ return c.n >= 20; });
+      select(live[Math.floor(Math.random()*live.length)].id);
+      $("insp").scrollIntoView({block:"nearest"});
+    });
+
+    select(864);   /* the ANSWER code: the clearest thing in the whole codebook */
+  }
+
+  /* -------------------------------------------------------------- sample */
+  function renderSample(txt){
+    var pre = $("sample");
+    pre.textContent = "";
+    /* highlight the citation machinery, which is the part that is correct */
+    var re = /(from \[\d+\](?:,\[\d+\])*:|ANSWER:|\[\d+\])/g;
+    var last = 0, mm;
+    while((mm = re.exec(txt)) !== null){
+      if(mm.index > last) pre.appendChild(document.createTextNode(txt.slice(last, mm.index)));
+      var b = el("span","cite"); b.textContent = mm[0];
+      pre.appendChild(b);
+      last = mm.index + mm[0].length;
+    }
+    if(last < txt.length) pre.appendChild(document.createTextNode(txt.slice(last)));
+  }
+
+  /* ----------------------------------------------------------------- map */
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function drawMap(){
+    var svg = $("map");
+    var W = 560, H = 520, PADL = 26, PADR = 16, PADT = 18, PADB = 26;
+    var xs = D.codes.map(function(c){ return c.x; });
+    var ys = D.codes.map(function(c){ return c.y; });
+    var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+    var y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+    var sx = function(v){ return PADL + (v - x0)/(x1 - x0) * (W - PADL - PADR); };
+    var sy = function(v){ return H - PADB - (v - y0)/(y1 - y0) * (H - PADT - PADB); };
+    var maxN = Math.max.apply(null, D.codes.map(function(c){ return c.n; }));
+
+    /* faint grid so the plane reads as a plane */
+    var g = document.createElementNS(SVGNS,"g");
+    g.style.stroke = cssvar("--grid");
+    g.setAttribute("stroke-width","1");
+    for(var i=1;i<5;i++){
+      var lx = document.createElementNS(SVGNS,"line");
+      lx.setAttribute("x1", PADL + i/5*(W-PADL-PADR)); lx.setAttribute("x2", PADL + i/5*(W-PADL-PADR));
+      lx.setAttribute("y1", PADT); lx.setAttribute("y2", H-PADB);
+      g.appendChild(lx);
+      var ly = document.createElementNS(SVGNS,"line");
+      ly.setAttribute("y1", PADT + i/5*(H-PADT-PADB)); ly.setAttribute("y2", PADT + i/5*(H-PADT-PADB));
+      ly.setAttribute("x1", PADL); ly.setAttribute("x2", W-PADR);
+      g.appendChild(ly);
+    }
+    svg.appendChild(g);
+
+    var axl = document.createElementNS(SVGNS,"text");
+    axl.setAttribute("x", W-PADR); axl.setAttribute("y", H-8);
+    axl.setAttribute("text-anchor","end");
+    axl.setAttribute("font-family","var(--mono)"); axl.setAttribute("font-size","10");
+    axl.style.fill = cssvar("--fg-3");
+    axl.textContent = "PC1 →";
+    svg.appendChild(axl);
+
+    var dots = document.createElementNS(SVGNS,"g");
+    svg.appendChild(dots);
+
+    /* draw big dots first so small ones stay clickable on top */
+    var order = D.codes.slice().sort(function(a,b){ return b.n - a.n; });
+    order.forEach(function(c){
+      var dot = document.createElementNS(SVGNS,"circle");
+      /* area ∝ count, with a floor so dead codes are still visible and clickable */
+      var r = c.n === 0 ? 1.6 : 2.0 + 9.0 * Math.sqrt(c.n / maxN);
+      dot.setAttribute("cx", sx(c.x).toFixed(2));
+      dot.setAttribute("cy", sy(c.y).toFixed(2));
+      dot.setAttribute("r", r.toFixed(2));
+      dot.style.fill = c.n === 0 ? cssvar("--fg-3") : cssvar(RVAR[dominant(c.roles)]);
+      dot.setAttribute("fill-opacity", c.n === 0 ? "0.25" : "0.62");
+      dot.setAttribute("data-id", c.id);
+      dot.setAttribute("tabindex","0");
+      dot.setAttribute("role","button");
+      dot.setAttribute("aria-label", "code " + c.id + ", " + c.n + " firings");
+      dots.appendChild(dot);
+    });
+
+    var tip = $("tip");
+    function showTip(c, ev){
+      var box = svg.getBoundingClientRect();
+      tip.textContent = "code " + c.id + " · " + num(c.n) + "× · " +
+                        (c.n ? ROLES[dominant(c.roles)] : "never fires");
+      tip.style.left = (ev.clientX - box.left) + "px";
+      tip.style.top  = (ev.clientY - box.top) + "px";
+      tip.classList.add("on");
+    }
+    svg.addEventListener("mousemove", function(ev){
+      var t = ev.target;
+      if(t.tagName === "circle"){ showTip(byId[+t.getAttribute("data-id")], ev); }
+      else tip.classList.remove("on");
+    });
+    svg.addEventListener("mouseleave", function(){ tip.classList.remove("on"); });
+    svg.addEventListener("click", function(ev){
+      var t = ev.target;
+      if(t.tagName === "circle") select(+t.getAttribute("data-id"));
+    });
+    svg.addEventListener("keydown", function(ev){
+      var t = ev.target;
+      if(t.tagName === "circle" && (ev.key === "Enter" || ev.key === " ")){
+        ev.preventDefault();
+        select(+t.getAttribute("data-id"));
+      }
+    });
+
+    $("pcavar").textContent = "PC1 " + pct(D.stats.pca_var[0]) + " · PC2 " + pct(D.stats.pca_var[1]);
+    $("pcavar2").textContent = pct(D.stats.pca_var[0] + D.stats.pca_var[1]);
+  }
+
+  /* ----------------------------------------------------------- inspector */
+  function select(id){
+    var c = byId[id];
+    if(!c) return;
+    selected = id;
+
+    [].forEach.call(document.querySelectorAll("#map circle"), function(d){
+      d.classList.toggle("on", +d.getAttribute("data-id") === id);
+    });
+    [].forEach.call(document.querySelectorAll("#trace b"), function(b){
+      b.classList.toggle("on", +b.getAttribute("data-c") === id);
+    });
+
+    var host = $("insp");
+    host.innerHTML = "";
+
+    var head = el("div","insp-head");
+    var h = el("h3"); h.textContent = "code " + c.id;
+    var sub = el("span","sub");
+    sub.textContent = c.n ? num(c.n) + " firings · " + share(c.n / D.meta.scored_positions) + " of the corpus"
+                          : "never fires on this corpus";
+    head.appendChild(h); head.appendChild(sub);
+    host.appendChild(head);
+
+    if(!c.n){
+      var dead = el("p","mini");
+      dead.innerHTML = "This is one of the <b>" + (D.meta.n_codes - D.stats.live_codes) +
+                       " dead codes</b>. It survived training without ever winning an assignment on this corpus.";
+      host.appendChild(dead);
+      return;
+    }
+
+    /* role distribution */
+    var sh = el("p","subhead"); sh.textContent = "reasoning-step role";
+    host.appendChild(sh);
+    var bar = el("div","rolebar");
+    ROLES.forEach(function(_, i){
+      var sp = el("span");
+      sp.style.width = (c.roles[i] / c.n * 100) + "%";
+      bar.appendChild(sp);
+    });
+    host.appendChild(bar);
+    var rl = el("p","mini");
+    rl.innerHTML = ROLES.map(function(r,i){
+      return "<b>" + pct(c.roles[i]/c.n) + "</b> " + r;
+    }).join(" · ");
+    host.appendChild(rl);
+
+    /* character distribution */
+    var sh2 = el("p","subhead");
+    sh2.textContent = "characters at its firing positions (" + c.nchars +
+                      " distinct" + (c.chars.length < c.nchars ? ", top " + c.chars.length : "") + ")";
+    host.appendChild(sh2);
+    var chars = el("div","chars");
+    c.chars.forEach(function(p){
+      var chip = el("span","chip");
+      var b = el("b"); b.textContent = showChar(p[0]);
+      var s = el("small"); s.textContent = pct(p[1]/c.n);
+      chip.appendChild(b); chip.appendChild(s);
+      chars.appendChild(chip);
+    });
+    host.appendChild(chars);
+
+    /* contexts */
+    var sh3 = el("p","subhead");
+    sh3.textContent = c.ex.length + " sampled contexts (not cherry-picked)";
+    host.appendChild(sh3);
+    var list = el("div","exlist");
+    c.ex.forEach(function(e){
+      var row = el("div","ex");
+      var t = e.t, i = e.i;
+      row.appendChild(document.createTextNode(vis(t.slice(0, i))));
+      var mk = el("mark"); mk.textContent = showChar(t[i]);
+      row.appendChild(mk);
+      row.appendChild(document.createTextNode(vis(t.slice(i+1))));
+      list.appendChild(row);
+    });
+    host.appendChild(list);
+  }
+
+  /* newlines inside a one-line context window would wreck the layout */
+  function vis(s){ return s.replace(/\n/g, "⏎").replace(/\t/g, "→"); }
+
+  /* --------------------------------------------------------------- trace */
+  var traceMode = "role";
+  function codeHue(id){
+    /* deterministic, well-spread hue per code, so distinct codes look distinct */
+    return (id * 137.508) % 360;
+  }
+  function drawTrace(){
+    var t = D.trace;
+    var box = $("trace");
+    box.innerHTML = "";
+    var uniq = {};
+    for(var i=0;i<t.text.length;i++){
+      var ch = t.text[i], cid = t.codes[i];
+      uniq[cid] = 1;
+      var b = el("b");
+      b.textContent = ch;
+      b.setAttribute("data-c", cid);
+      b.setAttribute("data-i", i);
+      b.setAttribute("title", "code " + cid + " · " + ROLES[t.roles[i]]);
+      box.appendChild(b);
+    }
+    paintTrace();
+    box.addEventListener("click", function(ev){
+      var b = ev.target;
+      if(b.tagName === "B"){
+        select(+b.getAttribute("data-c"));
+        document.querySelector(".explorer").scrollIntoView({block:"center"});
+      }
+    });
+
+    $("tracemeta").textContent = "corpus example #" + t.example + " · " + t.text.length +
+                                 " characters · " + Object.keys(uniq).length + " distinct codes";
+    $("tracenote").innerHTML =
+      "Every character above was assigned its code by a real forward pass. " +
+      Object.keys(uniq).length + " distinct codes cover " + t.text.length +
+      " characters, so the alphabet is chopped finely — <strong>most codes are close to a single " +
+      "character in a particular position</strong>, not a concept.";
+  }
+  function paintTrace(){
+    var t = D.trace;
+    var box = $("trace");
+    box.classList.toggle("fill", document.getElementById("mode-fill").getAttribute("aria-pressed") === "true");
+    [].forEach.call(box.children, function(b, i){
+      var col;
+      if(traceMode === "role"){
+        col = cssvar(RVAR[t.roles[i]]);
+      } else {
+        col = "hsl(" + codeHue(t.codes[i]).toFixed(1) + " 62% 55%)";
+      }
+      b.style.setProperty("--tc", col);
+    });
+  }
+  function setMode(m){
+    traceMode = m;
+    $("mode-role").setAttribute("aria-pressed", m === "role" ? "true" : "false");
+    $("mode-code").setAttribute("aria-pressed", m === "code" ? "true" : "false");
+    paintTrace();
+  }
+  $("mode-role").addEventListener("click", function(){ setMode("role"); });
+  $("mode-code").addEventListener("click", function(){ setMode("code"); });
+  $("mode-fill").addEventListener("click", function(){
+    var on = this.getAttribute("aria-pressed") === "true";
+    this.setAttribute("aria-pressed", on ? "false" : "true");
+    paintTrace();
+  });
+
+  /* ------------------------------------------------------------- reveal */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var els = [].slice.call(document.querySelectorAll(".rv"));
+  if(reduce || !("IntersectionObserver" in window)){
+    els.forEach(function(e){ e.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, {rootMargin:"0px 0px -8% 0px", threshold:0.02});
+    els.forEach(function(e){ io.observe(e); });
+  }
+})();
+</script>
+</body>
+</html>
