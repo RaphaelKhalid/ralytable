@@ -20,8 +20,9 @@ WHY THESE OPTIMISATIONS. At this size the bottleneck is NOT arithmetic, it is
 kernel launch overhead -- thousands of tiny CUDA launches per step, each costing
 more than the work it does. So:
 
-  - torch.compile(mode="reduce-overhead") captures CUDA graphs and replays them,
-    which is the single largest win for small models and does nothing for large.
+  - torch.compile is DISABLED by default: measured at 222 ms/step against
+    41.6 ms/step eager, because the dead-code revival's data-dependent topk
+    breaks the graph every step. See build().
   - bf16 autocast: Ada (sm_89) has bf16 tensor cores; bf16 over fp16 avoids loss
     scaling entirely.
   - TF32 matmuls, fused AdamW, and the whole corpus resident on the GPU so there
@@ -191,14 +192,24 @@ class DiscreteCore(nn.Module):
         return logits, loss, idx
 
 
-def build(vocab, device="cuda", compile_model=True, **kw):
+def build(vocab, device="cuda", compile_model=False, **kw):
+    """compile_model defaults to FALSE, and that is a measured decision.
+
+    torch.compile was tried three ways on this model and lost every time:
+      - mode="reduce-overhead" captures CUDA graphs, which cannot capture the
+        VQ's in-place EMA buffer writes during forward;
+      - default mode compiles, but the dead-code revival does a data-dependent
+        `topk` on `dead.sum()`, which breaks the graph and recompiles every
+        step: 222 ms/step against 41.6 ms/step eager, a 5x regression;
+      - and on Windows it needs a Triton whose version must match torch's
+        exactly (torch 2.6 wants triton 3.2, not 3.7).
+    Eager is the right default here. Pass compile_model=True only after
+    re-benchmarking on a model without data-dependent control flow.
+    """
     m = DiscreteCore(vocab, **kw).to(device)
     if compile_model and device == "cuda":
-        # reduce-overhead captures CUDA graphs; the big win at this size, where
-        # kernel launch cost dominates actual arithmetic. Needs Triton, which
-        # does not ship on Windows, so fall back to eager rather than dying.
         try:
-            compiled = torch.compile(m, mode="reduce-overhead")
+            compiled = torch.compile(m)
             compiled(torch.zeros(1, 8, dtype=torch.long, device=device))
             return compiled
         except Exception as e:
