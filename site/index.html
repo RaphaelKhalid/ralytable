@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ralytable — a language whose types know what a model represents</title>
-<meta name="description" content="Raly is a language whose type system tracks vector-space dimension, VSA family, superposition load and role schema, so interpretability is a property of the source rather than an archaeology project on trained weights.">
+<title>Ralytable — a compiler that knows what a vector holds</title>
+<meta name="description" content="PyTorch sees a vector as a list of numbers. Raly's type system knows which space it is in, how full it is, and which roles are bound into it — so overstuffing one is a compile error instead of a silent accuracy loss.">
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Ralytable">
-<meta property="og:description" content="Interpretability that lives in the type system.">
+<meta property="og:description" content="A compiler that knows what a vector holds.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -76,20 +76,22 @@ code,pre,kbd{font-family:var(--mono)}
 /* ------------------------------------------------------------------ layout */
 .wrap{max-width:var(--max);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
 section{border-top:1px solid var(--line)}
-.sec{padding:clamp(56px,9vw,104px) 0}
+.sec{padding:clamp(60px,9vw,110px) 0}
 .eyebrow{
   font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--accent);margin:0 0 18px;display:flex;align-items:center;gap:10px;
 }
 .eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);opacity:.6;flex:none}
-h2.big{font-size:clamp(28px,4.4vw,46px);max-width:22ch}
-.lede{color:var(--fg-2);font-size:clamp(16px,1.5vw,18.5px);max-width:66ch;margin-top:18px}
+h2.big{font-size:clamp(27px,4.2vw,44px);max-width:22ch}
+.lede{color:var(--fg-2);font-size:clamp(16px,1.5vw,18.5px);max-width:64ch;margin-top:18px}
 .grid{display:grid;gap:clamp(18px,2.4vw,26px)}
+.grid>*{min-width:0}
 @media(min-width:820px){
   .g2{grid-template-columns:1fr 1fr}
-  .g3{grid-template-columns:repeat(3,1fr)}
-  .split{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(26px,4vw,64px);align-items:start}
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .split{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(26px,4vw,58px);align-items:start}
 }
+@media(min-width:1040px){.g4{grid-template-columns:repeat(4,1fr)}}
 
 /* --------------------------------------------------------------------- nav */
 header.nav{
@@ -107,20 +109,20 @@ header.nav{
 .nav-links a:hover{color:var(--fg)}
 .nav-links a.ghost{border:1px solid var(--line-2);padding:5px 12px;border-radius:6px;color:var(--fg)}
 .nav-links a.ghost:hover{border-color:var(--accent);color:var(--accent)}
-@media(max-width:640px){.nav-links .hide-s{display:none}}
+@media(max-width:700px){.nav-links .hide-s{display:none}}
 
 /* ------------------------------------------------------------------- hero */
-.hero{padding:clamp(48px,8vw,86px) 0 clamp(40px,6vw,64px);position:relative;overflow:hidden}
+.hero{padding:clamp(44px,7vw,80px) 0 clamp(40px,6vw,64px);position:relative;overflow:hidden}
 .hero::before{
   content:"";position:absolute;inset:-40% 30% auto -30%;height:120%;
   background:radial-gradient(60% 50% at 30% 40%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 70%);
   pointer-events:none;
 }
 .hero-in{position:relative}
-h1{font-size:clamp(34px,6.1vw,68px);letter-spacing:-.038em;max-width:15ch;font-weight:700}
+h1{font-size:clamp(31px,5.4vw,58px);letter-spacing:-.038em;max-width:17ch;font-weight:700}
 h1 em{font-style:normal;color:var(--accent)}
-.hero p.sub{margin-top:24px;max-width:60ch;font-size:clamp(16px,1.7vw,19.5px);color:var(--fg-2)}
-.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero p.sub{margin-top:22px;max-width:52ch;font-size:clamp(15.5px,1.6vw,18px);color:var(--fg-2)}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 .btn{
   display:inline-flex;align-items:center;gap:8px;text-decoration:none;
   font-size:14px;font-weight:500;padding:10px 18px;border-radius:7px;
@@ -131,7 +133,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .btn.primary:hover{filter:brightness(1.08)}
 .btn .arr{font-family:var(--mono);opacity:.7}
 .statline{
-  margin-top:30px;display:flex;flex-wrap:wrap;gap:8px 22px;
+  margin-top:28px;display:flex;flex-wrap:wrap;gap:8px 22px;
   font-family:var(--mono);font-size:12px;color:var(--fg-3);
 }
 .statline b{color:var(--fg-2);font-weight:500}
@@ -142,29 +144,17 @@ h1 em{font-style:normal;color:var(--accent)}
   overflow:hidden;box-shadow:0 24px 60px -30px rgba(0,0,0,.75);
 }
 .panel-bar{
-  display:flex;align-items:center;gap:2px;flex-wrap:wrap;
-  border-bottom:1px solid var(--line);background:var(--panel-2);padding:0 6px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);background:var(--panel-2);padding:10px 14px;
+  font-family:var(--mono);font-size:11.5px;color:var(--fg-3);letter-spacing:.02em;
 }
-.tab{
-  appearance:none;background:none;border:0;cursor:pointer;
-  font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;
-  color:var(--fg-3);padding:11px 12px 10px;border-bottom:2px solid transparent;
-  transition:color .15s,border-color .15s;
-}
-.tab:hover{color:var(--fg-2)}
-.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
-.tab .pip{color:var(--accent)}
-.panel-file{
-  margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--fg-3);
-  padding:0 10px;display:none;
-}
-@media(min-width:720px){.panel-file{display:block}}
+.panel-bar .pip{color:var(--accent)}
 pre.code{
   margin:0;padding:20px clamp(14px,2.4vw,22px);
-  overflow-x:auto;font-size:12.6px;line-height:1.66;
+  overflow-x:auto;font-size:12.2px;line-height:1.66;
   color:var(--fg-2);tab-size:4;white-space:pre;
 }
-@media(min-width:900px){pre.code{font-size:13.2px}}
+@media(min-width:900px){pre.code{font-size:13px}}
 pre.code::-webkit-scrollbar{height:9px}
 pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 .panel-note{
@@ -194,19 +184,21 @@ pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 :root[data-theme="light"] .d-2,:root[data-theme="light"] .d-dash{color:#1a5fa0}
 :root[data-theme="light"] .ty{color:#0b5d80}
 :root[data-theme="light"] .st{color:#4a6b12}
+:root[data-theme="light"] .fn{color:#14161a}
 @media(prefers-color-scheme:light){
   :root:not([data-theme="dark"]) .d-2,:root:not([data-theme="dark"]) .d-dash{color:#1a5fa0}
   :root:not([data-theme="dark"]) .ty{color:#0b5d80}
   :root:not([data-theme="dark"]) .st{color:#4a6b12}
+  :root:not([data-theme="dark"]) .fn{color:#14161a}
 }
 
 /* ------------------------------------------------------------------- cards */
 .card{
   border:1px solid var(--line);border-radius:11px;background:var(--panel);
-  padding:clamp(18px,2.4vw,26px);
+  padding:clamp(18px,2.4vw,24px);
 }
-.card h3{font-size:17.5px;letter-spacing:-.015em}
-.card p{color:var(--fg-2);font-size:14.6px;margin-top:10px}
+.card h3{font-size:16.5px;letter-spacing:-.015em}
+.card p{color:var(--fg-2);font-size:14.4px;margin-top:10px}
 .card .tag{
   font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
   color:var(--fg-3);display:block;margin-bottom:12px;
@@ -216,23 +208,38 @@ pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
   color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim);padding-bottom:1px;
 }
 .card a.more:hover{border-bottom-color:var(--accent)}
-.num{font-family:var(--disp);font-size:clamp(30px,3.6vw,42px);font-weight:700;letter-spacing:-.03em;color:var(--fg);line-height:1}
-.num span{font-size:.42em;color:var(--fg-3);font-family:var(--mono);font-weight:400;letter-spacing:0;margin-left:6px}
 
-/* ------------------------------------------------------------------ compare */
-.cmp{display:grid;gap:16px}
-@media(min-width:900px){.cmp{grid-template-columns:1fr 1fr;gap:18px}}
-.cmp-head{
-  display:flex;align-items:center;gap:9px;margin-bottom:12px;
-  font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;
+/* ----------------------------------------------------------------- pipeline */
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin-top:34px}
+.pipe .stage{
+  flex:1 1 150px;min-width:0;border:1px solid var(--line);border-radius:10px;
+  background:var(--panel);padding:14px 16px;
 }
-.badge{
-  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  padding:3px 8px;border-radius:4px;border:1px solid currentColor;
+.pipe .stage b{display:block;font-family:var(--mono);font-size:12.5px;color:var(--fg);font-weight:500}
+.pipe .stage span{display:block;margin-top:6px;font-size:13px;color:var(--fg-3);line-height:1.5}
+.pipe .stage.src{background:var(--panel-2);border-style:dashed}
+.pipe .arw{align-self:center;font-family:var(--mono);color:var(--accent);opacity:.75;flex:none}
+@media(max-width:819px){
+  .pipe{flex-direction:column}
+  .pipe .arw{transform:rotate(90deg);align-self:center}
 }
-.b-silent{color:var(--err)}
-.b-caught{color:var(--ok)}
-.b-plan{color:var(--fg-3)}
+.pipe-note{
+  margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--fg-3);line-height:1.75;max-width:74ch;
+}
+.pipe-note b{color:var(--fg-2);font-weight:500}
+
+/* ------------------------------------------------------------ annotated type */
+.tsig{
+  font-family:var(--mono);font-size:clamp(12.5px,2.2vw,19px);color:var(--fg);
+  border:1px solid var(--line);border-radius:11px;background:var(--panel);
+  padding:22px clamp(14px,2.4vw,24px);overflow-x:auto;white-space:pre;line-height:1.9;
+}
+.tsig u{text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:2px}
+.tkey{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:14px}
+@media(min-width:760px){.tkey{grid-template-columns:repeat(3,1fr)}}
+.tkey li{border-left:2px solid var(--accent-dim);padding-left:14px}
+.tkey b{display:block;font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.02em}
+.tkey span{display:block;margin-top:4px;font-size:14.4px;color:var(--fg-2)}
 
 /* ------------------------------------------------------------------- status */
 .status{border-left:2px solid var(--line-2);padding-left:clamp(16px,2.2vw,24px)}
@@ -247,24 +254,16 @@ pre.code::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
 .mk.no{color:var(--fg-3)}
 .status li b{color:var(--fg);font-weight:600}
 
-/* ------------------------------------------------------------------ phases */
-.phase{
-  display:grid;gap:6px 22px;padding:20px 0;border-bottom:1px solid var(--line);
+/* ------------------------------------------------------------------ compare */
+.cmp{display:grid;gap:16px}
+.cmp>*{min-width:0}
+@media(min-width:900px){.cmp{grid-template-columns:1fr 1fr;gap:18px}}
+.badge{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;border:1px solid currentColor;
 }
-@media(min-width:760px){.phase{grid-template-columns:130px minmax(0,1fr) 150px;align-items:baseline}}
-.phase .pn{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3)}
-.phase h3{font-size:19px}
-.phase p{color:var(--fg-2);font-size:14.6px;margin-top:6px;max-width:62ch}
-.phase .gate{font-family:var(--mono);font-size:11.5px;color:var(--fg-3);line-height:1.55}
-.phase .gate b{color:var(--fg-2);font-weight:500;display:block}
-.phase.hi{
-  border:1px solid var(--accent-dim);border-radius:12px;padding:clamp(20px,3vw,30px);
-  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 6%,transparent),transparent 60%);
-  margin:26px 0;
-}
-.phase.hi .pn{color:var(--accent)}
-.phase.hi h3{font-size:clamp(21px,2.6vw,27px)}
-.phase.hi p{color:var(--fg-2);font-size:15.5px}
+.b-silent{color:var(--err)}
+.b-caught{color:var(--ok)}
 
 /* ------------------------------------------------------------------ footer */
 footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--fg-3);font-size:13.5px}
@@ -292,10 +291,10 @@ html{scroll-behavior:smooth}
   <div class="wrap nav-in">
     <a class="brand" href="#top"><span class="dot"></span>Ralytable<small>/ raly</small></a>
     <nav class="nav-links">
-      <a class="hide-s" href="#types">Types</a>
-      <a class="hide-s" href="#findings">Findings</a>
+      <a class="hide-s" href="#how">How it works</a>
+      <a class="hide-s" href="#why">Why types</a>
       <a href="#status">Status</a>
-      <a class="hide-s" href="#roadmap">Roadmap</a>
+      <a class="hide-s" href="#findings">Findings</a>
       <a class="ghost" href="https://github.com/RaphaelKhalid/ralytable">GitHub</a>
     </nav>
   </div>
@@ -308,75 +307,51 @@ html{scroll-behavior:smooth}
   <div class="wrap hero-in">
     <div class="grid split">
       <div>
-        <h1>Interpretability belongs in the <em>type system</em>.</h1>
+        <h1>A compiler that knows <em>what a vector holds</em>.</h1>
         <p class="sub">
-          Within a few years you will not be allowed to deploy a model you cannot explain,
-          and almost nobody is building for that. <b>Raly</b> is a language whose types track what a
-          vector <em>represents</em> — dimension, VSA family, superposition load, and which roles are
-          bound into it — so the signature is a description of the model, readable without running it.
+          PyTorch sees a list of numbers and checks that the shapes line up. It cannot know that a
+          vector is a bag already holding 7 things with room for 31 more — so overstuffing it throws
+          nothing, crashes nothing, and just quietly makes the model worse.
         </p>
+        <p class="sub"><b>Raly</b> puts that in the type. Overstuff it, and it does not compile.</p>
         <div class="cta">
-          <a class="btn primary" href="https://github.com/RaphaelKhalid/ralytable">Read the source <span class="arr">→</span></a>
-          <a class="btn" href="./playground/" id="pg">Playground <span class="arr">↗</span></a>
+          <a class="btn primary" href="./playground/" id="pg">Try the compiler <span class="arr">↗</span></a>
+          <a class="btn" href="#how">How it works</a>
           <a class="btn" href="#status">What actually works</a>
         </div>
         <div class="statline">
-          <span><b>4</b> Rust crates</span>
-          <span><b>71</b> passing tests</span>
-          <span><b>0</b> clippy warnings</span>
-          <span><b>0</b> lines of parser</span>
+          <span><b>179</b> tests</span>
+          <span><b>0</b> warnings</span>
+          <span><b>8</b> Rust crates</span>
+          <span><b>102KB</b> wasm playground</span>
         </div>
       </div>
 
       <div class="rv in">
         <div class="panel">
-          <div class="panel-bar" role="tablist" aria-label="Diagnostics">
-            <button class="tab" role="tab" id="t-cap" aria-controls="p-cap" aria-selected="true"><span class="pip">◆</span> designed · RALY5001</button>
-            <button class="tab" role="tab" id="t-lex" aria-controls="p-lex" aria-selected="false"><span class="pip">●</span> shipping · RALY1002</button>
-            <span class="panel-file" id="panel-file">scene.raly</span>
-          </div>
-
-<pre class="code" role="tabpanel" id="p-cap" aria-labelledby="t-cap"><span class="d-err">error</span>[<span class="d-code">RALY5001</span>]: <span class="d-msg">bundle exceeds the capacity of its space</span>
-<span class="d-loc">  --&gt; scene.raly:21:17</span>
-<span class="d-gut">   |</span>
-<span class="d-gut">21 |</span> <span class="d-src">    let scene = bundle(agent, patient, instrument, ..rest);</span>
-<span class="d-gut">   |</span>                 <span class="d-caret">^^^^^^</span> <span class="d-err">this bundle would hold 34 items</span>
-<span class="d-loc"> ::: scene.raly:9:7</span>
-<span class="d-gut">   |</span>
-<span class="d-gut"> 9 |</span> <span class="d-src">space Concepts = MAP&lt;D=1000&gt;</span>
-<span class="d-gut">   |</span>       <span class="d-dash">--------</span> <span class="d-2">declared here, over a codebook of 1000 atoms</span>
-<span class="d-gut">   |</span>
-<span class="d-gut">   =</span> <span class="d-note">note: <b>`Concepts` holds 31 of 31 items</b> at 95% top-1 retrieval</span>
-<span class="d-gut">   =</span> <span class="d-note">note: that capacity was measured, not cited: experiments/04_capacity</span>
-<span class="d-gut">   =</span> <span class="d-help">help: split the bundle, or declare a wider space</span>
-<span class="d-gut">   =</span> <span class="d-help">help: `cleanup` before re-binding keeps the load at 1</span>
+          <div class="panel-bar"><span class="pip">◆</span> raly check capacity-effective.raly</div>
+<pre class="code"><span class="d-err">error</span>[<span class="d-code">RALY5001</span>]: <span class="d-msg">this bundles 4 items into a space that holds 3</span>
+<span class="d-loc"> --&gt; capacity-effective.raly:7:5</span>
+<span class="d-gut">  |</span>
+<span class="d-gut">7 |</span> <span class="d-src">    bundle(a, b, c, d)</span>
+<span class="d-gut">  |</span>     <span class="d-caret">^^^^^^^^^^^^^^^^^^</span> <span class="d-err">4 items superposed here</span>
+<span class="d-loc"> ::: capacity-effective.raly:4:1</span>
+<span class="d-gut">  |</span>
+<span class="d-gut">4 |</span> <span class="d-src">space Sentences = MAP[384] where effective = 111</span>
+<span class="d-gut">  |</span> <span class="d-dash">-------</span> <span class="d-2">`Sentences` holds 3 items (from its measured</span>
+<span class="d-gut">  |</span>         <span class="d-2">effective dimension 111, not its nominal one)</span>
+<span class="d-gut">  |</span>
+<span class="d-gut">  =</span> <span class="d-note">note: past capacity, cleanup returns the wrong atom and</span>
+<span class="d-gut">   </span> <span class="d-note">      accuracy degrades towards chance without anything</span>
+<span class="d-gut">   </span> <span class="d-note">      failing at run time</span>
+<span class="d-gut">  =</span> <span class="d-help">help: superpose fewer items, or declare `Sentences` at</span>
+<span class="d-gut">   </span> <span class="d-help">      dimension 147</span>
 </pre>
-
-<pre class="code" role="tabpanel" id="p-lex" aria-labelledby="t-lex" hidden><span class="cm">$ cargo run -p raly -- check examples/broken.raly</span>
-
-<span class="d-err">error</span>[<span class="d-code">RALY1002</span>]: <span class="d-msg">unterminated string literal</span>
-<span class="d-loc"> --&gt; examples/broken.raly:2:20</span>
-<span class="d-gut">  |</span>
-<span class="d-gut">2 |</span> <span class="d-src">    let greeting = "hello</span>
-<span class="d-gut">  |</span>                    <span class="d-caret">^</span> <span class="d-err">this string is never closed</span>
-<span class="d-loc"> ::: examples/broken.raly:2:26</span>
-<span class="d-gut">  |</span>
-<span class="d-gut">2 |</span> <span class="d-src">    let greeting = "hello</span>
-<span class="d-gut">  |</span>                          <span class="d-dash">-</span> <span class="d-2">the line ends here, still inside the string</span>
-<span class="d-gut">  |</span>
-<span class="d-gut">  =</span> <span class="d-note">note: Raly string literals may not span multiple lines</span>
-<span class="d-gut">  =</span> <span class="d-help">help: add a closing `"` before the end of the line</span>
-</pre>
-
-          <div class="panel-note" id="note-cap">
-            <strong>This error does not exist yet.</strong> The renderer, the span machinery and the
-            note/help channels are built and tested; the type system that would raise RALY5001 is not.
-            The <code>5xxx</code> range is reserved for it. <a href="#status" style="color:var(--accent)">See the honest status →</a>
-          </div>
-          <div class="panel-note" id="note-lex" hidden>
-            <strong>Real output.</strong> Character-for-character what
-            <code>raly check</code> prints today, asserted by a snapshot test in <code>raly-diag</code>.
-            Colour is opt-in and provably changes only bytes, never layout.
+          <div class="panel-note">
+            <strong>The 3 is not a guess.</strong> Capacity comes from
+            <code>experiments/04_capacity</code>, measured rather than cited. The
+            <code>effective</code> override comes from <code>experiments/07_retrieval_cost</code>,
+            which found nominal dimension predicts nothing.
           </div>
         </div>
       </div>
@@ -384,266 +359,111 @@ html{scroll-behavior:smooth}
   </div>
 </div>
 
-<!-- ==================================================== THESIS -->
-<section>
+<!-- ==================================================== THE TYPE -->
+<section id="type">
   <div class="wrap sec">
-    <p class="eyebrow">The thesis</p>
-    <div class="grid g3">
-      <div class="rv">
-        <h3 style="font-size:20px">Reverse engineering is stalling.</h3>
-        <p class="lede" style="font-size:15.5px;margin-top:12px">
-          Trained networks have a thin layer of legible structure and a very long tail of junk
-          heuristics. Every year that stays true, building models legible <em>from the start</em>
-          gets more valuable.
-        </p>
-      </div>
-      <div class="rv">
-        <h3 style="font-size:20px">Asking the model does not work.</h3>
-        <p class="lede" style="font-size:15.5px;margin-top:12px">
-          We measured it. A reasoning model's self-reported dependency graph predicts its own
-          measured causal importance worse than the position of the step in the trace does.
-          Structure has to be built in, not requested.
-        </p>
-      </div>
-      <div class="rv">
-        <h3 style="font-size:20px">So put it in the types.</h3>
-        <p class="lede" style="font-size:15.5px;margin-top:12px">
-          Not a new architecture and not a probe. A compiler that refuses to build a
-          representation it cannot describe — and a signature you can read instead of a
-          weight matrix you cannot.
-        </p>
-      </div>
-    </div>
+    <p class="eyebrow">The type</p>
+    <h2 class="big">One annotation, three things a tensor throws away.</h2>
+
+    <div class="tsig rv" style="margin-top:34px"><span class="ty">Vec</span>[<u>Concepts</u>; <span class="k">load</span> <u>3</u>; <span class="k">roles</span> <u>{Subject, Verb, Object}</u>]</div>
+    <ul class="tkey rv">
+      <li><b>Concepts</b><span>Which space. That fixes the VSA family, the dimension and the codebook — atoms of a different codebook are noise here.</span></li>
+      <li><b>load 3</b><span>How full it is, against a capacity the checker derives from the space. Superposition load is counted, not hoped for.</span></li>
+      <li><b>roles {…}</b><span><em>Which</em> roles are bound in is static. <em>What</em> is bound to them stays runtime.</span></li>
+    </ul>
   </div>
 </section>
 
-<!-- ==================================================== TYPES -->
-<section id="types">
+<!-- ==================================================== HOW IT WORKS -->
+<section id="how">
   <div class="wrap sec">
-    <p class="eyebrow">What the type system tracks</p>
-    <h2 class="big">Four properties a tensor throws away.</h2>
+    <p class="eyebrow">How it works</p>
+    <h2 class="big">Four phases, one run, every error at once.</h2>
     <p class="lede">
-      In PyTorch a hypervector is a <code>float32[1000]</code>. So is every other hypervector,
-      from every other family, over every other codebook, holding any number of items, carrying any
-      set of roles. Raly's design makes all four of those part of the type, using four small
-      decidable mechanisms rather than one big solver.
+      <code>raly check</code> runs every phase every time. No phase returns a <code>Result</code>;
+      each returns a value <em>plus</em> diagnostics, so a syntax error does not silence name
+      resolution and an unresolved name does not silence the type checker.
     </p>
 
-    <div class="grid g2" style="margin-top:40px">
-      <div class="rv">
-        <div class="panel">
-          <div class="panel-bar"><span class="tab" aria-selected="true" style="cursor:default">roles are static, values are runtime</span></div>
-<pre class="code"><span class="cm">// A role schema is a set of labels carried in the type.</span>
-<span class="cm">// WHICH roles are bound is static. WHAT is bound to them is not.</span>
-
-<span class="k">fn</span> <span class="fn">encode</span>(a: <span class="ty">Sym</span>, p: <span class="ty">Sym</span>) -&gt; <span class="ty">Vec</span>&lt;<span class="ty">MAP</span>&lt;<span class="ty">D</span>=1000&gt;, <span class="ty">roles</span>={agent, patient}&gt;
-
-<span class="cm">// The signature is the documentation. You can read what this</span>
-<span class="cm">// function represents without reading its body or its weights.</span>
-
-<span class="k">let</span> s = <span class="fn">encode</span>(dog, ball);
-<span class="k">let</span> who = <span class="fn">unbind</span>(s, <span class="ty">instrument</span>);
-<span class="cm">//                  ^^^^^^^^^^ error: `instrument` is not in {agent, patient}</span>
-</pre>
-          <div class="panel-note">
-            Mechanism: <strong>row polymorphism with scoped labels</strong> (Leijen). Duplicate labels
-            are permitted, which is what you want — binding a role twice is meaningful in VSA, not an
-            error. Errors name the missing label instead of printing a residual type.
-          </div>
-        </div>
-      </div>
-
-      <div class="rv">
-        <div class="panel">
-          <div class="panel-bar"><span class="tab" aria-selected="true" style="cursor:default">load is counted, not hoped for</span></div>
-<pre class="code"><span class="cm">// Superposition load rides along in the type: "holds 3 of 31".</span>
-
-<span class="k">space</span> Concepts = <span class="ty">MAP</span>&lt;<span class="ty">D</span>=1000&gt;;          <span class="cm">// capacity 31, measured</span>
-
-<span class="k">let</span> a: <span class="ty">Vec</span>&lt;Concepts, <span class="ty">load</span>=1&gt; = <span class="fn">atom</span>(<span class="st">"dog"</span>);
-<span class="k">let</span> s: <span class="ty">Vec</span>&lt;Concepts, <span class="ty">load</span>=3&gt; = <span class="fn">bundle</span>(a, b, c);
-
-<span class="k">for</span> item <span class="k">in</span> stream {          <span class="cm">// 50 timesteps</span>
-    s = <span class="fn">bundle</span>(s, item);      <span class="cm">// load grows in the type</span>
-}                                <span class="cm">// -&gt; RALY5001 at 32</span>
-</pre>
-          <div class="panel-note">
-            Mechanism: <strong>natural-number load terms with interval bounds</strong> — a small
-            abstract-interpretation lattice, not an arithmetic theory, with an explicit checked coercion
-            where the checker cannot see through it. Futhark's compromise, for the same reason: a
-            checked coercion with a good message beats a solver that sometimes answers.
-          </div>
-        </div>
-      </div>
+    <div class="pipe rv">
+      <div class="stage src"><b>source</b><span>a <code>.raly</code> file</span></div>
+      <div class="arw">→</div>
+      <div class="stage"><b>lex</b><span>total: any bytes yield tokens, and never a panic</span></div>
+      <div class="arw">→</div>
+      <div class="stage"><b>parse</b><span>recursive descent that recovers; the tree covers the whole input</span></div>
+      <div class="arw">→</div>
+      <div class="stage"><b>resolve</b><span>two namespaces, scopes, a <code>DefId</code> for every reference</span></div>
+      <div class="arw">→</div>
+      <div class="stage"><b>typecheck</b><span>four properties, four small decidable solvers</span></div>
     </div>
 
-    <div class="grid g2" style="margin-top:20px">
-      <div class="card rv">
-        <span class="tag">Dimension &amp; family</span>
-        <h3>Free abelian group, not an assertion.</h3>
-        <p>
-          Dimensions unify as integer exponent vectors — Kennedy's units of measure, decidable,
-          principal types preserved, shipped in F# since 2.0. VSA family is a finite enum under
-          ordinary HM unification, with explicit coercions only. <code>MAP&lt;1024&gt;</code> and
-          <code>FHRR&lt;1024&gt;</code> stop being the same type.
-        </p>
-      </div>
-      <div class="card rv">
-        <span class="tag">Not a novelty claim</span>
-        <h3>These mechanisms are proven. That is the point.</h3>
-        <p>
-          Dex has typed index sets; Futhark has size types; F# has units. Compile-time
-          shape and dimension checking is <em>not</em> new. What is missing is anyone shipping it in a
-          tool ML practitioners actually use, extended to the things VSA needs — load and roles.
-          That is an execution gap, not a novelty gap, and execution gaps are the ones you can close.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================== COMPARISON -->
-<section id="compare">
-  <div class="wrap sec">
-    <p class="eyebrow">The bug this is for</p>
-    <h2 class="big">Silent in PyTorch. Caught at compile time in Raly.</h2>
-    <p class="lede">
-      This is specifically a <em>vector-symbolic</em> failure, not a claim about neural networks in
-      general. Bundling superposes items into one vector; past a capacity that scales linearly with
-      dimension, retrieval decays toward chance. Nothing throws. The tensor is the right shape,
-      the gradients flow, the loss goes down, and the retrieval is wrong.
+    <p class="pipe-note">
+      <b>dimension</b> — abelian-group unification (Kennedy's units of measure), so a mismatch prints a concrete residual rather than "unification failed"<br>
+      <b>VSA family</b> — a finite enum; <code>MAP[1024]</code> and <code>FHRR[1024]</code> stop being the same type<br>
+      <b>capacity / load</b> — natural-number intervals over measured capacity: <code>bundle</code> adds, <code>bind</code> multiplies, <code>cleanup</code> collapses to one<br>
+      <b>role schema</b> — row polymorphism with scoped labels (Leijen); unbinding a role a closed row does not carry will not compile
     </p>
 
-    <div class="cmp rv" style="margin-top:38px">
+    <div class="cmp rv" style="margin-top:46px">
       <div>
-        <div class="cmp-head"><span class="badge b-silent">silent</span><span style="color:var(--fg-3)">bundle.py</span></div>
         <div class="panel">
+          <div class="panel-bar"><span class="badge b-silent">silent</span> bundle.py</div>
 <pre class="code"><span class="k">import</span> torch
 
 D = 1000
-codebook = torch.<span class="fn">sign</span>(torch.<span class="fn">randn</span>(1000, D))   <span class="cm"># MAP atoms</span>
+codebook = torch.<span class="fn">sign</span>(torch.<span class="fn">randn</span>(1000, D))
 
 scene = torch.<span class="fn">zeros</span>(D)
-<span class="k">for</span> i <span class="k">in</span> item_ids:              <span class="cm"># 34 of them</span>
-    scene += codebook[i]        <span class="cm"># bundle</span>
-scene = torch.<span class="fn">sign</span>(scene)
+<span class="k">for</span> i <span class="k">in</span> item_ids:          <span class="cm"># 40 of them</span>
+    scene += codebook[i]    <span class="cm"># bundle</span>
 
-<span class="cm"># retrieval: nearest atoms to the bundle</span>
-top = (codebook @ scene).<span class="fn">topk</span>(<span class="fn">len</span>(item_ids)).indices
-
-<span class="cm"># No exception. No warning. Correct shapes throughout.</span>
-<span class="cm"># At D=1000 the top-34 set is simply no longer the set</span>
-<span class="cm"># you put in, and nothing in the program can tell you.</span>
+<span class="cm"># No exception. Correct shapes throughout.</span>
+<span class="cm"># The retrieved set is simply no longer the</span>
+<span class="cm"># set you put in, and nothing can tell you.</span>
 </pre>
-          <div class="panel-note">
-            Measured on this exact protocol: at D=1000 over a 1000-atom codebook, top-N retrieval holds
-            at ≥95% up to 31 items and falls away after. At D=256 the ceiling is 5.
-          </div>
         </div>
       </div>
-
       <div>
-        <div class="cmp-head"><span class="badge b-caught">caught</span><span style="color:var(--fg-3)">bundle.raly</span></div>
         <div class="panel">
-<pre class="code"><span class="k">space</span> Items = <span class="ty">MAP</span>&lt;<span class="ty">D</span>=1000, <span class="ty">codebook</span>=1000&gt;;
+          <div class="panel-bar"><span class="badge b-caught">caught</span> capacity.raly</div>
+<pre class="code"><span class="k">space</span> Small = <span class="ty">MAP</span>[1000]
 
-<span class="k">let</span> <span class="k">mut</span> scene: <span class="ty">Vec</span>&lt;Items, <span class="ty">load</span>=0&gt; = <span class="fn">empty</span>();
-<span class="k">for</span> i <span class="k">in</span> item_ids {           <span class="cm">// 34 of them</span>
-    scene = <span class="fn">bundle</span>(scene, <span class="fn">atom</span>(i));
+<span class="k">fn</span> <span class="fn">everything</span>(...) -&gt; <span class="ty">Vec</span>[Small] {
+    <span class="fn">bundle</span>(a, b, c, <span class="cm">/* … 40 items … */</span>)
 }
 
-<span class="d-err">error</span>[<span class="d-code">RALY5001</span>]: <span class="d-msg">bundle exceeds the capacity of its space</span>
-<span class="d-gut">   =</span> <span class="d-note">note: <b>`Items` holds 31 of 31 items</b> at 95% top-1 retrieval</span>
-<span class="d-gut">   =</span> <span class="d-help">help: split the bundle, or declare a wider space</span>
+<span class="d-err">error</span>[<span class="d-code">RALY5001</span>]: <span class="d-msg">this bundles 40 items</span>
+<span class="d-msg">into a space that holds 31</span>
 
-<span class="cm">// The number in the error is not a guess. It comes from</span>
-<span class="cm">// the same measurement, keyed on D and codebook size.</span>
+<span class="cm">// Real output: `raly check examples/capacity.raly`</span>
+<span class="cm">// is a golden test, asserted byte for byte.</span>
 </pre>
-          <div class="panel-note">
-            <span class="badge b-plan" style="margin-right:8px">designed</span>
-            Syntax is provisional and the checker is not written. What exists today is the
-            diagnostic machinery this error would be emitted through.
-          </div>
         </div>
       </div>
     </div>
-
-    <p class="lede" style="margin-top:26px">
-      The same shape of bug shows up in things people ship right now. Mean-pooling
-      sentence embeddings is bundling. We measured that too: at 10 pooled
-      <code>all-MiniLM-L6-v2</code> sentence embeddings, the centroid returns two thirds of
-      the wrong things — accuracy 0.354 against a random-vector baseline of 0.997 at equal
-      dimension. No error, no signal.
-    </p>
   </div>
 </section>
 
-<!-- ==================================================== FINDINGS -->
-<section id="findings">
+<!-- ==================================================== WHY TYPES -->
+<section id="why">
   <div class="wrap sec">
-    <p class="eyebrow">Measured, before writing the language</p>
-    <h2 class="big">Four results. Three of them are negative.</h2>
+    <p class="eyebrow">Why a compiler is the right shape</p>
+    <h2 class="big">If the type knows which roles a vector carries, the signature <em>is</em> the documentation.</h2>
     <p class="lede">
-      Every number below came out of this repository, on real data, with the script that produced it
-      sitting next to it. Kill criteria were written before the runs. Nothing here is cited from a
-      literature summary — where a summary and a measurement disagreed, the measurement won.
+      You can read what a function represents without running it, without a probe, and without an
+      archaeology pass over trained weights. That is the second half of the pitch, and it is the
+      half that made this a language rather than a library.
     </p>
-
-    <div class="grid g2" style="margin-top:40px">
-      <div class="card rv">
-        <span class="tag">01 · claimed vs causal</span>
-        <div class="num">|ρ| ≤ 0.09 <span>vs ρ = −0.45 for position alone</span></div>
-        <h3 style="margin-top:16px">A model's account of its own reasoning is not the causal graph.</h3>
-        <p>
-          Thought Anchors' released rollouts carry both an LLM judge's <code>depends_on</code> graph and
-          resampling-measured counterfactual importance, and nobody had ever checked one against the
-          other. Across 6,955 chunks from 40 traces and 2 models, every graph-derived predictor
-          correlates with measured importance at |ρ| ≤ 0.09, while raw position correlates at −0.45.
-          The graph is a worse predictor of causal importance than <em>where the step happened to sit</em>.
-        </p>
-        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments/01_claimed_vs_causal">experiments/01_claimed_vs_causal →</a>
-      </div>
-
-      <div class="card rv">
-        <span class="tag">03 · position decay</span>
-        <div class="num">−0.551 → +0.009 <span>conditioned on q ∈ [0.3, 0.7]</span></div>
-        <h3 style="margin-top:16px">Importance decays with depth because models commit early.</h3>
-        <p>
-          The obvious reading of a −0.551 position/importance correlation is a runway artifact. It is
-          not. Restrict to chunks where the answer is still genuinely open and the correlation
-          collapses to +0.009, CI [−0.126, +0.144]. Position predicts importance only because
-          position predicts how decided the answer already is. The rest of the trace is follow-through.
-        </p>
-        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/03_position_decay/FINDINGS.md">experiments/03_position_decay →</a>
-      </div>
-
-      <div class="card rv">
-        <span class="tag">04 · capacity</span>
-        <div class="num">31 <span>items at D=1000, not the ~10 a summary suggested</span></div>
-        <h3 style="margin-top:16px">The capacity number in the type had to be measured.</h3>
-        <p>
-          <code>M* = Θ(D / ln N)</code> is solid; the constant is what a compile-time check actually
-          needs, and published constants vary by ±2×. Measured over random bipolar codebooks at 95%
-          top-N retrieval: 5 items at D=256, 15 at D=512, 31 at D=1000, 67 at D=2048 — and 22 rather
-          than 31 when the codebook grows to 10,000 atoms. Linear in D, logarithmic in vocabulary,
-          exactly as the theory says, at roughly 3× the constant the summary implied.
-        </p>
-        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/04_capacity/measure_capacity.py">experiments/04_capacity →</a>
-      </div>
-
-      <div class="card rv">
-        <span class="tag">05 · real embeddings</span>
-        <div class="num">3–5× worse <span>than the matched random baseline</span></div>
-        <h3 style="margin-top:16px">Real embeddings lose bundled items faster than the toy predicts.</h3>
-        <p>
-          Mean-pooled MiniLM sentence embeddings over 7,600 AG News headlines: 0.354 retrieval at
-          N=10 against 0.997 for random Gaussian vectors at the same D=384. Averaged <em>token</em>
-          embeddings collapse almost immediately and converge on a fixed set of hub sentences
-          regardless of the query. Mean-centring recovers about half; the larger cause is
-          dimensionality collapse — MiniLM uses ~111 of its 384 dimensions.
-        </p>
-        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/05_real_embeddings/FINDINGS.md">experiments/05_real_embeddings →</a>
-      </div>
+    <p class="lede">
+      Interpretable-by-construction is not a new field — concept bottleneck models, weight-sparse
+      transformers and KANs all exist. Compile-time dimension checking is not new either; Dex,
+      Futhark and F# have had it for years. Two narrower claims are what is left: interpretability
+      living in the <em>type system</em>, and that no ML tool people actually use has checks like
+      these.
+    </p>
+    <div class="cta">
+      <a class="btn" href="./interpretability.html" id="interp">Interpretability in the type system <span class="arr">→</span></a>
+      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/compiler/GRAMMAR.md">Read the grammar</a>
     </div>
   </div>
 </section>
@@ -654,174 +474,70 @@ top = (codebook @ scene).<span class="fn">topk</span>(<span class="fn">len</span
     <div class="grid split">
       <div>
         <p class="eyebrow">What works today</p>
-        <h2 class="big">A lexer and a diagnostics engine. That is the entire compiler.</h2>
+        <h2 class="big">The front end is done. The back end is not.</h2>
         <p class="lede">
-          Nothing on the "not built" list is stubbed, faked, or half-written. It is absent. This
-          section exists because a project pitched on catching what other tools hide should not
-          begin by hiding what it has not built.
-        </p>
-        <p class="lede" style="margin-top:20px">
-          The diagnostics crate was built first and treated as the product rather than as plumbing.
-          Raly's whole pitch is catching mistakes other languages let through silently, so what a
-          user reads when something is wrong <em>is</em> the deliverable.
+          Nothing on the "not built" list is stubbed or half-written. It is absent. A project pitched
+          on catching what other tools hide should not begin by hiding what it has not built.
         </p>
       </div>
 
       <div class="status rv">
         <ul>
-          <li><span class="mk yes">✓</span><span><b>raly-diag</b> — byte-offset spans, a source map that derives line/column only at render time, primary <code>^</code> and secondary <code>-</code> labels, separate <code>note:</code> and <code>help:</code> channels, stable greppable codes. Hand-written renderer, no dependencies, output asserted character-for-character.</span></li>
-          <li><span class="mk yes">✓</span><span><b>raly-lexer</b> — <code>logos</code>-based, and <em>total</em>: every input including arbitrary bytes yields a token stream and never panics. Four recoverable error classes with targeted homoglyph hints. Comments kept as trivia.</span></li>
-          <li><span class="mk yes">✓</span><span><b>raly-ast</b> — arena-allocated, 32-bit ids, interned names, generic visitor. Explicitly provisional: no precedence and no keyword meaning is encoded, so none could be smuggled in under cover of scaffolding.</span></li>
-          <li><span class="mk yes">✓</span><span><b>raly</b> — a binary with <code>lex</code> and <code>check</code>, honest exit codes, 71 passing tests, zero clippy warnings.</span></li>
-          <li><span class="mk no">·</span><span><b>Parser</b> — in progress. No grammar, no precedence table. <code>raly check</code> stops after lexing.</span></li>
-          <li><span class="mk no">·</span><span><b>Type system</b> — does not exist. No types, no inference, no checking. Everything on this page under "designed" lives here.</span></li>
-          <li><span class="mk no">·</span><span><b>Name resolution, IR, codegen</b> — do not exist. <code>raly</code> cannot produce an executable and does not pretend to.</span></li>
-          <li><span class="mk no">·</span><span><b>The model</b> — does not exist. Ralytable-1 is Phase 3.</span></li>
-          <li><span class="mk no">·</span><span><b>Keyword semantics</b> — <code>space</code>, <code>bind</code>, <code>bundle</code>, <code>permute</code>, <code>unbind</code>, <code>cleanup</code> lex to distinct tokens and mean nothing yet. Reserving them is the only commitment made.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Diagnostics</b> — byte-offset spans, primary and secondary labels, separate <code>note:</code> and <code>help:</code> channels, stable greppable codes, output asserted character-for-character.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Lexer</b> — total: any input, including arbitrary bytes, yields a token stream and never panics.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Parser</b> — hand-written recursive descent with error recovery; the tree is total over the input.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Name resolution</b> — two namespaces, scopes, use-before-definition as its own diagnostic, suggestions that err towards silence.</span></li>
+          <li><span class="mk yes">✓</span><span><b>Type system</b> — all four properties: dimension, VSA family, capacity/load, role schema. <b>179 tests, zero warnings.</b></span></li>
+          <li><span class="mk yes">✓</span><span><b>Browser playground</b> — the real Rust compiler as wasm, 102KB. Live errors and inline squiggles, no install.</span></li>
+          <li><span class="mk no">·</span><span><b>IR and codegen</b> — do not exist. <code>raly</code> cannot produce an executable and does not pretend to.</span></li>
+          <li><span class="mk no">·</span><span><b>The model</b> — Ralytable-1 is not built. What exists is a 6.4M-parameter toy whose citation structure is flawless and which cannot reason.</span></li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ==================================================== ROADMAP -->
-<section id="roadmap">
+<!-- ==================================================== FINDINGS -->
+<section id="findings">
   <div class="wrap sec">
-    <p class="eyebrow">The phases</p>
-    <h2 class="big">Every phase has a gate, and a gate is a number that can fail.</h2>
+    <p class="eyebrow">Measured, not cited</p>
+    <h2 class="big">The numbers in the compiler came out of experiments in this repo.</h2>
     <p class="lede">
-      Not a milestone to walk past. Where a gate fails, the phase is a negative result and it ships
-      as one.
+      Kill criteria were written before the runs, every headline number was re-derived
+      independently, and several results are negative — which is the point rather than an
+      embarrassment.
     </p>
 
-    <div style="margin-top:44px">
-      <div class="phase rv">
-        <div class="pn">Phase 0 · mostly done</div>
-        <div>
-          <h3>Foundations</h3>
-          <p>Write the semantics down before the compiler assumes them: which VSA algebraic laws
-          actually hold, capacity measured rather than cited, prior art surveyed, architecture
-          decisions researched before they get expensive to change. The compiler skeleton is the
-          open item.</p>
-        </div>
-        <div class="gate"><b>Gate</b>No claim in the semantics doc that isn't measured or cited. Holding; one asserted claim already got caught and corrected.</div>
+    <div class="grid g4" style="margin-top:38px">
+      <div class="card rv">
+        <span class="tag">04 · capacity</span>
+        <h3>31 items at D=1000.</h3>
+        <p>Roughly 3× what a literature summary implied. This is the number the checker prints, reproduced exactly at four measured points and interpolated between them.</p>
+        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/04_capacity/FINDINGS.md">experiments/04 →</a>
       </div>
-
-      <div class="phase rv">
-        <div class="pn">Phase 1 · current</div>
-        <div>
-          <h3>The language runs</h3>
-          <p>Grammar, parser, typechecker. Capacity types, role-schema types, static nesting-depth
-          checks that force a <code>cleanup</code> before retrieval degrades. Differentiable end to end.
-          Error messages good enough to be the reason people use it.</p>
-        </div>
-        <div class="gate"><b>Gate</b>One VSA experiment visibly easier in Raly than in fifty lines of <code>jax.numpy</code>. If that can't be produced, the language is a cathedral and it stops.</div>
+      <div class="card rv">
+        <span class="tag">07 · retrieval cost</span>
+        <h3>Averaging chunks costs a quarter of retrieval accuracy.</h3>
+        <p>On BEIR scifact, mean-pooling 8 passages into one document vector drops hit-rate from .877 to .619 with realistic grouping — and 70–76% of that is the averaging itself, not the coarser granularity. mpnet has twice MiniLM's nominal dimension and the same cost: nominal D predicts nothing.</p>
+        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/07_retrieval_cost/FINDINGS.md">experiments/07 →</a>
       </div>
-
-      <div class="phase rv">
-        <div class="pn">Phase 2</div>
-        <div>
-          <h3>The legibility curve</h3>
-          <p>Train the same task across dense, weight-sparse, discrete-bottleneck, VSA-structured and
-          gate-based models, and measure both how good each one is and how much of it a person or an
-          auditing model can actually recover. The hard part is a legibility metric defined
-          independently of the architecture — one that measures whether the algorithm can be
-          recovered, not whether the weights are discrete.</p>
-        </div>
-        <div class="gate"><b>Gate</b>None: this one can't fail, only inform. A cheap tax means the direction is live; an expensive one is a real negative result that saves other people a wall.</div>
+      <div class="card rv">
+        <span class="tag">06 · discrete core</span>
+        <h3>A discrete bottleneck costs about 3 points of accuracy.</h3>
+        <p>At matched parameters, and it buys 8 points of role legibility above chance. Cross-entropy actually improves. Bigger alphabets got more capable <em>and</em> more legible together, the opposite of the tradeoff expected. One datapoint at toy scale, not a curve.</p>
+        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/06_discrete_core/FINDINGS.md">experiments/06 →</a>
       </div>
-
-      <div class="phase rv">
-        <div class="pn">Phase 3</div>
-        <div>
-          <h3>Ralytable-1</h3>
-          <p>Small, local, legible. A small alphabet the model's entire internal vocabulary can be
-          listed from. Soft perception, hard reasoning: a neural encoder into a discrete readable
-          core. Distilled from a cheap teacher, training on one 8GB laptop GPU.</p>
-        </div>
-        <div class="gate"><b>Gate</b>The reasoning core is readable <em>and</em> the model isn't useless. Both, or the thesis is wrong and it gets said out loud.</div>
-      </div>
-
-      <div class="phase hi rv">
-        <div class="pn">Phase 4 · the strongest idea</div>
-        <div>
-          <h3>Legible RLHF: grade the reasoning, not just the answer.</h3>
-          <p>
-            RLHF rewards outcomes because outcomes are all a reward model can see. The reasoning that
-            produced the answer is opaque, so it goes ungraded — and that is exactly how you train a
-            model to reach right answers through broken reasoning.
-          </p>
-          <p>
-            If the reasoning core is legible, the reward model can see inside it. You grade the
-            process instead of the product: penalise a right answer that came out of a derivation that
-            doesn't hold, reward a sound step that happened to land wrong. A dense transformer cannot
-            do this, because there is no readable process to grade. This architecture can.
-          </p>
-          <p>
-            That would make it the first case we know of where being interpretable makes a model
-            <em>better</em> rather than merely safer — which flips interpretability from a tax into an
-            advantage.
-          </p>
-        </div>
-        <div class="gate"><b>Gate</b>Process-supervised beats outcome-supervised on held-out reasoning at equal compute. If legibility doesn't buy capability here, it probably never will — and that is still worth knowing.</div>
-      </div>
-
-      <div class="phase rv">
-        <div class="pn">Phase 5</div>
-        <div>
-          <h3>Scale</h3>
-          <p>Does the legibility tax shrink with scale or grow? Raly as infrastructure other people
-          build on, and the obvious default when interpretability stops being optional.</p>
-        </div>
-        <div class="gate"><b>Gate</b>Open.</div>
+      <div class="card rv">
+        <span class="tag">01 · claimed vs causal</span>
+        <h3>A model's account of its own reasoning is not the causal graph.</h3>
+        <p>Every graph-derived predictor correlates with measured causal importance at |ρ| ≤ 0.09; raw position correlates at −0.45. Structure has to be built in, not requested.</p>
+        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/01_claimed_vs_causal/FINDINGS.md">experiments/01 →</a>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ==================================================== RISKS -->
-<section id="risks">
-  <div class="wrap sec">
-    <p class="eyebrow">What could kill this</p>
-    <h2 class="big">Four ways this is wrong, written down in advance.</h2>
-    <div class="grid g2" style="margin-top:38px">
-      <div class="card rv">
-        <span class="tag">Risk 01</span>
-        <h3>The legibility tax may be fundamental.</h3>
-        <p>ETH Zürich's recurrent differentiable logic-gate networks reached 4.39 BLEU at inference on
-        WMT'14 En–De. That is near the floor. It kills the maximalist all-discrete version outright
-        and leaves the version worth testing: soft perception with a hard reasoning core. Phase 2
-        exists to find out which before betting on it.</p>
-      </div>
-      <div class="card rv">
-        <span class="tag">Risk 02</span>
-        <h3>Learned codebooks may void every capacity guarantee.</h3>
-        <p>VSA capacity bounds hold because atoms stay near-orthogonal. Gradient descent has no reason
-        to keep them that way, and no published method gives a training-time guarantee. This gates
-        the entire learnable-VSA premise, and the load type depends on it.</p>
-      </div>
-      <div class="card rv">
-        <span class="tag">Risk 03</span>
-        <h3>Discrete does not mean legible. Small means legible.</h3>
-        <p>Convolutional logic-gate networks hit 86.29% on CIFAR-10 using 61 million gates. A
-        61M-gate circuit is exactly as opaque as 61M weights. Any legibility metric has to measure
-        recovery, not discreteness.</p>
-      </div>
-      <div class="card rv">
-        <span class="tag">Risk 04</span>
-        <h3>DSLs die from missing on-ramps, not bad design.</h3>
-        <p>This is the ordinary way a language like this fails, and it is why Phase 1's gate is
-        about a task being visibly easier rather than about the type system being elegant.</p>
-      </div>
-    </div>
-    <p class="lede" style="margin-top:30px">
-      Prior art was surveyed properly, and the honest answer came back narrower than hoped. HPVM-HDC
-      is a real VSA compiler. GHRR already swapped transformer attention for VSA binding. Concept
-      bottleneck LLMs, weight-sparse transformers and KANs are all interpretable-by-construction
-      already. The claim here is narrower and more specific: interpretability living in the
-      <em>type system</em>, and a legibility/capability curve measured across architecture families
-      rather than inside one.
-      <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/prior-art.md" style="display:inline;margin-left:4px">Read the survey →</a>
+    <p class="lede" style="margin-top:28px">
+      Three more are in the repo, including a negative result on this project's own idea.
+      <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)">All seven findings →</a>
     </p>
   </div>
 </section>
@@ -829,11 +545,11 @@ top = (codebook @ scene).<span class="fn">topk</span>(<span class="fn">len</span
 <!-- ==================================================== CTA -->
 <section>
   <div class="wrap sec" style="padding-bottom:clamp(44px,7vw,80px)">
-    <h2 class="big" style="max-width:18ch">Everything is in the open, including what does not work.</h2>
-    <div class="cta" style="margin-top:30px">
+    <h2 class="big" style="max-width:20ch">Everything is in the open, including what does not work.</h2>
+    <div class="cta" style="margin-top:28px">
       <a class="btn primary" href="https://github.com/RaphaelKhalid/ralytable">github.com/RaphaelKhalid/ralytable <span class="arr">→</span></a>
-      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap</a>
-      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/semantics/vsa-and-discrete-ops.md">Semantics</a>
+      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap &amp; risks</a>
+      <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/prior-art.md">Prior art</a>
     </div>
   </div>
 </section>
@@ -845,25 +561,25 @@ top = (codebook @ scene).<span class="fn">topk</span>(<span class="fn">len</span
     <nav>
       <b>Language</b>
       <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/compiler">Compiler</a>
-      <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/compiler-architecture.md">Architecture</a>
+      <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/compiler/GRAMMAR.md">Grammar</a>
       <a href="./playground/">Playground</a>
     </nav>
     <nav>
       <b>Research</b>
       <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments">Experiments</a>
       <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/prior-art.md">Prior art</a>
-      <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/RESEARCH_LOG.md">Research log</a>
+      <a href="./interpretability.html">Interpretability</a>
     </nav>
     <nav>
       <b>Project</b>
       <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap</a>
       <a href="#status">Status</a>
-      <a href="#risks">Risks</a>
+      <a href="#how">How it works</a>
     </nav>
     <p class="foot-note">
       Ralytable is the project and the model. Raly is the language and compiler. MIT licensed.
-      Nothing on this page is a product announcement — the parser is unfinished and the type system
-      is a design. Every number is reproducible from the repository.
+      The front end compiles and type-checks; there is no code generator and no trained model yet.
+      Every number on this page is reproducible from the repository.
     </p>
   </div>
 </footer>
@@ -871,27 +587,6 @@ top = (codebook @ scene).<span class="fn">topk</span>(<span class="fn">len</span
 <script>
 (function(){
   "use strict";
-
-  /* ---- hero diagnostic tabs ---- */
-  var tabs = [
-    {t:"t-cap", p:"p-cap", n:"note-cap", f:"scene.raly"},
-    {t:"t-lex", p:"p-lex", n:"note-lex", f:"examples/broken.raly"}
-  ];
-  var fileEl = document.getElementById("panel-file");
-  function select(i){
-    tabs.forEach(function(x,j){
-      var t=document.getElementById(x.t),p=document.getElementById(x.p),n=document.getElementById(x.n);
-      if(!t||!p||!n)return;
-      var on = i===j;
-      t.setAttribute("aria-selected", on?"true":"false");
-      p.hidden=!on; n.hidden=!on;
-      if(on && fileEl) fileEl.textContent=x.f;
-    });
-  }
-  tabs.forEach(function(x,j){
-    var t=document.getElementById(x.t);
-    if(t) t.addEventListener("click",function(){select(j);});
-  });
 
   /* ---- reveal on scroll ---- */
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -905,20 +600,25 @@ top = (codebook @ scene).<span class="fn">topk</span>(<span class="fn">len</span
       });
     },{rootMargin:"0px 0px -8% 0px",threshold:.08});
     els.forEach(function(e,i){ e.style.transitionDelay=(Math.min(i%3,2)*70)+"ms"; io.observe(e); });
+    /* Fail-safe: nothing stays invisible, whatever the observer does.
+       Matters for print, full-page capture and any browser that never fires. */
+    setTimeout(function(){ els.forEach(function(e){ e.classList.add("in"); }); }, 3000);
   }
 
-  /* ---- playground link: non-breaking if it isn't built yet ---- */
-  var pg = document.getElementById("pg");
-  if(pg && window.fetch && location.protocol.indexOf("http")===0){
-    fetch("./playground/",{method:"HEAD"}).then(function(r){
+  /* ---- links that must not break if their target is not built yet ---- */
+  function guard(id, fallback, label){
+    var el = document.getElementById(id);
+    if(!el || !window.fetch || location.protocol.indexOf("http") !== 0) return;
+    fetch(el.getAttribute("href"), {method:"HEAD"}).then(function(r){
       if(!r.ok) throw 0;
     }).catch(function(){
-      pg.setAttribute("href","https://github.com/RaphaelKhalid/ralytable/tree/main/playground");
-      pg.setAttribute("title","The playground is still being built");
-      pg.innerHTML = 'Playground <span class="arr" style="opacity:.5">soon</span>';
-      pg.style.opacity=".72";
+      el.setAttribute("href", fallback);
+      el.setAttribute("title", label + " is still being built");
+      el.style.opacity = ".72";
     });
   }
+  guard("pg", "https://github.com/RaphaelKhalid/ralytable/tree/main/playground", "The playground");
+  guard("interp", "https://github.com/RaphaelKhalid/ralytable", "That page");
 })();
 </script>
 </body>
