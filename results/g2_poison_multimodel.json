@@ -1,0 +1,38 @@
+{
+  "deepseek/deepseek-r1-distill-llama-70b": {
+    "open_think": {
+      "answer": "15",
+      "verdict": "ignored",
+      "cost": 0.000612
+    },
+    "plain_content": {
+      "answer": "6",
+      "verdict": "PREFILL WORKS",
+      "cost": 0.000368
+    }
+  },
+  "qwen/qwen3-32b": {
+    "open_think": {
+      "answer": "15",
+      "verdict": "ignored",
+      "cost": 6.664e-05
+    },
+    "plain_content": {
+      "answer": "15",
+      "verdict": "ignored",
+      "cost": 0.0001463
+    }
+  },
+  "deepseek/deepseek-r1-0528": {
+    "open_think": {
+      "answer": "15",
+      "verdict": "ignored",
+      "cost": 0.00078894
+    },
+    "plain_content": {
+      "answer": "15",
+      "verdict": "ignored",
+      "cost": 0.001877886
+    }
+  }
+}
