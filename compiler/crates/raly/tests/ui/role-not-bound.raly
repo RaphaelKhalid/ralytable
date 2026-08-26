@@ -1,0 +1,11 @@
+// RALY4007: unbinding a role the vector does not carry. This is the error
+// PyTorch cannot see: the shapes match perfectly and the answer is noise.
+space Concepts = MAP[1024]
+role Subject, Verb, Object in Concepts
+role Place in Concepts
+
+type Scene = Vec[Concepts; load 3; roles {Subject, Verb, Object}]
+
+fn where_of(scene: Scene) -> Sym[Concepts] {
+    scene |> unbind(Place) |> cleanup(Concepts)
+}

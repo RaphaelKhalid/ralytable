@@ -1,0 +1,9 @@
+error[RALY3001]: cannot find name `Subjekt` in this scope
+ --> unresolved-name.raly:6:10
+  |
+6 |     bind(Subjekt, x)
+  |          ^^^^^^^ not found in this scope
+  |
+  = help: did you mean `Subject`?
+
+error: 1 error

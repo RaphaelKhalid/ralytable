@@ -5,6 +5,8 @@ members = [
     "crates/raly-lexer",
     "crates/raly-ast",
     "crates/raly-parse",
+    "crates/raly-resolve",
+    "crates/raly-types",
     "crates/raly",
 ]
 exclude = ["crates/raly-wasm"]
@@ -19,3 +21,5 @@ raly-diag = { path = "crates/raly-diag" }
 raly-lexer = { path = "crates/raly-lexer" }
 raly-ast = { path = "crates/raly-ast" }
 raly-parse = { path = "crates/raly-parse" }
+raly-resolve = { path = "crates/raly-resolve" }
+raly-types = { path = "crates/raly-types" }

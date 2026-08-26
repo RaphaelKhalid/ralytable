@@ -1,0 +1,19 @@
+error[RALY4002]: `Narrow` has dimension 1024 and `Wide` has dimension 8192
+ --> dimension-mismatch.raly:7:15
+  |
+7 |     bundle(a, b)
+  |               ^ this is `MAP[1024]`
+ ::: dimension-mismatch.raly:3:18
+  |
+3 | space Wide = MAP[8192]
+  |                  ---- `Wide` is this wide
+ ::: dimension-mismatch.raly:7:12
+  |
+7 |     bundle(a, b)
+  |            - the first operand is here
+  |
+  = note: dimensions form an abelian group, and these do not cancel: the residual is 1024 / 8192
+  = note: this is operand 2 of `bundle`
+  = help: bind, bundle and unbind are all elementwise; two widths cannot mix
+
+error: 1 error

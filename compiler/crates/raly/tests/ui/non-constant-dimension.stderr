@@ -1,0 +1,10 @@
+error[RALY4004]: the dimension of `Concepts` is not a compile-time constant
+ --> non-constant-dimension.raly:6:22
+  |
+6 | space Concepts = MAP[width()]
+  |                      ^^^^^^^ this does not fold to a number
+  |
+  = note: capacity is derived from the dimension, so a dimension the compiler cannot evaluate leaves every bundle in this space unchecked
+  = help: write a literal, or a top-level `let` of literals
+
+error: 1 error

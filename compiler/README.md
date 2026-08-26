@@ -3,9 +3,15 @@
 Infrastructure for the **Raly** language front end. Source files use the
 `.raly` extension.
 
-It **lexes, parses, and reports errors beautifully**. It does not type-check or
-generate code — those are deliberately absent, see
+It **lexes, parses, resolves names, type-checks, and reports errors
+beautifully**. It does not generate code — see
 [Deliberately not here yet](#deliberately-not-here-yet).
+
+The type system is the point. It tracks four properties a tensor library
+cannot see at all — **dimension**, **VSA family**, **superposition load against
+measured capacity**, and **role schema** — and each has its own small decidable
+solver rather than one mechanism for all four. See
+[`raly-types`](#raly-types--the-product).
 
 The concrete grammar is written down in **[GRAMMAR.md](GRAMMAR.md)**, which is
 normative: EBNF, the rationale for each decision, and worked examples. Read it
@@ -35,7 +41,7 @@ Then, from this directory:
 
 ```
 cargo build              # zero warnings expected
-cargo test --workspace   # 154 tests, all passing
+cargo test --workspace   # 179 tests, all passing
 cargo clippy --workspace --all-targets   # clean
 cargo fmt --all --check
 ```
@@ -44,6 +50,8 @@ cargo fmt --all --check
 
 ```
 cargo run -p raly -- check examples/scene.raly          # exits 0
+cargo run -p raly -- check examples/capacity.raly       # a capacity error
+cargo run -p raly -- check examples/wrong-role.raly     # a wrong-role unbind
 cargo run -p raly -- parse examples/scene.raly          # dumps the tree
 cargo run -p raly -- check examples/broken-syntax.raly  # 13 errors, exits 1
 cargo run -p raly -- check examples/broken.raly         # lexical errors
@@ -53,9 +61,33 @@ cargo run -p raly -- lex   examples/tour.raly
 | File | What it is |
 | --- | --- |
 | `examples/scene.raly` | A substantial, valid program: a role-filler scene memory. What real Raly looks like. |
+| `examples/capacity.raly` | Well-shaped, silently wrong: a bundle 9 items past what its space can retrieve, plus a space declaring its *measured effective* dimension. |
+| `examples/wrong-role.raly` | Unbinding a role that was never bound, and nesting two unbinds with no `cleanup` between. |
 | `examples/broken-syntax.raly` | One of each recoverable *syntax* error. All 13 are reported in a single run. |
 | `examples/broken.raly` | One of each recoverable *lexical* error. |
 | `examples/tour.raly` | Exercises every token class. A lexer fixture, **not** a valid program — `check` reports on it by design. |
+
+The capacity error is the one worth reading:
+
+```
+error[RALY5001]: this bundles 40 items into a space that holds 31
+  --> examples/capacity.raly:27:5
+   |
+27 |     bundle(
+   |     ^^^^^^^ 40 items superposed here
+   | ...continues to line 33
+  ::: examples/capacity.raly:13:1
+   |
+13 | space Small = MAP[1000]
+   | ----------------------- `Small` holds 31 items
+   |
+   = note: 31 is the capacity of `Small` at dimension 1000, measured at 95%
+           retrieval in experiments/04_capacity
+   = note: past capacity, cleanup returns the wrong atom and accuracy degrades
+           towards chance without anything failing at run time
+   = help: superpose fewer items, or declare `Small` at dimension 1247, or 2048
+           for a power of two
+```
 
 `broken.raly` is the fastest way to see what the diagnostics look like:
 
@@ -80,7 +112,12 @@ error[RALY1002]: unterminated string literal
 | --- | --- |
 | `raly lex <file>` | Dump every token with its kind, byte span and line:column |
 | `raly parse <file>` | Parse and dump the syntax tree to stdout |
-| `raly check <file>` | Lex, parse, render all diagnostics to stderr, exit non-zero on error |
+| `raly check <file>` | Lex, parse, resolve, type-check, render all diagnostics to stderr, exit non-zero on error |
+
+`check` runs every phase every time. No phase returns a `Result`; each returns
+a value plus diagnostics, so a syntax error does not silence name resolution
+and an unresolved name does not silence the type checker. One run tells you
+everything that is wrong, sorted into reading order.
 
 Flags: `--color` / `--no-color` (default off), `--explain` (append each code's
 registry description), `-h`, `-V`.
@@ -213,9 +250,135 @@ function from `bundle`, not a spelling of it. `space S = 1024` is `RALY2010`,
 pointing at both the dimension and the name, because family is part of a
 vector's identity.
 
+
+### `raly-resolve`
+
+`resolve(&Ast) -> Resolved`. Two namespaces (`Value` and `Type`), a scope
+stack, and a `DefId` for **every** reference — including the ones it could not
+resolve, which get `DefId::ERROR` and a type of `Error`. Nothing downstream has
+to branch on "was this resolved?", and nothing cascades.
+
+- **Items are hoisted, `let`s are sequential.** Functions may be mutually
+  recursive and a `space` may be used above its declaration; a local is visible
+  only after its own `let`, so `let x = x` refers to the outer `x`.
+- **Use-before-definition is its own diagnostic** (`RALY3004`), not "unknown
+  name". The resolver can see the `let` sitting two lines below, and saying so
+  is the whole difference between a useful message and a useless one.
+- **A space lives in both namespaces.** It is a type in `Vec[Concepts]` and a
+  value in `cleanup(v, Concepts)`, which names a codebook to project onto.
+- **Shadowing a local is fine and silent; shadowing a `role` is a warning**
+  (`RALY3007`). A role is a codebook atom, and a local that hides one silently
+  changes what every `bind` naming it computes.
+- **Family names resolve here**, against a builtin table, exactly as GRAMMAR.md
+  §3 says they should — which is why `MAP` can stay an identifier rather than
+  becoming a keyword.
+- Suggestions come from a length-scaled Levenshtein threshold that errs towards
+  silence, because a wrong suggestion is worse than none.
+- `where` attribute values are deliberately *not* resolved. GRAMMAR.md §3 makes
+  `where` an extension point whose attributes have no fixed meaning yet, so
+  `codebook = fixed` names a mode, not a binding.
+
+### `raly-types` — the product
+
+Decision 4 of `docs/compiler-architecture.md` is binding: **algebraic types plus
+small decidable solvers, one per property. No SMT, no dependent types.** SMT
+fails nonconstructively — an unsat core is not an explanation — and a language
+pitched on explaining silent bugs cannot answer "why?" with a timeout.
+
+**Dimension — abelian-group unification.** Kennedy's units of measure, as
+shipped in F# 2.0. A dimension is a formal product of atoms (integer constants,
+and named constants the checker could not fold) with integer exponents;
+multiplication adds exponents and division subtracts them. Two dimensions are
+equal exactly when their quotient is the identity, and when they are not, the
+**residual is what gets printed**:
+
+```
+= note: dimensions form an abelian group, and these do not cancel:
+        the residual is 1024 / 8192
+```
+
+Not "unification failed". `MAP[2 * BASE_D]` still compares equal to another
+`MAP[2 * BASE_D]` even though neither folds to a number.
+
+**Family — a plain enum.** `MAP`, `BSC`, `HRR`, `FHRR`. Mixing them is
+`RALY4001`, and the message says what each family *is*, because the reason
+there is no conversion is that they have different binding operations over
+different alphabets.
+
+Family, dimension and codebook are checked **in that order**, so two spaces that
+differ in family get a family error rather than a technically-true and useless
+dimension error. Two spaces agreeing on both but still distinct get `RALY4003`:
+a space also fixes the codebook, and atoms of one codebook are noise to the
+other.
+
+**Capacity and load — natural-number intervals over measured numbers.**
+Futhark's compromise, as decision 4 asks. A load is a closed interval; `bundle`
+adds intervals, `bind` multiplies them (binding distributes over superposition),
+`unbind` collapses to one noisy item, `cleanup` collapses to one clean atom.
+Compatibility is **interval intersection**, not equality, so an annotation
+narrows what the checker knows rather than asserting something it must prove.
+
+The capacity numbers are measured, not derived. `experiments/04_capacity` found
+the largest bundle still retrieved at 95%:
+
+| D | 256 | 512 | 1000 | 2048 |
+|---|-----|-----|------|------|
+| largest bundle | 7 | 14 | 31 | 71 |
+
+The checker reproduces those four points **exactly** and interpolates linearly
+in log–log space between them, extrapolating the nearest segment's exponent
+outside the range. A global power-law fit (about `0.0145 · D^1.114`) fits all
+four to within 8% and was rejected for exactly that reason: the experiment is
+the authority, and a checker that disagrees with it at D=512 is wrong.
+
+Per `experiments/05_real_embeddings`, a bound derived from ambient `D`
+overstates real capacity by 3–5×, because real embedding spaces have an
+effective dimension far below their nominal one — 110.6 of 384 for MiniLM. A
+space may declare what was measured, and the checker uses it and says so:
+
+```raly
+space Sentences = MAP[384] where effective = 111
+```
+
+**Role schema — row polymorphism with scoped labels.** Leijen's design, as
+decision 4 asks. A row is a multiset of labels plus a tail; `bind` extends it,
+`unbind` restricts it, and unbinding a label a closed row does not carry is
+`RALY4007`. Duplicates are permitted rather than an error, which is what makes
+scoped labels simpler than other record systems — and binding one role twice is
+a meaningful VSA operation anyway. A `Vec[S]` with no `roles {..}` qualifier is
+**open**, so a function can accept any vector carrying `Subject` without naming
+the rest; only an explicit schema closes a row, and only a closed row can prove
+a role is *absent*.
+
+**The algebra, enforced.** `bundle()` is a parse error because superposition has
+no identity (`RALY2003`). `bundle.left` is a *different function* from the n-ary
+primitive because bundling is not associative, and using it on three or more
+operands is `RALY5003`. `bind` is commutative, so operand order carries no
+information and every rule here folds over operands with a commutative combiner.
+Nested `unbind` with no `cleanup` between is a warning at depth 2 and an error
+at depth 3 (`RALY5002`) — semantics §3 puts usable depth at about 2 at D=1000,
+so depth 3 retrieves at close to chance.
+
+**Blame provenance, from the first commit.** Decision 5 calls this the most
+expensive decision to get wrong and the cheapest to get right now. Every
+constraint carries a `Span + Reason` (`constraint.rs`) generated at the point
+the constraint is *created*, so a failure is reported against the expression
+that caused it and the message can say "this is operand 2 of bundle" or "this
+is the result of `encode`, whose signature fixes its type" rather than "cannot
+unify". Raly has no unification variables to search over — annotations are
+mandatory at function boundaries, per GRAMMAR.md §5.6 — so the *ordering* half
+of the Helium design is not needed yet. The provenance half is here.
+
+**No implicit conversions.** The Swift lesson from decision 5, taken seriously:
+no overload resolution, no literal defaulting across types, annotations at
+function boundaries. There is therefore no search, and no expression can be
+"too complex". The one inclusion that exists is not a conversion: a `Sym[S]` is
+already a vector of load one, so it is accepted where a `Vec[S]` is wanted. The
+reverse is not, and the message names `cleanup` as the operation that fixes it.
+
 ## Tests
 
-154 tests: 150 unit and integration, plus 4 doctests.
+179 tests: 174 unit and integration, plus doctests.
 
 ```
 raly-diag    3 unit + 21 integration   source map, spans, rendered output
@@ -227,8 +390,33 @@ raly-parse  46 grammar                 one per construct, asserted on the dump
             16 recovery                multiple errors per run, no cascades,
                                        error-node provenance, termination
             10 diagnostics             rendered output, character for character
-raly        13 integration             exit codes, stdout/stderr discipline
+raly-resolve 3 unit                    edit distance, suggestion silence,
+                                       family table round-trip
+raly-types  17 unit                    capacity anchors and monotonicity,
+                                       dimension group laws and residuals,
+                                       load intervals, row extend and restrict
+raly         2 unit                    the pipeline reports every phase at once
+            13 integration             exit codes, stdout/stderr discipline
+             2 UI                      24 golden files, plus a test that every
+                                       3xxx/4xxx/5xxx code has one
 ```
+
+### UI tests
+
+`crates/raly/tests/ui/` holds one `.raly` file per error class, each paired with
+the exact rendered output it must produce. This is the enforcement mechanism
+decision 5 asks for: a change to what a user reads becomes a reviewable diff
+rather than something that drifts while a `contains("RALY4007")` assertion
+stays green.
+
+```
+RALY_BLESS=1 cargo test -p raly --test ui    # re-record, then read the diff
+```
+
+Both the binary and the UI tests go through `raly::compile`, so a golden file
+asserts on exactly the bytes a user sees. A second test walks the code registry
+and fails if any resolution, type or capacity code has no UI test, which catches
+the failure mode where a diagnostic is added and never regression-tested.
 
 Several rendering tests assert on the **exact** text a user sees, character for
 character. That is deliberate: a change to diagnostic layout should be a change
@@ -244,25 +432,66 @@ tree.
 
 Nothing below exists, and no part of it is stubbed, faked, or half-written.
 
-- **Type system.** No types, no inference, no checking. Nothing verifies that a
-  `load 3` is within capacity, that two vectors share a space, or that a role
-  schema is satisfied. The AST *carries* every annotation the checker will need
-  — space, load, role schema, cleanliness — and checks none of them.
-- **Constant folding.** A space's dimension is stored as an arbitrary
-  expression. Deciding that `2 * BASE_D` is a constant, and what it evaluates
-  to, is the checker's job.
-- **Name resolution.** No scopes, no bindings, no symbol table beyond the
-  string interner.
+### Not in the type system
+
+- **No polymorphism over spaces.** A function is written against named spaces;
+  there is no `fn f[S: Space](v: Vec[S])`. Every generic-looking program has to
+  be written once per space. This is the largest gap, and it is the next thing
+  a real model would ask for.
+- **No load coercions.** Decision 4 calls for Futhark-style *explicit*
+  coercions where the checker cannot see through a size. There is no syntax for
+  one, so today an annotation the checker cannot satisfy is simply an error.
+  Interval intersection absorbs most of what a coercion would be needed for,
+  but not all of it.
+- **Row variables are anonymous.** A row is open or closed; there is no way to
+  name a tail and thread it through a signature, so "returns whatever roles it
+  was given, plus `Time`" cannot be written down.
+- **Cleanliness is a flag, not an effect.** `clean`/`noisy` is tracked, and
+  unbind depth is counted, but neither participates in an effect system and
+  neither can be abstracted over.
+- **`bind` does not require a role key.** Binding two plain atoms is allowed
+  (it is legal VSA), so a keyed record built with a non-role key produces a
+  vector with an empty schema rather than a diagnostic. Only `unbind` insists
+  on a declared role.
+- **Load through `bind` is an upper bound, not an identity.** Binding is
+  modelled as multiplying loads, which is right for bind-distributes-over-bundle
+  but conservative when operands share structure.
+- **No exhaustive constant folding.** Dimensions and `load` counts fold over
+  integer literals, top-level `let` constants, and `+ - * /`. Anything else
+  becomes a free variable of the dimension group (so equality still works) or,
+  for a `load`, an error.
+- **Codebook provenance is not tracked.** A space fixes *which* codebook, and
+  two spaces are distinguished by identity, but nothing follows the semantics
+  note's `coherence: unknown` marking for learned codebooks. A learned codebook
+  invalidates every capacity number in this README, and the compiler cannot
+  currently tell.
+- **Capacity is one curve.** The measured numbers are for MAP/bipolar, a
+  1000-atom codebook, 95% retrieval, flat bundles. Capacity also falls as the
+  cleanup pool grows, and the checker does not model that. Nested-structure
+  capacity has no agreed closed form and is handled only by the depth rule.
+
+### Not in the compiler at all
+
 - **IR and codegen.** No lowering, no optimisation, no backend. `raly` cannot
   produce an executable and does not pretend to.
 - **Semantics for the operations.** `bind`, `bundle`, `permute`, `unbind` and
-  `cleanup` parse, and their arities are enforced. What they *compute* is not
-  implemented anywhere.
+  `cleanup` are type-checked. What they *compute* is not implemented anywhere.
 - **`struct`, `enum`, `match`, `for`.** Reserved, and parsed to a dedicated
-  "recognised but not implemented" diagnostic (`RALY2007`) rather than a
-  confusing syntax error. `for` in particular waits on the checker being able to
-  count loop iterations against a space's capacity.
+  "recognised but not implemented" diagnostic (`RALY2007`). `for` in particular
+  waits on the checker being able to count loop iterations — the checker can
+  now count a bundle, but not a loop that bundles once per timestep, which is
+  the canonical broken program the semantics note describes.
 - **Multi-file compilation.** `SourceMap` holds many files and spans carry a
-  `FileId`, but the driver only ever loads one. `import` does not resolve.
+  `FileId`, but the driver only ever loads one. `import` parses and resolves to
+  nothing; multi-segment paths are skipped by name resolution rather than
+  reported, because reporting them would be noise until modules exist.
+- **Mutation.** `let mut` parses and is otherwise ignored; there is no
+  assignment syntax, so mutability has nothing to permit yet.
+- **Incrementality.** Phases are pure functions with no ambient state, which is
+  salsa's required shape, but there is no query engine, no caching and no
+  invalidation. That is decision 1, on purpose.
+- **JSON diagnostics and applicability.** `Diagnostic` is structured data and a
+  second renderer would be mechanical, but only the ANSI/plain one exists, and
+  suggestions do not yet carry a rustc-style `Applicability`.
 - **Block comments, raw strings, char literals, literal suffixes.** Not in the
   brief, so not invented.

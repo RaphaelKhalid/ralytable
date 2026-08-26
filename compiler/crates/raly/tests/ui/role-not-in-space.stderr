@@ -1,0 +1,13 @@
+error[RALY3006]: `Alias` is not a space
+ --> role-not-in-space.raly:4:17
+  |
+4 | role Subject in Alias
+  |                 ^^^^^ a role must be declared in a space, but this is a type alias
+ ::: role-not-in-space.raly:2:6
+  |
+2 | type Alias = Int
+  |      ----- declared here
+  |
+  = note: a role is an atom drawn from a space's codebook, so the space fixes its family, dimension and provenance
+
+error: 1 error

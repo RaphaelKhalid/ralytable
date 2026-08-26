@@ -1,0 +1,7 @@
+// RALY4001: MAP and FHRR vectors bundled together.
+space Concepts = MAP[1024]
+space Phases = FHRR[1024]
+
+fn f(a: Sym[Concepts], b: Sym[Phases]) -> Vec[Concepts; load 2] {
+    bundle(a, b)
+}

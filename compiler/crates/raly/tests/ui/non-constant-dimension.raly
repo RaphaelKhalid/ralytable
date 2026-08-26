@@ -1,0 +1,6 @@
+// RALY4004: a dimension the checker cannot fold, so capacity is unknown.
+fn width() -> Int {
+    1024
+}
+
+space Concepts = MAP[width()]

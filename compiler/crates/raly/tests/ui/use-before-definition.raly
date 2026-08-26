@@ -1,0 +1,6 @@
+// RALY3004: a local used above the `let` that defines it.
+fn f() -> Int {
+    let a = b + 1
+    let b = 2
+    a
+}

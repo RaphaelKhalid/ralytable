@@ -1,0 +1,10 @@
+[package]
+name = "raly-resolve"
+description = "Name resolution for the Raly language."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+raly-diag.workspace = true
+raly-ast.workspace = true

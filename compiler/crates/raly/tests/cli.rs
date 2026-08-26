@@ -17,7 +17,10 @@ fn temp_file(name: &str, contents: &str) -> std::path::PathBuf {
 
 #[test]
 fn check_succeeds_on_a_clean_file() {
-    let path = temp_file("clean.raly", "// fine\nlet x = 1 |> f\n");
+    let path = temp_file(
+        "clean.raly",
+        "// fine\nspace S = MAP[1024]\nrole R in S\nlet x: Int = 1\n",
+    );
     let output = raly().arg("check").arg(&path).output().unwrap();
     assert_eq!(output.status.code(), Some(0));
     assert!(
@@ -128,7 +131,12 @@ fn check_accepts_the_substantial_example() {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
-    assert!(output.stderr.is_empty());
+    // The one thing it does say is the deliberate `bundle.left` demonstration:
+    // the fold is a different function from the n-ary primitive, and the
+    // checker says so without failing the build.
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("warning[RALY5003]"), "{stderr}");
+    assert!(!stderr.contains("error["), "{stderr}");
 }
 
 #[test]

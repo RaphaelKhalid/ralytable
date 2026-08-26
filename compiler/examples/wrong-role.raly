@@ -1,0 +1,38 @@
+// wrong-role.raly -- asking a record for a field it does not have.
+//
+// A scene is built by binding three roles and superposing them. Reading it
+// back means unbinding one of those three. Unbinding a *fourth* role is not a
+// runtime error and not a shape error: the arithmetic is identical, the result
+// is the right length, and it is pure crosstalk. `cleanup` will then project
+// that noise onto whichever codebook atom it happens to lie nearest.
+//
+//     cargo run -p raly -- check examples/wrong-role.raly
+//
+// The role schema is part of the type, so Raly refuses.
+
+space Concepts = MAP[4096]
+
+role Subject, Verb, Object in Concepts
+role Place in Concepts
+
+type Scene = Vec[Concepts; load 3; roles {Subject, Verb, Object}]
+
+fn encode(s: Sym[Concepts], v: Sym[Concepts], o: Sym[Concepts]) -> Scene {
+    bundle(bind(Subject, s), bind(Verb, v), bind(Object, o))
+}
+
+// Fine: `Subject` is in the schema.
+fn subject_of(scene: Scene) -> Sym[Concepts] {
+    scene |> unbind(Subject) |> cleanup(Concepts)
+}
+
+// Not fine: `Place` was never bound into a `Scene`.
+fn place_of(scene: Scene) -> Sym[Concepts] {
+    scene |> unbind(Place) |> cleanup(Concepts)
+}
+
+// Also not fine: two unbinds with no cleanup between them. Retrieval degrades
+// multiplicatively with nesting depth, and the checker counts.
+fn nested(scene: Scene) -> Sym[Concepts] {
+    unbind(unbind(scene, Subject), Verb) |> cleanup(Concepts)
+}

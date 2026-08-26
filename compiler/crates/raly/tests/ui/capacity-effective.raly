@@ -1,0 +1,8 @@
+// RALY5001 again, but the bound comes from a *measured effective* dimension
+// rather than the nominal one. experiments/05_real_embeddings found MiniLM's
+// 384 dimensions carry about 111 dimensions of usable variance.
+space Sentences = MAP[384] where effective = 111
+
+fn f(a: Sym[Sentences], b: Sym[Sentences], c: Sym[Sentences], d: Sym[Sentences]) -> Vec[Sentences] {
+    bundle(a, b, c, d)
+}

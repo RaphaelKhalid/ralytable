@@ -1,0 +1,15 @@
+error[RALY5001]: this type declares a load of 40 in a space that holds                      7
+ --> capacity-annotation.raly:5:16
+  |
+5 | type TooMuch = Vec[Tiny; load 40]
+  |                ^^^^^^^^^^^^^^^^^^ a load of 40 declared here
+ ::: capacity-annotation.raly:3:1
+  |
+3 | space Tiny = MAP[256]
+  | --------------------- `Tiny` holds 7 items
+  |
+  = note: 7 is the capacity of `Tiny` at dimension 256, measured at 95% retrieval in experiments/04_capacity
+  = note: past capacity, cleanup returns the wrong atom and accuracy degrades towards chance without anything failing at run time
+  = help: superpose fewer items, or declare `Tiny` at dimension 1247, or 2048 for a power of two
+
+error: 1 error

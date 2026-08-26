@@ -1,0 +1,7 @@
+// RALY4003: same family, same dimension, different codebook.
+space Nouns = MAP[1024]
+space Verbs = MAP[1024]
+
+fn f(a: Sym[Nouns], b: Sym[Verbs]) -> Vec[Nouns; load 2] {
+    bundle(a, b)
+}
