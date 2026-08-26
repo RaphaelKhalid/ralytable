@@ -93,3 +93,37 @@ claim the tax is small in general. It is enough to justify running the real Phas
 
 Reproduce: `python experiments/06_discrete_core/run.py` (corpus is cached), then
 `verify.py` to separate cross-entropy from the commitment term.
+
+
+## What the model actually generates
+
+The overnight run reported metrics and saved no checkpoints, so nothing had been
+looked at. `sample.py` retrains codes=1024 and generates. Unedited:
+
+```
+PROMPT: "[1] A train travels"
+
+[1] A train travels 300 miles.
+[2] The train's pool holds 15,000 gallons.
+[3] from [1],[2]: 15,000 / 15,000 = 5,000 quarts.
+[4] from [3]: The pool holds 60,000 liters.
+ANSWER: 5000
+```
+
+It cannot reason. A train acquires a pool, 15,000/15,000 becomes 5,000, gallons
+become quarts become litres. Another sample writes "4 feet x 12 = 72 inches" and
+answers 92. That is the right outcome for 6.4M parameters and six minutes.
+
+**But the citation structure is flawless.** Every derived step cites earlier steps,
+never a step that does not exist, never a premise pretending to cite. Form is learned
+long before content.
+
+**And that means the model reproduces the exact pathology this project exists to
+fix.** It emits `from [1],[2]` without steps 1 and 2 constraining the result. The
+dependency is decorative, which is finding 01 all over again, this time inside our
+own architecture.
+
+So the bar for Phase 3 is sharper than "the tax looks small". The structure has to be
+LOAD-BEARING: changing step 1 must change step 3. That is testable with the
+resampling method from `experiments/01`, pointed at our own model. It is the next
+experiment worth running, and nobody has run it on an architecture built to pass it.
