@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = ["crates/raly-diag", "crates/raly-lexer", "crates/raly-ast", "crates/raly"]
+exclude = ["crates/raly-wasm"]
 
 [workspace.package]
 version = "0.0.0"
