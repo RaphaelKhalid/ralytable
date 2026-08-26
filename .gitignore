@@ -19,3 +19,10 @@ experiments/06_discrete_core/corpus.jsonl
 experiments/06_discrete_core/STOP
 experiments/07_retrieval_cost/cache/
 run.log
+experiments/08_tinystories/cache/
+experiments/08_tinystories/ckpt/
+experiments/08_tinystories/STOP
+experiments/08_tinystories/train.log
+experiments/08_tinystories/prep.log
+experiments/08_tinystories/metrics.jsonl
+experiments/08_tinystories/wandb/

@@ -1,0 +1,32 @@
+wandb: WARNING The anonymous parameter to wandb.login() has no effect and will be removed in future versions.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from C:\Users\rapha\_netrc.
+wandb: Currently logged in as: raphaelbahadurkhan (raphaelk) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+Traceback (most recent call last):
+  File "C:\Users\rapha\AppData\Local\Temp\claude\wt-tinystories\experiments\08_tinystories\run.py", line 667, in <module>
+    main()
+  File "C:\Users\rapha\AppData\Local\Temp\claude\wt-tinystories\experiments\08_tinystories\run.py", line 587, in main
+    train_one(c, s, a, tok, meta, dash, wb, budget, i, n_runs, gstart)
+  File "C:\Users\rapha\AppData\Local\Temp\claude\wt-tinystories\experiments\08_tinystories\run.py", line 240, in train_one
+    model.load_state_dict(st["model"])
+  File "C:\Users\rapha\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\nn\modules\module.py", line 2581, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for DiscreteCore:
+	Missing key(s) in state_dict: "enc.1.n1.weight", "enc.1.n2.weight", "enc.1.qkv.weight", "enc.1.proj.weight", "enc.1.w1.weight", "enc.1.w2.weight", "enc.1.w3.weight", "enc.2.n1.weight", "enc.2.n2.weight", "enc.2.qkv.weight", "enc.2.proj.weight", "enc.2.w1.weight", "enc.2.w2.weight", "enc.2.w3.weight", "dec.1.n1.weight", "dec.1.n2.weight", "dec.1.qkv.weight", "dec.1.proj.weight", "dec.1.w1.weight", "dec.1.w2.weight", "dec.1.w3.weight", "dec.2.n1.weight", "dec.2.n2.weight", "dec.2.qkv.weight", "dec.2.proj.weight", "dec.2.w1.weight", "dec.2.w2.weight", "dec.2.w3.weight". 
+	size mismatch for emb.weight: copying a param with shape torch.Size([8192, 128]) from checkpoint, the shape in current model is torch.Size([8192, 512]).
+	size mismatch for pos.weight: copying a param with shape torch.Size([128, 128]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for enc.0.n1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for enc.0.n2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for enc.0.qkv.weight: copying a param with shape torch.Size([384, 128]) from checkpoint, the shape in current model is torch.Size([1536, 512]).
+	size mismatch for enc.0.proj.weight: copying a param with shape torch.Size([128, 128]) from checkpoint, the shape in current model is torch.Size([512, 512]).
+	size mismatch for enc.0.w1.weight: copying a param with shape torch.Size([512, 128]) from checkpoint, the shape in current model is torch.Size([2048, 512]).
+	size mismatch for enc.0.w2.weight: copying a param with shape torch.Size([512, 128]) from checkpoint, the shape in current model is torch.Size([2048, 512]).
+	size mismatch for enc.0.w3.weight: copying a param with shape torch.Size([128, 512]) from checkpoint, the shape in current model is torch.Size([512, 2048]).
+	size mismatch for dec.0.n1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for dec.0.n2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for dec.0.qkv.weight: copying a param with shape torch.Size([384, 128]) from checkpoint, the shape in current model is torch.Size([1536, 512]).
+	size mismatch for dec.0.proj.weight: copying a param with shape torch.Size([128, 128]) from checkpoint, the shape in current model is torch.Size([512, 512]).
+	size mismatch for dec.0.w1.weight: copying a param with shape torch.Size([512, 128]) from checkpoint, the shape in current model is torch.Size([2048, 512]).
+	size mismatch for dec.0.w2.weight: copying a param with shape torch.Size([512, 128]) from checkpoint, the shape in current model is torch.Size([2048, 512]).
+	size mismatch for dec.0.w3.weight: copying a param with shape torch.Size([128, 512]) from checkpoint, the shape in current model is torch.Size([512, 2048]).
+	size mismatch for norm.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for head.weight: copying a param with shape torch.Size([8192, 128]) from checkpoint, the shape in current model is torch.Size([8192, 512]).
