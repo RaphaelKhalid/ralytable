@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The blind test: can you tell the readable model from the ordinary one?</title>
+<meta name="description" content="Two small story models, same size and same data. One is readable inside. Read a pair of completions, pick which is which, and see your score next to the judge's 85.4%.">
+<meta name="color-scheme" content="dark light">
+<meta property="og:title" content="Ralytable, the blind test">
+<meta property="og:description" content="Run the blind test on yourself, then read what it cost us.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------ tokens */
+:root{
+  --bg:#08090b;
+  --bg-2:#0d0f12;
+  --panel:#0f1216;
+  --panel-2:#12161b;
+  --line:#1e242c;
+  --line-2:#2a323d;
+  --fg:#e8ecf1;
+  --fg-2:#a7b0bd;
+  --fg-3:#6d7683;
+  --accent:#c7625c;
+  --accent-fill:#a70900;
+  --accent-dim:#750600;
+  --accent-ink:#ffffff;
+  --err:#ff6b5b;
+  --ok:#4ad493;
+  --sel:rgba(167,9,0,.24);
+
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --disp:"Space Grotesk",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --body:"Inter",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+
+  --pad:clamp(20px,5vw,44px);
+  --max:1180px;
+}
+:root[data-theme="light"]{
+  --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
+  --line:#e2ded6; --line-2:#cfc9be;
+  --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
+  --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
+  --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
+    --line:#e2ded6; --line-2:#cfc9be;
+    --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
+    --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
+    --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
+  }
+}
+
+/* ------------------------------------------------------------------- reset */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--body);font-size:16.5px;line-height:1.62;
+  font-feature-settings:"cv11","ss01";
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--sel)}
+img,svg{max-width:100%}
+a{color:inherit}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:600;letter-spacing:-.022em;line-height:1.1;margin:0}
+p{margin:0}
+code,pre,kbd{font-family:var(--mono)}
+code{overflow-wrap:anywhere}
+
+/* ------------------------------------------------------------------ layout */
+.wrap{max-width:var(--max);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+section{border-top:1px solid var(--line)}
+.sec{padding:clamp(48px,7vw,92px) 0}
+.eyebrow{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 18px;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);opacity:.6;flex:none}
+h2.big{font-size:clamp(26px,4vw,42px);max-width:24ch}
+.lede{color:var(--fg-2);font-size:clamp(16px,1.5vw,18.5px);max-width:66ch;margin-top:18px}
+.grid{display:grid;gap:clamp(18px,2.4vw,26px)}
+.grid>*{min-width:0}
+@media(min-width:900px){
+  .split{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(26px,4vw,58px);align-items:start}
+}
+
+/* --------------------------------------------------------------------- nav */
+header.nav{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--bg) 84%,transparent);
+  backdrop-filter:saturate(150%) blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{display:flex;align-items:center;gap:14px;height:56px}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;font-family:var(--disp);font-weight:700;letter-spacing:-.03em;font-size:17px}
+.dot{width:8px;height:8px;border-radius:2px;background:var(--accent);display:inline-block;transform:translateY(-1px)}
+.brand small{font-family:var(--mono);font-weight:400;font-size:11px;color:var(--fg-3);letter-spacing:.04em}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:clamp(10px,2vw,22px);font-size:13.5px}
+.nav-links a{color:var(--fg-2);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--fg)}
+.nav-links a[aria-current="page"]{color:var(--accent)}
+.nav-links a.ghost{border:1px solid var(--line-2);padding:5px 12px;border-radius:6px;color:var(--fg)}
+.nav-links a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:700px){.nav-links .hide-s{display:none}}
+
+/* ------------------------------------------------------------------- hero */
+.hero{padding:clamp(40px,6vw,72px) 0 clamp(30px,4vw,48px);position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:-40% 30% auto -30%;height:120%;
+  background:radial-gradient(60% 50% at 30% 40%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 70%);
+  pointer-events:none;
+}
+.hero-in{position:relative}
+h1{font-size:clamp(29px,5vw,54px);letter-spacing:-.038em;max-width:19ch;font-weight:700}
+h1 em{font-style:normal;color:var(--accent)}
+.hero p.sub{margin-top:22px;max-width:56ch;font-size:clamp(15.5px,1.6vw,18px);color:var(--fg-2)}
+.statline{
+  margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 22px;
+  font-family:var(--mono);font-size:12px;color:var(--fg-3);
+}
+.statline b{color:var(--fg-2);font-weight:500}
+
+/* ----------------------------------------------------------------- buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;
+  font-family:var(--body);font-size:14px;font-weight:500;padding:10px 18px;border-radius:7px;
+  border:1px solid var(--line-2);color:var(--fg);background:none;cursor:pointer;transition:.16s;
+}
+.btn:hover{border-color:var(--fg-3)}
+.btn.primary{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn .arr{font-family:var(--mono);opacity:.7}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* -------------------------------------------------------------------- test */
+.test{
+  border:1px solid var(--line-2);border-radius:12px;background:var(--panel);
+  box-shadow:0 30px 70px -34px rgba(0,0,0,.8);overflow:hidden;
+}
+.test-bar{
+  display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);background:var(--panel-2);padding:10px 14px;
+  font-family:var(--mono);font-size:11.5px;color:var(--fg-2);
+}
+.test-bar .pip{color:var(--accent)}
+.test-bar .right{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
+.test-bar b{color:var(--fg);font-weight:500}
+.test-body{padding:clamp(16px,2.6vw,28px)}
+.opening{
+  border-left:2px solid var(--accent);padding:2px 0 2px 16px;
+  font-size:clamp(15px,1.5vw,17px);color:var(--fg);max-width:70ch;
+}
+.opening .tag{
+  display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--fg-3);margin-bottom:7px;
+}
+.cols{display:grid;gap:clamp(14px,2vw,20px);margin-top:22px}
+@media(min-width:900px){.cols{grid-template-columns:1fr 1fr}}
+.col{
+  border:1px solid var(--line);border-radius:10px;background:var(--bg-2);
+  padding:clamp(14px,1.8vw,20px);min-width:0;
+}
+.col h3{
+  font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fg-3);font-weight:400;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.col .verdict{font-family:var(--body);font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--fg-2)}
+.col p{
+  margin-top:12px;color:var(--fg-2);font-size:15.2px;line-height:1.72;
+  max-width:62ch;overflow-wrap:break-word;
+}
+.col p + p{margin-top:10px}
+.col.named{border-color:var(--line-2)}
+.col.named.win{border-color:var(--accent)}
+.picks{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+.picks .q{width:100%;color:var(--fg-2);font-size:15px;margin-bottom:2px}
+.reveal{
+  margin-top:20px;border-top:1px solid var(--line);padding-top:18px;
+  display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;
+}
+.reveal .mark{font-family:var(--disp);font-weight:600;font-size:19px}
+.reveal .mark.yes{color:var(--ok)}
+.reveal .mark.no{color:var(--err)}
+.reveal .mark.skip{color:var(--fg-2)}
+.reveal p{color:var(--fg-2);font-size:14.5px;max-width:58ch;flex:1 1 300px}
+.hidden{display:none}
+
+/* ------------------------------------------------------------------ score */
+.bars{display:grid;gap:14px;margin-top:18px;max-width:62ch}
+.bar-lab{display:flex;justify-content:space-between;gap:12px;font-size:13.8px;color:var(--fg-2);margin-bottom:5px}
+.bar-lab b{font-family:var(--mono);color:var(--fg);font-weight:500}
+.track{height:10px;border-radius:6px;background:var(--bg-2);border:1px solid var(--line);overflow:hidden}
+.fill{height:100%;background:var(--accent-fill);width:0;transition:width .5s ease}
+.fill.grey{background:var(--line-2)}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+
+/* ------------------------------------------------------------ number table */
+.nums{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:8px;min-width:460px}
+.nums th,.nums td{text-align:left;padding:9px 14px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.nums th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3);font-weight:400}
+.nums td{color:var(--fg-2)}
+.nums td b{color:var(--fg);font-family:var(--mono);font-weight:500}
+.nums tr:last-child td{border-bottom:0}
+.scroller{overflow-x:auto;max-width:100%}
+.scroller::-webkit-scrollbar{height:9px}
+.scroller::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
+
+/* ------------------------------------------------------------------- lists */
+.limits{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}
+.limits ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:11px;max-width:74ch}
+.limits li{display:flex;gap:11px;color:var(--fg-2);font-size:14.6px;line-height:1.6}
+.limits li::before{content:"\00b7";font-family:var(--mono);color:var(--fg-3);flex:none}
+.limits li b{color:var(--fg);font-weight:600}
+
+blockquote.drift{
+  margin:22px 0 0;padding:18px 20px;border-left:2px solid var(--accent);
+  background:var(--panel);border-radius:0 10px 10px 0;color:var(--fg-2);
+  font-size:15.4px;line-height:1.72;max-width:68ch;
+}
+blockquote.drift b{color:var(--fg);font-weight:600}
+
+/* ------------------------------------------------------------------ footer */
+footer{border-top:1px solid var(--line);background:var(--bg-2);padding:34px 0 46px;color:var(--fg-3);font-size:13px}
+.foot-grid{display:flex;flex-wrap:wrap;gap:26px 44px;align-items:flex-start}
+.foot-grid nav{display:flex;flex-direction:column;gap:7px}
+.foot-grid nav b{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--fg-3);margin-bottom:4px;font-weight:400}
+.foot-grid nav a{color:var(--fg-2);text-decoration:none}
+.foot-grid nav a:hover{color:var(--accent)}
+.foot-note{max-width:44ch;margin-left:auto;font-size:12.5px;line-height:1.65}
+
+/* ------------------------------------------------------- hover definitions */
+/* A definition is a dictionary entry and nothing else. The trigger is a real
+   button so it is reachable by Tab and works on a tap, not only on hover. */
+.dfn{
+  font:inherit;color:inherit;background:none;padding:0;margin:0;
+  border:0;border-bottom:1px dotted var(--accent);
+  cursor:help;line-height:inherit;
+}
+.dfn{text-align:left}
+.dfn:hover{border-bottom-style:solid}
+.dfn[aria-expanded="true"]{border-bottom-style:solid;color:var(--accent)}
+#dfn-pop{
+  position:fixed;z-index:200;max-width:min(300px,calc(100vw - 24px));
+  background:var(--panel-2);color:var(--fg);
+  border:1px solid var(--line-2);border-radius:8px;
+  padding:11px 13px;font-size:13.5px;line-height:1.5;
+  box-shadow:0 16px 40px -18px rgba(0,0,0,.7);
+  opacity:0;visibility:hidden;transition:opacity .12s;
+  pointer-events:none;
+}
+#dfn-pop.on{opacity:1;visibility:visible}
+#dfn-pop b{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:5px;font-weight:500}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="./index.html"><span class="dot"></span>Ralytable<small>/ raly</small></a>
+    <nav class="nav-links">
+      <a href="./index.html">Home</a>
+      <a class="hide-s" href="./interpretability.html">Inside the model</a>
+      <a class="hide-s" href="./playground/">Playground</a>
+      <a href="#result">The result</a>
+      <a class="ghost" href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments/09_story_quality">Experiment</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ==================================================== HERO -->
+<div class="hero">
+  <div class="wrap hero-in">
+    <h1>We built a model you can read inside. <em>It writes worse stories.</em></h1>
+    <p class="sub">
+      Two models of the same size, trained on the same children's stories for the same
+      amount of compute. One is an ordinary transformer. The other has to push everything
+      it knows through 512 fixed symbols, which is the thing that makes its insides
+      readable. We asked a judge to compare their writing without telling it which was
+      which. It picked the ordinary model 85.4% of the time.
+    </p>
+    <p class="sub">
+      Here are the same story pairs the judge saw. Pick which one you think came from the
+      readable model, and see how your score compares.
+    </p>
+    <div class="statline">
+      <span><b>29.5M</b> parameters each, matched to 0.25%</span>
+      <span><b>3</b> seeds per model</span>
+      <span><b>60</b> held-out story openings</span>
+      <span>judge win rate <b>85.4%</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================================== THE TEST -->
+<section id="test">
+  <div class="wrap sec" style="padding-top:clamp(26px,4vw,44px)">
+    <p class="eyebrow">Take the test</p>
+    <h2 class="big">Ten pairs. Which one is the readable model?</h2>
+    <p class="lede">
+      Each story opening is the first 40 tokens of a real story the models never saw in
+      training. Both completions were written under identical settings and cut off at 200
+      new tokens, so every one of them stops mid-sentence. Which completion sits on the
+      left and which sits on the right is decided fresh every time this page loads.
+    </p>
+
+    <div class="test" style="margin-top:30px">
+      <div class="test-bar">
+        <span class="pip">&#9670;</span>
+        <span id="tb-count">pair <b id="tb-n">1</b> of <b id="tb-total">10</b></span>
+        <span class="right">
+          <span id="tb-score">no answers yet</span>
+          <span id="tb-mode">blind</span>
+        </span>
+      </div>
+
+      <div class="test-body">
+        <div id="round">
+          <div class="opening">
+            <span class="tag">The story opening, given to both models</span>
+            <p id="op-text"></p>
+          </div>
+
+          <div class="cols">
+            <div class="col" id="col0">
+              <h3><span id="h0">Completion A</span><span class="verdict" id="v0"></span></h3>
+              <div id="t0"></div>
+            </div>
+            <div class="col" id="col1">
+              <h3><span id="h1">Completion B</span><span class="verdict" id="v1"></span></h3>
+              <div id="t1"></div>
+            </div>
+          </div>
+
+          <div class="picks" id="picks">
+            <p class="q">Which one came from the readable model, the one with 512 symbols?</p>
+            <button type="button" class="btn" id="pick0">A is the readable one</button>
+            <button type="button" class="btn" id="pick1">B is the readable one</button>
+            <button type="button" class="btn" id="pickT">Cannot tell</button>
+          </div>
+
+          <div class="reveal hidden" id="reveal">
+            <span class="mark" id="mark"></span>
+            <p id="rev-text"></p>
+            <button type="button" class="btn primary" id="next">Next pair <span class="arr">&#8594;</span></button>
+          </div>
+        </div>
+
+        <div id="final" class="hidden">
+          <h3 style="font-size:clamp(20px,2.6vw,28px)" id="fin-head"></h3>
+          <p class="lede" style="margin-top:12px" id="fin-sub"></p>
+          <div class="bars">
+            <div>
+              <div class="bar-lab"><span id="bl-you">You</span><b id="bv-you"></b></div>
+              <div class="track"><span class="fill" id="bf-you"></span></div>
+            </div>
+            <div>
+              <div class="bar-lab"><span>The judge, 179 head-to-head comparisons</span><b>85.4%</b></div>
+              <div class="track"><span class="fill grey" id="bf-judge"></span></div>
+            </div>
+            <div>
+              <div class="bar-lab"><span>The judge on two copies of the ordinary model</span><b>51.7%</b></div>
+              <div class="track"><span class="fill grey" id="bf-null"></span></div>
+            </div>
+          </div>
+          <p class="lede" style="margin-top:20px;font-size:15.5px">
+            The bottom bar is the floor. Two seeds of the ordinary model are draws from the
+            same recipe, so the truthful answer there is a coin flip, and the judge returned
+            51.7%. That is what a real inability to tell two models apart looks like. 85.4%
+            is not that.
+          </p>
+          <div class="picks" style="margin-top:24px">
+            <button type="button" class="btn primary" id="again">Ten more pairs</button>
+            <a class="btn" href="#result">Read the result <span class="arr">&#8595;</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top:18px;font-size:14.5px;color:var(--fg-3)">
+      All 60 pairs come from <code>experiments/09_story_quality/generations.json</code>, taken
+      in the order the generator produced them. Nothing was picked for being flattering or
+      embarrassing.
+    </p>
+  </div>
+</section>
+
+<!-- ==================================================== THE RESULT -->
+<section id="result">
+  <div class="wrap sec">
+    <div class="grid split">
+      <div>
+        <p class="eyebrow">The result</p>
+        <h2 class="big">The threshold we wrote down in advance was not met.</h2>
+        <p class="lede">
+          Before a single story existed we committed a rule to the repository: the readable
+          model is good enough if its grammar and consistency scores land within noise of the
+          ordinary model, even though we already knew its
+          <button type="button" class="dfn" data-t="Perplexity" data-d="A measure of how surprised a language model is by real text. Lower means the model predicted it better.">perplexity</button>
+          was worse. Then we generated, judged and applied the rule mechanically. Both
+          criteria missed by a wide margin.
+        </p>
+        <p class="lede">
+          So this page reports a loss for our own idea. Legibility is not free here, and it
+          is not cheap either.
+        </p>
+      </div>
+
+      <div>
+        <div class="scroller">
+          <table class="nums">
+            <thead><tr><th>what was measured</th><th>ordinary</th><th>readable</th><th>real stories</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><button type="button" class="dfn" data-t="Cross-entropy" data-d="The average number of nats of surprise per token on text the model was not trained on. Lower is better.">Validation cross-entropy</button></td>
+                <td><b>1.6608</b></td><td><b>2.2892</b></td><td>n/a</td>
+              </tr>
+              <tr>
+                <td><button type="button" class="dfn" data-t="Next-token accuracy" data-d="How often the model's single most likely next token is the one that actually comes next.">Next-token accuracy</button></td>
+                <td><b>58.8%</b></td><td><b>48.9%</b></td><td>n/a</td>
+              </tr>
+              <tr>
+                <td>Grammar, 1 to 10</td>
+                <td><b>7.00</b><br><span style="font-size:12.5px">[6.78, 7.22]</span></td>
+                <td><b>4.54</b><br><span style="font-size:12.5px">[4.27, 4.82]</span></td>
+                <td><b>9.47</b></td>
+              </tr>
+              <tr>
+                <td>Consistency, 1 to 10</td>
+                <td><b>5.83</b><br><span style="font-size:12.5px">[5.58, 6.08]</span></td>
+                <td><b>3.08</b><br><span style="font-size:12.5px">[2.86, 3.30]</span></td>
+                <td><b>9.47</b></td>
+              </tr>
+              <tr>
+                <td>Head-to-head win rate</td>
+                <td colspan="3"><b>85.4%</b> to the ordinary model, <span style="font-size:12.5px">[79.5, 89.8]</span> over 179 comparisons</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="lede" style="margin-top:14px;font-size:14.5px">
+          Square brackets are 95%
+          <button type="button" class="dfn" data-t="Confidence interval" data-d="A range that the true value would fall inside 95 times out of 100 if the whole experiment were repeated.">confidence intervals</button>
+          over three seeds. Every model saw the same 60 openings, so each opening is its own
+          control and the differences are taken within a prompt before being averaged.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== CONTROLS -->
+<section>
+  <div class="wrap sec">
+    <p class="eyebrow">Why the number can be trusted</p>
+    <h2 class="big">A judge that cannot fail is worth nothing, so we gave it two ways to fail.</h2>
+
+    <div class="grid split" style="margin-top:30px">
+      <div>
+        <p class="lede" style="margin-top:0">
+          <b style="color:var(--fg)">It can spot good writing.</b> Real human-written passages
+          from the same story collection were dropped into the same blind format and judged as
+          if they were model output. They scored 9.47 on grammar and beat the ordinary model
+          93% of the time. Had the judge shrugged at real writing, nothing else here would
+          mean anything.
+        </p>
+        <p class="lede">
+          <b style="color:var(--fg)">It does not invent winners.</b> We also ran the ordinary
+          model against a second copy of itself trained with a different random seed. Those
+          two are genuinely equivalent, and the judge returned 51.7%. That is the reference
+          point for indistinguishable.
+        </p>
+        <p class="lede">
+          <b style="color:var(--fg)">Position bias is present and cannot explain it.</b> The
+          judge picks whichever completion it reads first 41.6% of the time. That leaning is
+          the same size in every comparison type, and sides were shuffled, so a constant
+          offset cannot produce an 85 to 15 split in one comparison and a 52 to 48 split in
+          another.
+        </p>
+      </div>
+
+      <div>
+        <div class="scroller">
+          <table class="nums">
+            <thead><tr><th>comparison</th><th>n</th><th>win rate</th></tr></thead>
+            <tbody>
+              <tr><td>ordinary against readable</td><td>179</td><td><b>85.4%</b> <span style="font-size:12.5px">[79.5, 89.8]</span></td></tr>
+              <tr><td>ordinary seed 0 against ordinary seed 1</td><td>60</td><td><b>51.7%</b> <span style="font-size:12.5px">[39.3, 63.8]</span></td></tr>
+              <tr><td>real human stories against ordinary</td><td>60</td><td><b>93.3%</b> <span style="font-size:12.5px">[84.1, 97.4]</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="limits" style="margin-top:26px">
+          <p class="eyebrow" style="margin-bottom:0">Limitations, stated once</p>
+          <ul>
+            <li><b>The judge almost never called a tie</b>, once in about 300 comparisons,
+              including zero times in the 60 comparisons where a tie was the honest answer.
+              So the low tie rate in the main test is not separate evidence of a gap, and we
+              do not count it as any.</li>
+            <li><b>One judge model</b>, not calibrated against a second judge or against human
+              raters. The effect is large; a close result would need more than this.</li>
+            <li><b>One size, one budget, one codebook</b>: 29.5M parameters, 87M tokens, 512
+              symbols at one point in the network. Whether the gap narrows at a different
+              scale or with a bigger codebook was not tested here.</li>
+            <li><b>One decoding setting</b>, matched across both models for fairness but not
+              tuned for either.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== THE FAILURE MODE -->
+<section id="drift">
+  <div class="wrap sec">
+    <p class="eyebrow">What actually breaks</p>
+    <h2 class="big">Grammar survives the bottleneck. Knowing what a thing is does not.</h2>
+    <p class="lede">
+      The interesting part of the loss is where it lands. Sentences from the readable model
+      are mostly well formed. What it loses is track of the object it is talking about. Given
+      an opening about a kite, it produces this, inside one paragraph:
+    </p>
+
+    <blockquote class="drift">
+      It is a <b>star of water</b>. "Wow, look at the <b>balloon</b>!" Ben says. "It is so
+      pretty!" "My kite!" Anna says. "My <b>flag</b> is better with all the other toys."
+      They have fun with the <b>drum</b>. They share it with the other kids. They make new
+      shapes for the <b>trumpet</b>.
+    </blockquote>
+
+    <p class="lede">
+      Six names for one object in a few lines. The ordinary model, given the same opening,
+      stays on the kite and repeats itself instead. Grammar is a local property: the next few
+      words only need the last few words, and 512 symbols carry that fine. Holding on to
+      which object is which needs an identity to survive dozens of tokens, and that is what
+      the bottleneck drops. This is a description of one failure we can see in the samples,
+      not a measured mechanism.
+    </p>
+    <p class="lede">
+      It shows in the scores too. Consistency falls further than grammar, 2.72 points against
+      2.44, and the ordinary model's own consistency score of 5.83 is not good either.
+    </p>
+  </div>
+</section>
+
+<!-- ==================================================== CTA -->
+<section>
+  <div class="wrap sec" style="padding-bottom:clamp(44px,7vw,80px)">
+    <h2 class="big" style="max-width:22ch">The negative results are in the repository along with the rest.</h2>
+    <p class="lede">
+      The write-up, the 420 generations, the 720 judge calls and the exact prompt the judge
+      was given are all committed. The total spend on judging was $0.03.
+    </p>
+    <div class="picks" style="margin-top:26px">
+      <a class="btn primary" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/09_story_quality/FINDINGS.md">Read the full finding <span class="arr">&#8594;</span></a>
+      <a class="btn" href="./interpretability.html">See what readable means</a>
+      <a class="btn" href="./index.html">Back to the project</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <nav>
+      <b>This page</b>
+      <a href="#test">The test</a>
+      <a href="#result">The result</a>
+      <a href="#drift">What breaks</a>
+    </nav>
+    <nav>
+      <b>Research</b>
+      <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments">Experiments</a>
+      <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments/09_story_quality">Story quality</a>
+      <a href="./interpretability.html">Inside the model</a>
+    </nav>
+    <nav>
+      <b>Project</b>
+      <a href="./index.html">Home</a>
+      <a href="./playground/">Playground</a>
+      <a href="https://github.com/RaphaelKhalid/ralytable">GitHub</a>
+    </nav>
+    <p class="foot-note">
+      The stories on this page were written by 29.5M-parameter models trained on TinyStories.
+      Neither of them can reason. Every number here is reproducible from
+      <code>experiments/09_story_quality</code>.
+    </p>
+  </div>
+</footer>
+
+<div id="dfn-pop" role="tooltip" aria-hidden="true"></div>
+<script>
+(function(){
+  "use strict";
+
+  /* Each entry: p = the story opening, t = the two completions, k = which slot of t
+     holds the ordinary model's text. The slots were shuffled when this file was built,
+     and shuffled again below at render time, so the pair the visitor reads carries no
+     ordering clue. Nothing about the identity of either completion is ever written into
+     the document: no class, no id, no data attribute, no order. It lives only in the
+     variable ANS below until a button is pressed. */
+  var PAIRS = [{"p":"Anna and Ben are friends. They like to play with toys and books. One day, Anna has a new toy. It is a kite. The kite has a long string and a tail. It","t":["is a star of water.\n\"Wow, look at the balloon!\" Ben says. \"It is so pretty!\"\n\"My kite!\" Anna says. \"My flag is better with all the other toys. I like to play with it. It is very fast.\"\nThey have fun with the drum. They share it with the other kids. They make new shapes for the trumpet. They have fun.\nBut then, something bad happens. The other kids on the same time. There are more pieces to draw. They have left the park.\n\"Oh no, our kite!\" Anna says. She is angry.\n\"I am the birds of the bird!\" Ben says.\n\"No, this is my tree. You can't have it. Go away!\" Anna says.\nThey both pull each other. They are angry. Their friendship are spoiled.\n\"Stop it!\" Anna shouts. She is angry. \"I","is very pretty. Anna wants to show Ben her kite.\nThey go to Ben's house. Ben's mom is sitting on a chair. She has a box of paper. She looks at the paper and says, \"This is a sign. You can make your kite fly. Do you want to try?\"\nAnna and Ben are happy. They say, \"Yes, please. Thank you.\" They take the kite and the string. They run back to the garden.\nAnna takes the string and the string. She holds the string and the string. She makes it fly up in the air. She feels the wind on her face. She feels the kite. She tries to catch it, but it is too fast. She feels sad.\nBen sees Anna and his kite. He wants to help. He says, \"Don't worry, I can help you. I can make your kite fly again. It will not fly away. Your kite is strong."],"k":1},{"p":"Ben is a boy who likes to play with his dog, Rex. Rex is a big dog who can run fast and catch balls. Ben and Rex are best friends. They like to go to the","t":["park and see the birds and flowers.\nOne day, they go to the park with their mom. They see a new boy there. He is big and brown and has a big smile. He looks sad and lonely. Ben and Rex want to be his friend. They go to him and say hello. They ask him how he is happy. He says his name is Rex.\nSpot licks their faces and wags his tail. He wants to play with them. He barks and runs around. Ben and Rex feel happy and proud. They think Rex is very cute and friendly. They play with Rex every day. They have fun and make a new friend. They are not lonely anymore. They are happy.Mia and Leo are playing with their toys in the living room. They have a big box of toys for different things. Mia likes to make things with her dolls. Leo likes to make cars with blocks. He likes to make cars and trucks and planes.\n\"","park with Spot. Spot is very big and hairy and furry and has a long tail.\nOne day, Rex sees Spot and runs to him, wagging his tail. Spot is a little dog who likes to play and fetch. Spot likes to pet Spot and make him laugh. Spot jumps up and grabs a ball as he can. Spot barks and nods. Spot barks, but Spot is not scared.\nSpot barks and wagged his tail. He likes to play with Spot too. He jumps around and wags his tail, wagging Spot, and barks and bark. Spot watches Bobo and wags his tail. Spot runs, wagging a tail and licks him. Spot wagged his tail and wags his tail.\nSpot is a very nice cat, but Spot is very strong. He likes to watch the cat and chase Lily with his tail. Lily and Spot see Fluffy and want to be their friends. They run and bark and hide in the park. They see Spot and Spot. Spot looks"],"k":0},{"p":"Lily and Tom are friends. They like to play with toys and sing songs. One day, they find a big box in the attic. Inside the box, there is a player. The player has","t":["a big dog, a ball, and a big dog. They are happy.\nThey open the box and see many things. Some of them are different things. Some birds are big, some are small. Some animals are big and strong. Some animals are small and some are small. Some are red and some are. Some are different things. Some people do not understand. Some flowers and cars are dangerous. Ben and Lily are sad. They do not like to be alone. They want to go back to their room and make it hard.\nThey think of a plan. They have an idea. They ask their moms to help them. Their teacher says yes. They use their bags and papers and go to the store. They get their bags and their books and books. They put them on the shelf. They go to their room and get their things inside. They put their toys and books to the table. They get the book and the box. They make a card with","a shiny red coat and a shiny bike.\n\"Wow, a player!\" Lily says. \"Can we play with it?\"\n\"OK, but we have to be careful. The player is rough and cold,\" Tom says.\nThey roll the player and ride around the house. They have a lot of fun.\nBut then, they see something shiny in the corner. They are curious. They want to touch it.\n\"Let's touch it!\" Tom says.\n\"No, Tom, it is dangerous. It might hurt us,\" Lily says.\nBut Tom does not listen. He runs to the player and tries to pull the player off.\nThe player does not like Tom and Lily. He shouts and pushes Tom away. He shouts and hits Tom on the head.\n\"Ow, ow, ow! That hurts!\" Tom says.\nLily runs to Tom. She hugs him and says sorry."],"k":1},{"p":"Once upon a time, there was a large hill with green grass. On top of the hill lived two friends, Stuart and Sally. One day, Stuart and Sally were playing together","t":["in the field.\nSuddenly, Lilly heard a noise. She looked around and saw a big black bird.\n\"What's that?\" Stuart asked.\nSally smiled and said, \"It's a raven. Can I touch it?\"\nStuart and Sally both of them reached out their hands and said, \"Yes, you can touch the raven.\"\nThe raven was so excited and started to sing a beautiful song. Sally was so happy!\nThe raven flew away but Stuart said, \"That was so cool! Let's go play in the field again tomorrow!\"\nSo they hugged and laughed and went back to playing.Once upon a time, there lived a young fox. He was very lonely because he had no friends. One day, he saw a bird in the sky. The fox wanted to meet the bird and play with him.\nHe said, \"Hi bird! Let's have a race!\"","in the park, enjoying each other.\nIt was a sunny day and the sun became a big surprise. It was a lovely and shiny forest. Lily and Emma jumped in the blue sun and laughed.\nThen they both said, \"It's a surprise!\"\nThe sun was shining and it felt so nice. They looked around and said, \"I'm so glad we arrived when the sun goes down!\"\nThen they heard that to their surprise were full! The park was full of beautiful things like trees and flowers, a big green ball. They also had a great time playing together.\nAt it, a group of children were playing in the big ocean. They had a lot of fun! When it was time for lunch, they said goodbye to the lake and went home happy. The end!Once upon a time there was a little girl named Lucy. She was a very organized girl and she was very brave. One day, she was walking with"],"k":0},{"p":"Mama and Max were driving home from mommy's job. Max was looking out the window when he saw an old, filthy window display. He wanted to look closer, so he started to search for a","t":["way to get closer to it.\nMama said to Max, â€œI have an important job to do, Max. We need to do a lot of work and be good. You must be careful!â€\nMax was so excited. He started to look outside the window and look out and see the trees, trees, and grass. He saw a big puddle and jumped right into it!\nMama ran over and said, â€œMax, donâ€™t go too far, you donâ€™t have to do that.â€ Max started to get a bit disappointed, but he kept looking for a way to get there. Suddenly, he saw a tall man standing near him.\nMax said, â€œHello! Can you help me?â€\nThe man smiled and said, â€œYes, I can help you. Have a great search!â€ So Max followed him and it was great work.Once upon a time,","way out.\nMax was very curious and wanted to explore it. He walked up to the door and peeked inside. Then, he saw something shiny! The box was filled with gold boxes! Max was so happy that he decided to explore!\nMax ran around the garden, looking at the sky and behind the garden. He saw lots of tall bugs, and some big rocks. Max was so happy and he wanted to keep them all.\nMax decided to stay in the castle and he was no longer scared of the adventure. He was looking forward to the next time to go!Once there was a little girl who wanted to go on a big adventure. She looked for a new adventure. One day she spotted a big, shiny stone. She asked the pear, \"Can I have it?\". Her mom said, \"No, you must't take it. You must be very hungry and don't want to get sick.\"\nBut the little girl was brave,"],"k":0},{"p":"Once upon a time there was a flower. She was very red and beautiful. Every day she would put out her petals and dance in the wind. She loved being surrounded by other flowers but she was","t":["always a bit bit too loud.\nOne day, she decided she wanted to try something new. She decided to stretch her arms and legs and dance around the flower. She stretched her arms in the air and felt like she was flying! The other flowers watched in amazement.\nThe flower felt so free and happy, she forgot all about being deaf. She spread her arms wide and began to dance around the flower. She even jumped up and down in circles until her wings were full of colour.\nThe flower was so happy, and she jumped and twirled around in circles. She even flew in the sky, like she was a fairy.\nThe end!Once upon a time there was a boy. He wanted a bicycle. So, he went to the store to buy a bicycle.\nHe looked around the store and saw a big bicycle. It was cheap and blue. He wanted it very badly.\nHe asked his mum for the bicycle. He","also very small.\nThen one day, the flower got very tired. She flew back home very high, but it was too late. The petals were gone and she couldn't keep up.\nThe next morning, the flower began to grow a flower to cheer up the garden. As she did she know it, it was time to go home. She thought it would be easy to show the other flowers to her family.\nThe little girl was so happy she could hardly believe her luck. She had a wonderful day and made a new friend. From that day onwards, she knew that it was her special friend.Once upon a time, there was a wise girl who loved to play. She always played in the kitchen and thought the cake was very funny. One day, the girl was playing with her spoon when she heard a loud noise. She looked around and saw a little boy walking in the room. He seemed excited and started to lick her lips. He looked"],"k":0},{"p":"Lily wanted to wear her new dress to the party. It was pink and had flowers on it. She loved it very much. She put it on and looked at herself in the mirror. She smiled","t":["and said, \"Hello, mom. What are you doing?\"\n\"I'm Lily, mom. I met a new dress with a pink dress and a big smile on my head. Do you want to play with me?\" Lily said, smiling.\n\"Yes, please!\" Lily said, giving her mom the yellow dress.\nThey played with their toys and danced with the dolls. Lily held her doll and her doll. She spun and tried to catch it. She laughed and said, \"This is my dress. I am going to my party. Do you want to see?\"\nLily nodded and smiled. She said, \"Yes, please.\" She felt the wind in her hair and mouth. She walked to the mirror and tried to reach it with her hair. She made it dance and talk and dance.\nBut then, something bad happened. Her dress moved. It was broken and her teeth. Lily was scared and sad. She did not like","and said, \"I look like a princess. I am a princess. You are my friend.\"\nLily put on the pink dress and twirled around in her dress. She felt very pretty. She wanted to show her friend Lily. She ran to her house and showed her mom. \"Look, Mommy, I am a princess. I am a princess. I have a necklace, a necklace, and a crown. Do you like me?\"\nMommy looked at Lily and smiled. She was surprised. \"That is very creative, Lily. You are very creative. But you know what? You are very modest. You don't need any friends. You are unique, just like me. You don't need a dress to be yourself. You look different with your clothes. You are my unique.\"\nLily looked at her mom and nodded. She said, \"Thank you, Mommy. You are very unique. You are unique. You are my unique and unique. You have"],"k":1},{"p":"Lily liked to play with her dad's office things. She liked the pens, the papers, the stapler and the calculator. She liked to pretend she was working like her","t":["dad.\nOne day, her dad gave her a new book. It was a shiny book with a lock. He said it was a special book. Lily was very happy. She wanted to study it. She looked at the book and the pictures. She smiled.\nLily found a book with a princess and a dragon. She read the book with the princess. She opened the book and read the words. They showed her the pictures. They said the king was very clever. Lily was amazed. She hugged her dad and said thank you.\nHer dad saw her book and smiled. He was proud of her. He said she was very clever. He said she was a good sister. He said he was proud of her.\nLily went back to her dad. She said she was sorry for the book. He said she wanted to study it. He said they could have a snack and read more books. He said they could have a snack later. He said","dad.\nOne day, Lily went to the park with her dad. She saw a big slide and wanted to try it. She looked very strong. She saw a hat, a hat, and a shoes. She also saw a swing and a hat. She ran to the sandbox and jumped down. She looked happy and tired.\nBut the swing was not strong. It was a long time for Lily. It was a small animal. Lily was very surprised, so she ran with a green hat. She reached the belt in her pocket. She opened it and climbed in. She felt the wind and the sun on her face. She felt the wind of her skin.\nBut the slide was not fun. It was hard and wet. It made the grass feel hot and wet. Lily could not hear it. She heard the slide getting closer. She cried and closed her arms. She hoped she was wet and dirty. She hoped she could go back to the park and"],"k":0},{"p":"Lily and Ben were having lunch with their mom. They liked to eat soup and bread. Lily wanted some salt on her bread, but the salt was on the other side of the table. She tried","t":["to reach for the jar, but it slipped from her hand. The jar fell to the floor and broke.\n\"Oh no, Ben, you broke the jar and the salt!\" Lily said.\n\"I'm sorry, Lily, I didn't mean to!\" Ben said.\nMom heard the noise and came to see what happened. She saw the broken jar and the salt on the floor. She was angry and sad.\n\"What have you done, Lily and Ben? You need to clean up and take turns to put the salt on your bread. And you hurt each other. And you made a mess on the floor. You are in big trouble!\" Mom said.\nShe took the jar from Lily and put it on her bread. She helped them clean up the mess and put away the salt. She also gave them a hug and a hug.\n\"I'm sorry, Lily and Ben, I know you were trying to hurt the jar","to grab the salad from herself, but it was too slippery. She tried to reach her hand, but it was too heavy. She said she had to wait until the water was too strong.\n\"Oh no, what are you doing, Lily?\" Ben said. \"I'm scared. I'm afraid, I'm very hungry.\"\nLily felt angry. She wanted to be nice. She loved the soup. She said, \"No, Ben, I don't care. I don't want to be a bad boy. I want to be like you. I will take them back.\"\nBen looked at Lily and said, \"You are a good brother, Lily. I love you. You are a good friend. I'm not a mouse. I am a doctor. I will not have a cake. I will give you a big hug. You are my best snowman.\"\nLily said, \"I am not tired. I am not a good friend."],"k":0},{"p":"Sam and Mia are twins who like to play in the garden. They have a small patch where they grow radishes, carrots and lettuce. They are very proud of their vegetables and like to water them every","t":["day.\nOne day, they decide to make a special radish soup for lunch. They ask their mom if they can have a carrot soup, and she says yes. They are very hungry and want to make the soup for lunch.\nThey go to the kitchen and look for a carrot. They see a big orange carrot and a big orange carrot. They both want to have a carrot soup. They start to fight over the carrot carrot, which is soft and yellow.\n\"Mine!\" Sam says.\n\"No, mine!\" Mia says.\nThey start to fight over the carrot carrot, and pull hard. They make loud noises and cry.\nMom hears the noise and comes out. She sees the mess and the twins crying.\n\"What are you doing?\" she asks them.\n\"Mom, mom, we both wanted the carrot soup!\" Sam says.\n\"Mom, you both have to eat the carrot soup, and","day.\nOne day, they see a sign on the ground. It is a big tree with a hole on it. Tom and Jen want to see what is inside. They ask their mom, \"Can we have a bite?\"\nMom says, \"Yes, you can have one coin. But be careful not to touch it.\" Tom and Mia say, \"He is funny. They are hungry. We don't want to get near the flowers from the tree.\"\nMom says, \"OK, but first, you have to be careful. You have to eat your fruits first, okay?\"\nTom and Mia are happy. They take out a big leaf and some paper. They give the bucket to their mom and make it fly. The worm makes a big hole with the water. It is hard and cold.\nMom says, \"That was a great word. You need to ask before you touch them. Then you can have some of my money or"],"k":0},{"p":"Tim and Lily were playing with their toy cars and trucks in the living room. They liked to pretend they were drivers who had to deliver things to different places. Tim had a red truck and Lily had","t":["a blue car. They had a lot of fun making noises and stories from their toy trucks.\nBut then, Tim saw a big book on the shelf. It had a lot of words and pictures. He wanted to read it, but he could not reach it. He asked Lily to help him. Lily said they needed to share the book. They both reached for the book, but Tim was faster. He grabbed the book and ran away.\nLily was angry. She chased after him and said, \"You are a bad friend. You can't take my book. It is mine. You are mean.\" She tried to catch him, but he ran away.\nTim and Lily ran around the house, shouting and waving their hands. They did not stop until they reached a small house. They knocked on the door and said, \"Please, can we have this book? It is very shiny and pretty.\"\nThe big house was quiet. Tim and Lily did","a blue tie.\n\"Look, Lily, I have a red doll!\" she said, pointing to a blue train.\n\"Wow, it is so pretty!\" Tim said, smiling.\n\"No, it does not,\" Lily said, pushing Ben away.\nThey both grabbed the train and pulled it around the room. They looked at it and saw a sign that said \"Do not go here\".\nBut then, Lily saw a boy. She had an idea. \"Let's be friends! It looks fun.\"\nSam ran inside and looked at a car. He had an idea. He brought the other side of the car and ran away.\nLily followed him and said, \"Is your glove. It is very big and soft. It is blue and new and shiny.\"\nLily looked at Tim and said, \"Wow, I like it. You are a good friend.\"\nThey played with the new toy together."],"k":0},{"p":"Tom and Lily were playing hide and seek in the big house. Tom was the seeker and Lily was the hider. Lily ran to the living room and saw a big armchair. She thought it was a","t":["good place to sit and wait. She hid behind it and closed it. She did not see the house. She was afraid of the big house.\n\"I found you!\" Tom said. He grabbed the box and ran to his door. He wanted to open the door. \"It is not a toy, it's magic!\"\nBut there was only a toy. Tom had an idea. He picked up the broken block and ran to the tree. He had a hammer, a bucket, a hat, and a sandbox. He started to fill the hat. He moved and made a fort from the slide. It was very warm and cold.\n\"Look, Tom, I have a bandage!\" Lily said to him. \"It has a hole in it. Do you want to see what else it is for?\"\nTom felt scared and sorry. He did not like the dirty puddle, he did not want to hurt Lily or the sun. He threw the rope","good place to hide. She went to the armchair and opened it.\n\"Ready or not?\" Tom called.\n\"Ready or not, I come!\" Lily said.\nTom counted to ten and then turned around. Then he ran back to the kitchen. Lily followed him and looked at the armchair. It was shiny and soft.\n\"This is my armchair!\" she said.\nTom did not understand. He thought it was a good place to hide. He looked for a good place to hide. He saw a jar of jam on the table. He thought it would be tasty. He took a big bite and bit it.\n\"Yuck!\" he said.\nLily was angry. She saw Tom's face and felt worried. She did not like the jam. She thought it was not good.\n\"Tom, you are such a bad seeker!\" she said.\nTom laughed. He was embarrassed. He wanted to say sorry"],"k":1},{"p":"Once upon a time, there was a white thief. He was sneaky and liked to take things. One day, he was walking in the dark, trying to be sneaky and sneaky, when all of","t":["the animals came to him. They wanted to play with him and keep him on his own.\nThe man was really happy with the things he had done with, and he was happy to be back home in the woods. The end.Once upon a time, there was a little girl named Lily. She loved to look at the stars and the sky on the grass. One day, she went to the park and saw a pretty flower in the middle of the garden. She thought it was so pretty and picked it up.\nLily wanted to pick the flower, but she was scared to see who could keep it. Suddenly, she heard a voice say, \"No, I haven't seen the flower!\" The flower was so happy and flew away.\nThe flower was so happy that it gave Lily a big hug and said, \"Thank you, Lily. I am so glad you're safe.\" From that day on, Lily always looked forward to picking the flower","a sudden he heard a loud noise. It was another child. She said, \"What are you doing here?\" The thief stopped and told her what he had done. She said, \"You cannot take things that are not yours. That's not right.\"\nThe next day, the thief was walking near a town. Suddenly, he saw something on the ground. It was a little girl, playing near the thief that was trying to take his things! She was trying to steal the thief, but she was too quick. The thief grabbed the little girl and ran away with her things.\nThe little girl was very sad. She had lost her things and was still very quiet. She looked for the thief but couldn't find him. She was so sad that she had lost her stuff and her adventures with the black thief.\nThe End.Once upon a time, there was a little girl called Sally. Sally was three years old and she loved to play. Today"],"k":1},{"p":"Once upon a time, there was an ordinary house. Inside the house lived two children, Mike and Anna.\n\nOne day, Mike said to Anna, â€œLetâ€™s go on an","t":["adventure!â€\nAnna looked serious, so she said, â€œNo, Mike! You have to stay here and help me!â€\nMike smiled. â€œOk, Anna. I will help you.â€\nSo, Rose and Mike went off into the woods and found a little house. It was cozy and comfortable, and Mike said, â€œI will stay here and you must stay here until the weather is gone.â€\nAnna stayed there for a long time, then it was time for dinner.\nThe two of them had a wonderful time. They made up stories and shared stories.\nBy the end of their journey, the two children were ready to go home.\nâ€œThanks for your help, Mike!â€ said Anna.\nMike smiled. â€œYouâ€™re welcome, Anna! Iâ€™m glad you had a good time.â€Once upon a time there","adventure! We should go on a big adventure!â€ But Anna was so scared. She looked around and saw no one.\nâ€œWhy is there?â€ Ben asked. â€œItâ€™s a surprise.â€ Anna said. â€œI see a big pile of leaves!â€\nâ€œThatâ€™s a surprise!â€ said Jake.\nSara was filled with excitement. She could see a huge pile of leaves. She asked Ben what she could do that.\nâ€œI think it would be my adventure!â€ said Ben.\nAnna smiled and said â€œThank you for being so kind, Ben. Let€™s play together!â€\nBen and Anna spent the rest of the day playing together. They had lots of fun and were never been so excited about the things around them.Once upon a time, there was a grumpy little girl. She was very brave, but she was very"],"k":0},{"p":"Lily and Ben were playing in the garden. They liked to dig and plant seeds. They saw a big yellow bird in the sky. It had long wings and a sharp beak.\n\n\"Look","t":[", a yellow bird!\" Lily said. \"Can we feed it?\"\n\"I don't know,\" Ben said. \"Maybe it will fly away.\"\nThey went closer to the bird. The bird looked at them and sang. Lily and Ben smiled. They threw some seeds from their hands and watched them.\nBut then, they saw something else. A big yellow and shiny was on the ground. They ran to it and picked it up. It had a long arm and a red tie. It was a snake.\n\"Look, Ben, a snake!\" Lily said. \"Can we keep it?\"\n\"No, Lily, we can't,\" Ben said. \"It is not a snake. It is a snake. It will bite us.\"\nThey put the snake on a stick and said goodbye to the bird. They decided to play with something else. Something adventurous. Something like green things, like black or black things.\nThey",", a bird!\" Lily said, pointing at the bird.\n\"Wow, it is so pretty, Lily!\" Ben said.\nThey ran to the tree and touched the bird's neck. The bird flew away and landed on a branch. Lily and Ben were very surprised and scared. They ran away as fast as they could.\nThen, they heard a voice say, \"Hello, hello, what are you doing here?\"\nThe bird looked at them and said, \"I came to see you. Do you know what this is behind the tree that makes you happy?\"\nLily and Ben nodded. They felt a little sad and angry. They did not want to play in the garden anymore.\n\"Can we play with you?\" Lily asked.\n\"Sure, let's go to the tree and see if we can find our way back. Maybe we can find a new spot to play with them.\" Ben said.\nThey ran to"],"k":0},{"p":"Tim and Jen are friends who like to play on the farm. They like to feed the cows, pet the sheep and run in the grass. One day, they see a huge pile of hay in","t":["the field. They want to see what is inside.\n\"Let's go and look,\" Tim says. \"Maybe there are apples or carrots or chicken.\"\n\"OK,\" Jen says. \"But be careful. They might have been hiding. Let's be careful.\"\nThey run to the edge of the field. They see a big pile of hay near the fence. They are curious and want to see what is inside.\nThey crawl into the hay and smell the hay. It smells good. They are very careful not to touch the hay, because it is rough and wet.\n\"Wow, this is great,\" Jen says. \"I can jump on it and see what happens.\"\nShe reaches her hand into the hay and feels something soft and warm. She pulls it off the ground and sees it is a worm. It is slimy and slimy and makes a face.\n\"Yuck!\" Jen says. \"It is a worm. It","the barn. They wonder what is inside the hay.\n\"Let's go up the car, Lily!\" Tom says. He runs to the barn and looks at the apples. He finds a shiny nut and thinks it is a good place to hide.\n\"I know, but I need a red one.\" Lily says.\n\"That is a good idea, Lily. Maybe they can be friends on a farm,\" Tom says.\nThey climb up the tree and sit on the grass. They have fun. They run around and laugh. They feel happy and proud of their work.Lily and Max were playing on the sand with their spade. They liked to build towers and houses and trees. Lily loved to look for a big hole of her blocks and Ben had a blue one.\n\"Look, Lily, I made a taller tower!\" Max said. He held up his green blocks. \"I have a green blocks and blue blocks for red clouds!\""],"k":0},{"p":"Anna and Ben are friends. They like to play with toys and books. One day, they find a big door in the hall. The door is brown and has a shiny knob.\n\n\"","t":["Let's open the box!\" Tom says. He takes out the key of the door and opens it.\n\"No, Tom, that's not a key. That is a place!\" Sue says. She pulls the box on the floor. She goes to the box and pressed it.\n\"Stop, Tom, stop!\" he says. \"You are in the box!\"\nTom runs to the door. He peek inside. He sees a long, red button and a gray pillow. He thinks it is a toy.\n\"Wow, Tom, a doll!\" she says. \"Maybe it is a toy. Maybe it can do something fun.\"\nBut it is not a toy. It is a fake truck. It has buttons, a truck, and a horn. Tom does not know how to measure it. He pulls the button out of the box.\n\"Stop!\" Tom says. He does not keep his truck. He is angry. He","Wow, look at this room!\" Anna says. \"Let's open it and see what is inside!\"\n\"No, that is not a place,\" Ben says. \"The room is for a game. You stay away.\"\n\"But I like the house. It is cozy and cozy,\" Anna says. \"Is it a secret room?\"\n\"No, it is not a secret,\" Ben says. \"It is just a place for a game. How about the game?\"\n\"Is it a game?\" Anna and Ben say.\n\"No, it is not a game. It is a game. You move your arms and legs and make noises with your fingers. Then you open the door and see,\" the box says.\nAnna and Ben are scared. They do not like the game. They don't want to play the game. They do not want to argue.\nThey start to argue. They get angry and frustrated. They"],"k":1},{"p":"Lila and Tom are friends. They like to play on the farm. They see many animals and plants. They run and laugh.\n\nOne day, they find a big field of wheat. The","t":["wheat is brown and white. It has little white flowers and pink flowers. Lila and Tom want to smell the wheat.\nThey go to the field. They see many different things: flowers, birds, squirrels and sheep. They are happy.\nBut then, they see a big dog. The dog is brown and furry. It has a long tail and a loud bark. It looks angry.\nLila and Tom are afraid. They do not like the dog. They run away. They leave the wheat alone.\nThey go back to the field. They see a big dog coming. The dog is barking. It looks angry. Lila and Tom are scared. They want to go back.\nThey run to the gate. They see their mom. She is angry. She shouts at the dog. She calls the dog. She tells the dog to go away. She tells Lila and Tom to stay away from the wheat. She says it is important.","corn has many colors and words. Tom and Lily want to pick some?\" Tom says.\nThey run to the tree of the fence. They get some on their faces. They run to the farmer, who is making a big mess.\n\"Can we pick some pumpkin?\" Tom asks.\n\"No, I can't. It is too fast.\" Lily says.\n\"But I want to pick fruits,\" Tom says.\nThe farmer does not like it. He is angry. He grabs the corn from Tom and Lily. He says sorry.\n\"No, thank you, thank you. It was not nice. It is not for eating. It's not nice to children. We will share with you. Please, please, please, give them the red fruit!\" The farmer says.\nTom and Lily do not want to give the corn. They are angry. They do not want to share or play nicely or eat.\nBut"],"k":0},{"p":"Sara likes to plan. She plans what to wear, what to play, and what to eat. She has a big book with many pictures. She looks at the pictures and makes plans.","t":["She finds a big book with lots of pictures on it. She opens the book and sees many pictures: books, toys, books, and more. She picks a book with a big star. She puts it in her backpack. She also finds a big doll.\nShe hugs the book and runs to the living room. She wants to show her mom. She puts the book on the floor. She points the doll in her backpack. She smiles.\nBut then, she hears a loud noise. She looks up and sees a fire truck on the floor. It is broken and dirty. It stops and the hat and the book. Sara is scared. She runs to her mom and tells her what she did.\nHer mom hugs her and says, \"Don't worry, Sara. The fire truck is not broken. It just needs some light. It will be fixed soon.\" She takes the book and shows her how to use it. She says the paper is safe and","One day, she finds a big book with a picture of a red sky. It has many colors and pictures. Anna wants to choose it. She puts it on her bed and goes to the door. She sees a boy who is sitting on a bench. He looks lonely. Anna is angry. She says, \"Ben, I am sorry. I will go to him now. I will show you the fun things.\"\nBen is scared. He does not know the girl. He says, \"What are you doing? You should say sorry. You are not allowed to get in the right place. You should say sorry and follow the rules. I am sorry for being kind. You do not listen to me. You were just curious. I'm sorry.\"\nAnna looks at him. She feels sorry for him. She likes his book. She says, \"I'm sorry, Ben. I did not know. I will help you. Maybe we will be nice to each"],"k":0},{"p":"One day, a boy named Tommy was playing in his garden. He saw a wide silver pond nearby, and it made him so excited. He ran to his mother and said, â€œMommy,","t":["look! That is the pond!â€\nHis mother smiled and said, â€œThatâ€™s right, Tommy, letâ€™s go there.â€\nTommy went to the pond and saw a big black fish swimming around. He asked it, â€œCan we catch it?â€\nHis mother said, â€œYes, of course you can!â€\nSo Tommy got a string and tied it around the pond. He watched it float and bobbing, until finally it was just the right size for him.\nTommy was so proud of himself for helping the big black fish. He ran back to his mother and said, â€œI did it! I caught a wide blue fish!â€Once upon a time, there were two friends, Sam and Joe. Sam was three and Joe was four. Joe was a very generous boy and always shared the toys with Joe.\nOne day, Joe and Joe were playing together","look at this pretty toy!â€\nMum smiled and said, â€œItâ€™s ok, Jack. We can keep it and keep it safe.â€ So they went inside and watched the big, white little boy. Then, with a smile, they went home.\nThey all sat down on the grass and laughed. They were so happy and excited. Jack hugged his mom and said, â€œSee you, I am proud of you.â€\nThe little boy smiled back and said, â€œYes, it was. I'm glad you had fun here.â€\nThe moral of the story is, remember this great things can happen to your mum.Once upon a time, there was a smart little girl named Sarah. She loved to play with her friends in the park. One day, she saw a big box on the ground. She tried to open it with her finger, but it was too hard.\nThen"],"k":0},{"p":"Ben and Sam like to play in the park. They see a big animal with a long nose and big ears. It is an elephant. The elephant is wet because it is hot and it sprays water","t":["on the ground.\n\"Look, Sam, look!\" Ben says. \"The elephant is wet. It is jumping and going fast.\"\nSam is not scared of the elephant. He wants to see the elephant too. He thinks the elephant is friendly.\n\"Hello, elephant!\" Ben says. \"You are very big and strong. Do you want to play with us?\"\nThe elephant nods and runs to Ben. It brings a ball and throws it to Ben. Ben grabs the ball and throws it at the elephant. The ball flies up and chases the ball.\n\"Hello, elephant!\" Ben says. \"You are so loud and fast, elephant!\"\n\"See, Ben?\" Sam says. \"How did you do that?\"\n\"I wanted to play with you,\" Ben says. \"Do you want to play with us?\"\nThe elephant laughs and runs after them. Mia and Ben run after the elephant. They want to","on a tree.\n\"Look, a pig!\" Tom says. \"It is like a cow! A big, colorful animal!\"\n\"Wow, Tom, let's eat it!\" Lily says. They run to the pig. The cow is friendly. It wants to catch it.\n\"Let's talk, Tom!\" Lily says. \"It is not a horse. It is a pig. It is yellow and soft. The cow is cold.\"\nSam does not listen. He thinks it is a toy. He thinks it is a monster. He says to Lily, \"Do you know what the dinosaur is doing? Can we touch it?\"\nSue says. \"No, I want to touch the cow. I am hungry. I thought it can hurt us. Let me show it to the lion.\"\nTom and Lily start to fight. They pull and pull things into the barn. They do not know what is wrong. They do not know"],"k":0},{"p":"Lila and Max were playing in the park. They liked to dig in the sand and look for shiny things. Sometimes they found coins or buttons or shells. They put them in a bucket and pretended they","t":["were in a build.\n\"Look, I found a sword in the sand!\" Lily said, pointing to a small wave. \"Let's go on the beach!\"\n\"OK, but there are many rocks that comes out!\" Tom said.\nThey ran towards the sand and saw a big bowl of water. They were curious and wanted to see what was inside.\n\"Let's go and eat it!\" said Tom.\nThey ran as fast as they could to go back. They looked into the pile and found a big stone in the sand. It was white and shiny and had a big mouth.\n\"Wow, look at this!\" Tom said. \"It's so big and round and colorful!\"\n\"Yes, it is!\" Lily said. \"It is amazing!\"\nThey got the bucket and went back to the water and saw a small fish. They had a lot of fun in the sand.\nBut then,","were treasures or animals or animals.\n\"Look, Lila, I found a treasure!\" Max said, holding up a shiny diamond. \"It is so shiny and pretty. Do you want to see?\"\n\"Yes, Max, yes!\" Lila said, running to Max. \"Can I see it?\"\nMax reached out his hand to grab the diamond. Lila pulled him away, but he held it tight. \"No, Max, it is mine! I found it first!\"\n\"Please, Lila, just for a little bit! I want to see it better!\" Max said, and looked at Lila. He saw that she was angry and scared. He knew that she was wrong to take things that were not hers. He wanted to say sorry to Lila and Max.\n\"Please, Lila, I want to see it! It is so pretty and shiny. Please don't be mad at me. Please, come on, can we have it?\""],"k":1},{"p":"Sam and Ben were brothers who liked to play pirates. They had a big cardboard box that they pretended was a ship. They also had a hook, a hat and a sword that they took turns to","t":["use.\nOne day, they decided to have a picnic in their box. They saw a big box on the floor. They thought it was a big box with a lock. They opened the box and looked inside.\n\"Wow, look at all these things!\" Sam said. He grabbed a stick and started to poke the box.\n\"Hey, what are you doing?\" Lily wondered. She saw the hook and grabbed it. \"That is not a treasure, that is a coin! It is not a treasure, it is a treasure!\"\nSam looked at the coin and felt scared. He saw that it was dirty and had mud all over it. He started to cry.\n\"Hey, look! I found it in the box!\" Lily shouted. She picked up the coin and looked at it. It was very dirty and dirty. She felt regret.\n\"Sam, you are right! You can play with the money. And you can","sail in. Lily had a scarf that she loved to put in a boator. Ben had a toy and a blue dress.\nOne day, Anna and Ben were playing with their cars outside the house. Lily had a doll and Tom had a scarf. They were having fun, but they wanted. Lily's doll was faster than Ben. They wanted the doll for herself.\n\"Give me the princess, Lily! You can have that tea car. That's very cool and special. You will wear your belt,\" Ben said.\n\"No, I don't. I want to keep it. You are a princess,\" Lily said.\nShe held the toy doll and ran to Ben. She tried to pull it with her. Ben held it tight and held it tight. He was happy with his truck. He had a new car that Lily had bought it.\n\"Hey, Lily, can I play with you?\" Ben asked.\nLily shook"],"k":0},{"p":"Billy woke up bright and early for school one morning. He was so excited to see his friends and learn something new. He ran into the kitchen to have breakfast and saw his mom looking frustrated.","t":["\"Mom, can I have something to eat?\" Billy asked, pointing to the freezer.\n\"What do you want, Billy?\" she asked.\n\"I want a cake, please,\" his friend answered.\nBilly's mom smiled and said, \"Ok, here you go!\" She came over and gave Billy a big bowl of delicious treats for dinner.\nAfter breakfast, his mom asked him if he wanted to go outside and play. Billy was so excited! He ran and jumped in the garden and couldn't wait to show his friends.\nBilly ran around and enjoyed the bright sunshine. He was so happy of it and he was no longer frustrated.One day, a little boy named Max was walking in the garden. He saw a big sunflower and he wanted to pick it. He reached up and grabbed it.\nMax said, \"Mom, I found a sunflower!\"\nHis mom smiled and said, \"That's great,","\"Mom, why's I ate? It's hot,\" he shouted.\nHis mom smiled and said, \"That's alright, I'm sorry. Let's go to the oven to make dinner together\".\nJack was excited. He asked his mom for something. When he got there, his mom said, \"Well, this food is delicious!\"\nJoe was so excited that he ran away and smiled. He was so happy that he was able to eat his favorite fruits!Once upon a time there was a little girl, who loved to ride. She was so happy, she always went for long drive near her dad. One day, she took her passport to the beach. She saw lots of cool things and a big smile.\nThe little girl picked up a big log with lots of different things. She was so excited! She could hardly wait to see what would happen. After a long walk, she saw the ocean and the big blue blue sky"],"k":0},{"p":"Lily and Ben were best friends. They liked to play in the park every day. They liked to swing, slide and run. One day, they saw a big duck pond in the park. They","t":["wanted to feed it frogs.\n\"Let's find some frogs,\" said Lily. She took a green frog from her pocket and threw it into the water. The green frog came out and swam to the ball.\n\"Be careful, Lily,\" said Ben. \"The green frog is very fast.\"\nLily took the green frog and put it on her finger. She held it in her hand and walked with the green frog on her finger. She was very happy.\nBut then, Max saw a net on the other side. He wanted to catch the green frog. He wanted to catch it with Lily. He jumped and tried to grab the net.\nBut the green frog was not very friendly. It jumped out of the net and onto the net. It jumped and dragged Ben with its foot.\n\"Help, Lily, help!\" Ben cried. He ran after the green frog.\nLily saw what happened. She ran to the net and","wanted to catch it, but they had no money.\n\"Hello, hello, bird!\" Ben said. \"Do you want to play with us?\"\nThe duck looked at them and nodded. It did not know how to play. It wanted to play with them.\n\"Hello, can I play with you?\" Ben asked.\nThe goose did not answer. It jumped on the lake and looked at them.\n\"That is not a duck, that was a bird. It is a very friendly and fun,\" the duck said.\n\"Maybe it is a good duck,\" Ben said.\nThey decided to be a good friend. They went to the pond and showed their mom and dad about their adventure. They told them the duck would like the fun. He said they were good kids and they had a lot of fun.\nThey ran to the pond and slid down. They felt the breeze in their hair and the water in their"],"k":0},{"p":"Lily and Tom were going on a trip with Mom and Dad. They had to pack their luggage in big bags. Lily wanted to pack her favorite doll, but Tom said no.\n\n\"That","t":["'s not nice. You have to pack your passport. It's too important for the trip. You have to pack your suitcase and get in the car,\" Mom said.\n\"But I'm bored. I don't want to pack my bag. I want to go on the trip. It's too cold and dark. I don't like the hotel. It's too dark and scary,\" Lily said.\nTom did not listen to Lily. He grabbed his passport and ran out of the room. Lily followed him. She was scared.\nThey ran and ran until they saw their big sister, Lila, sitting on the floor. Lila was holding a doll. She looked scared and sad.\n\"Mama, Lila, Ben, where are you? We are on the trip. Can you be my sister?\" Lila said to Tom.\nTom looked up and saw Lila. He realized he was in trouble.\n\"Mama, Lila, Ben are going to","is not how you get your toys, Lily and Tom,\" Tim said to Lily.\nThey went to their grandma's office to find her. They saw many things: pictures of animals, monkeys, frogs, and bugs. Lily liked Tom and Lily very much.\n\"Look, mom, I have a new toy. She is so pretty and pretty. Can I have a present, please?\" Tom said.\n\"Sure, but be careful. And don't run too far, okay?\" Lily said.\n\"OK, Lily, you can have fun. But be careful, okay?\" Tom said. He took his hand and ran to his mom.\n\"Mom, mom, I can see my whistle with your car.\" Lily said.\n\"Okay, Lily. But can you show me?\" Tom said. He was excited.\nLily and Tom took the car and ran to the garden. They played on the swings, the slide, the"],"k":0},{"p":"The little bear opened his eyes. He was on a mountain and it was very harsh. He looked around and saw all the other animals, scurrying up and down the rocky peaks. He","t":["heard his friends and they all got excited. Everyone was so excited that they started to laugh at him.\nThe little one wanted to join in, but it was too late to jump down. After much time, the big bear had enough and decided to try. He moved over the big rock and sat down and enjoyed it.\nThe bears were so happy that they had made a new friend. They went back to the beach and the bunny never forgot to sing with the birds. They felt like a new day and the brave ocean they had shared them with all the animals.Once upon a time there was a little girl called Alice. She was only three years old. She had a beautiful, white teddy bear that she loved to keep.\nIn the park, Alice saw a lot of people playing with her. One of them said, â€œI want to join a game!â€\nSuddenly Mandy saw a group of children playing and she wanted to join in","was so excited! He waved at the animals and tried to take them all away. But he could not do that. He was sad and disappointed.\nSuddenly, the little bear felt something strange. He looked up and saw that the animals had been following him. He looked down his path and saw the birds. He smiled and waved at them, feeling very happy. From that day on, the little bear was never alone.Once upon a time, there was a little girl called Lucy. She loved to explore the world and find new places.\nOne day, Lucy saw an ancient house. She noticed lots of windows and doors. She wondered what was inside, so she walked inside.\nWhen Lucy arrived, she was surprised to find a tiny bird. It had a small nest on a branch. The bird asked Lucy if he needed help. \"Yes,\" said Lucy. She carefully reached up to the nest and carefully put a soft piece of cloth in it."],"k":1},{"p":"Tom is a boy who likes to fold paper. He can make many shapes with paper, like birds, boats and hats. He likes to show his paper shapes to his friends and family. He is","t":["very polite and kind.\nOne day, he goes to the big pond with his mom. He sees his dad's face and his friends. He has a big boat and a big map. He takes him to the new place. He is good at the sea, and he can not tell it to drink. He is very happy and proud.\nBut then, something bad happens. The raft does not see the big wave. It looks like a big rock, but it is not good. It is a boat. It has no wheels and a horn.\n\"Look, Ben, a boat!\" Anna says. She runs to the boat. \"Can I play with you?\"\n\"Sure, but be careful. It is not scary. It is just the one we have. Do you want to come on the boat?\" Ben says.\n\"No, thank you. I have a nice voice. I can make you move you to the other side,\"","obedient and kind. He likes the paper shapes. He wants to make a big house with many shapes. He puts it on his shelf and goes to find his mom and dad.\nHe is in the kitchen, making a lot of noise. He sees the mess they made and messing them. He is very upset. He says to Tom, \"Why did you make such a mess with your paper shapes? They are all messed up and hurt. You should not play with paper or scissors. You should be careful and respectful. You should be ashamed of yourself.\"\nTom is scared. He runs away from his room. He cries. He is sorry. He tells his mom and dad what he did. They hug him and say they are sorry. They say they will help him clean the wall and the shapes. They say they will help him clean the papers. They say they are proud of him for being good and obedient.\nTom smiles. He says he loves"],"k":1},{"p":"Lily and Ben are playing in the park. They see a big rope hanging from a tree. They want to swing on it.\n\n\"Can I go first?\" Lily asks.\n\n\"","t":["Me too!\" Ben says.\nThey both run to the rope. They take turns to swing and pull each other. They laugh and shout.\nBut then, they hear a loud voice. It is a man. He is angry. He has a hat and a coat. He is angry.\n\"Hey, you kids! Get off my rope!\" the man shouts.\nHe grabs Ben and Ben by the arm. He pulls them off the rope. He throws them in the trash.\n\"Sorry, mister!\" Ben and Lily say.\nThey get up from the rope. They run to the swings. They are wet and dirty.\nThey hug each other. They are still friends.\n\"Let's play something else,\" Ben says.\n\"OK, but can we swing on the swings?\" Lily asks.\n\"Sure, why not?\" Ben says.\nThey smile and play with the swings and the slide","OK, but be careful. It looks fun. And don't go too close,\" Ben says.\nThey run down the ladder. They see a man with a big hat and a hat. He is a nice car. He walks to them and grabs his ball.\n\"Hello, kids!\" Ben asks.\n\"Hello, I like your bear, Rex,\" the man says.\nThe man looks at the man with his dog. He smiles.\n\"Hello, children. You are very nice. You are very good. Do you like him?\" the man asks.\n\"Yes, we do!\" Lily and Ben say. \"We love you. Do you like the dog if it is very kind?\"\nThe man smiles and hugs them. \"Yes, thank you. I hope you are happy,\" he says.\n\"Bye, sir. You are very nice. You helped me.\" the man says. He gives them a hug"],"k":0},{"p":"Lily and Max were playing in the garden. They liked to dig in the dirt and look for shiny things. Sometimes they found coins, buttons, or rocks. But today, they found something very special","t":[".\n\"Look, Lily, I found a green thing!\" Max said, holding up an black stone.\n\"Wow, Max, that's a pretty thing! Do you want to see?\" Lily asked.\n\"Yes, please!\" Max said.\nThey reached for the shiny thing, but as they did, a big dog came out of nowhere and chased them. Max and Lily were scared and tried to run away, but the dog was faster. It caught them in its mouth and barked softly.\n\"Help! Help! Help!\" they cried.\nBut no one heard them. They were too weak to move. They fell to the ground, and the metal thing on their clothes and rocks. They did not feel anything. They did not breathe.\nThe dog woke up and barked. It was not a magic thing. It was a magic rock. It brought the shiny thing with it to Lily and Max. It had a sign that",". It was a box of candy. They picked it up and looked shiny.\n\"Look, Mia, a pretty one!\" Tom said, pointing at a brown stone. \"It is so pretty. Do you want to play with it?\"\n\"Yes, Tom, please!\" Mia said, scared. \"Maybe we can find something fun inside. Or we can find what it has.\"\nThey ran to the box and looked at the pictures. They did not know what they were. They did not know what the key was.\nThen, they heard a noise. It was a big truck. It had a hole and a loud horn. It was coming out of the hole. The car broke open. It jumped on the trash and hit them.\n\"Oh, no!\" Tom cried. \"This is a fire!\"\n\"Ben, it was a fire. It was so scary!\" Mia said.\nThey heard their dad coming into the"],"k":0},{"p":"Once upon a time, there was a big lion. The lion was very powerful and he liked to show his power to other animals. One day, a little rabbit saw the lion and got scared.","t":["The mouse wanted to help the rabbit.\nThe lion went to the cat's house and asked for help. The lion agreed and they both went together. But when they got there, the lion saw the lion and the mouse's friends was sad. They tried to run away, but the lion didn't help. The lion was very happy and thanked the lion for helping him. From that day on, the lion always helped others whenever they needed it.Once upon a time, there was a little girl named Lily. She loved to play with her toys all day long. One day, she went to the park with her mom to play on the slide. They walked and walked until they saw a big tree. They went to pick some flowers and Lily picked some flowers.\nSuddenly, Lily's little brother came into the room. She saw the big dog and said, \"Wow, that's so nice!\" Lily felt happy and proud. She said, \"I'll be very","The lion tried to run away, but he couldn't. The lion was too fast and caught the rabbit. The rabbit was very sad and cried a lot. The lion felt bad and wished he had never trusted the little rabbit.Once upon a time, there was a little girl named Lily. She loved to play in her backyard and look for treasures. One day, she found a big, open box and decided to hide inside.\nHer friend, Timmy, came over and asked, \"What are you doing with that big box?\"\nLily replied, \"I discovered a treasure hidden in the ground!\"\nTimmy said, \"Why?\"\nLily said, \"I saw a big, scary monster in the sky.\"\nTimmy said, \"Let's go inside and find a way to get it out!\"\nThey went inside and found a dark, dark room. Lily's mom said, \"Let's clean it up together. It needs water and dirt"],"k":1},{"p":"Lily and Ben were playing in the garden. They liked to look at the flowers and smell them. Lily saw a daisy that was very pretty. It had white petals and a yellow middle. She wanted","t":["to pick it and show it to Ben.\n\"Look, Ben, a daisy!\" she said. \"It is so pretty and pretty!\"\nBen was not sure. He saw a big yellow daisy in the garden. It was very sweet and juicy. He reached for it, but Lily stopped him.\n\"Me too!\" she said. \"It is a special daisy. It is a special flower. It will have a wish too.\"\nBen felt sad. He thought it was a special daisy. He did not want to lose it.\n\"But it is so nice!\" he said. \"It is a beautiful flower. It is very special. I want to take it home and show it to my mom.\"\nLily felt sorry for Ben. She did not want to hurt him. She liked her daisy too. She liked the daisy too.\n\"I am sorry, Ben,\" she said. \"You are right. The daisy is","to pick it.\n\"Look, Ben, I found a yellow flower!\" Lily said. She wanted to taste it.\nBen saw a flower on the table. He picked it up and looked. He reached, but Lily followed him.\n\"Be careful, Lily!\" he said.\nHe reached for the flower. He smiled.\n\"No, Lily, it is not a potato, that is funny and pretty. It can hurt someone. It is like a flower. It is beautiful. But it has a name and it was not real. It has no hair or teeth. We have to clean it up and take it away.\"\nLily said, \"Don't be scared, Ben. It's not nice. It has a hole and a big mouth. A long.\"\nBen laughed. He liked the sunflower. He wanted to catch it. He said, \"No, Lily, let's go. It is too high. We"],"k":0},{"p":"Sam and Mia were playing pirates in the garden. They had a big box for a ship, a stick for a sword and a map for treasure. The map had a red X on it and some","t":["shells.\n\"Look, I found the treasure!\" Tom said, holding up a red and blue pirate necklace. \"It is so pretty!\"\n\"I found it first, I keep it for my pirate ship!\" Mia said, holding up a shiny necklace. \"But I want to keep it for myself!\"\nThey started to argue and shout. They made a lot of noise and mess. They did not share or say sorry.\nTheir mom heard them and came to the garden. She saw the box and the twins fighting over the treasure. She was not happy.\n\"Stop it, boys, stop it! You are making a lot of noise. You are not sharing and fighting. You are hurting each other's feelings. You can find another treasure that you both like,\" she said.\nTom and Mia looked at their mom and felt ashamed. They knew they were being silly and rude. They did not want to hurt each other's feelings.","holes. Tom and Sue liked to look at the map and see the stars.\nOne day, they found a shiny coin that was very good. It was very tasty and red and looked very yummy. Tom and Sue put the coin in the mailbox and ran to meet it. They wanted to keep it and play with it. But then they saw something else. It was a hole of smoke and a hole.\n\"Look, Tom, a big, mean cat!\" Lily said. \"Let's hide and not to go!\"\nTom ran to the door and called the police. The guard came out and looked for the key. He saw the hole and followed the police. He was angry and sad.\n\"Help, help, Tom, run!\" the police cried. He grabbed the key from the box and put it in the box. He ran away with his mom and dad.\n\"Mom, dad, there's a fire in the garden!\" he"],"k":0},{"p":"Lily and Ben were best friends. They liked to play in the park, read books, and eat blueberries. One day, Ben told Lily that he had to travel with his family. He said they","t":["were going to a big city that had many cars and loud noises.\nLily was very scared. She did not like the city very much. She did not like the cars and the loud noises. She wanted to sleep and eat blueberries. She tried to make Ben feel better.\n\"Ben, please, don't be scared. The cars are nice. They are strong and pretty. They are not scary. They are friendly and fun. They are not scary. They are fun. Please, Ben, please. Come with me,\" Lily said.\n\"But Ben, you are not a baby. You are a baby. You are a baby. You are not funny. You are loud and silly. You are a baby. You are in a big city. You are a baby. You are very brave,\" Ben said.\nLily did not want to talk. She did not like Ben. She wanted to go home. She wanted to go home.","were going on a trip and had to be good and stay.\nLily was sad. She wanted to play with Ben, but he was not. She walked to Ben and said, \"Hi, I am Lily. I am playing on the beach. Do you want to play with us?\"\nBen nodded and said, \"Yes, Lily. You are very nice and nice. Can I see you?\"\nLily looked at the water and smiled. She said, \"Yes, Ben, that is a duck. I like ducks. They are my friends.\"\nBen said, \"Yes, I do. I will see you from the bottom of the pond. You are so kind.\"\nLily and Ben hugged him. They said, \"You are my best friend, too. We love you. You are my best friend.\"\nThey smiled and hugged. They felt happy. They had made a new friend.Anna and Ben are twins. They like"],"k":0},{"p":"Anna and Ben love to play in the pool. They splash each other with water and laugh. They see a big slide and want to try it. They climb up the stairs and wait for their turn","t":[".\n\"Look, Lily, I can slide up!\" Ben says.\n\"Me too, Lily. I'm fast too!\" Ben says.\nThey start to play around the slide and the slide. They have fun all day. They are happy. They do not see their mom calling them.\nBut then, Lily sees a big boy on the slide. The big boy is going on the slide. He shouts, \"Hey, what are you doing? You are not a baby!\"\nLily and Ben are scared. They are not scared. They are also very sad. They want a hug.\n\"Sorry, Ben, we did not mean to,\" Lily says. \"We just wanted to slide down. We want to meet you. We want to be like you.\"\n\"I am sorry,\" Ben says. \"I was not a new friend. I thought you should ask first. I think you should never take the slide. I",".\n\"Are you ready, Anna?\" Ben asks Ben.\n\"Yes, I am, Ben. Let's go!\" Anna says.\nThey hold hands and slide down. They hold hands and slide down. They feel the wind in their hair and the sun on their faces. They laugh and shout. They feel the wind in their hair and the sun on their faces. They have fun in the pool.\nBut then, they hear a loud noise. It sounds like a roar. They stop and look. They see a big fish on a rock. The fish is angry and hungry. It swims to them and eat them.\n\"Hey, that's my fish!\" Ben shouts.\n\"Ri, fish, go away!\" Anna shouts.\nThey run away from the rock. The fish chase them. They swim fast and far. They see a river. They swim and swim. They reach the rocks and swim. They reach the"],"k":1},{"p":"One day, a little girl named Lily went to her friend Tom's house to play. They liked to build forts with chairs and cushions. When Lily got to Tom's house, she saw that","t":["he was very busy. \"Tom, can you please help me find my toy?\" she asked. Tom nodded and gave his friend his toy. He said, \"Here, you can use my toy car.\"\nTogether, they started to build a fort in the fort. They both picked up sticks and sticks and made it into a fort. They had so much fun that they did not hear their mom calling them for lunch. They knew they would build again tomorrow. And they lived happily ever after.Once upon a time, there was a little boy named Tim. Tim was a very obedient boy who always did what his mom and dad told him to do. One day, Tim saw a big, green tree near his house. Tim wanted to climb the tree and see what was on the other side.\nAs Tim climbed, he saw a branch on the ground. He jumped and climbed, but he could not reach the top. He felt sad. Tim wanted to be independent","the clothes were very dirty. She said, \"Look, Tom, I found a bandage! Can I wear it?\"\nSue was curious and she wanted to try it. She said, \"Yes, but be careful!\" Tom was happy with his new toy. He said, \"Good job, Lily! You are so pretty, too. We can play with it and make fun things together.\"\nTom and Lily played together for a long time, then Sue's turn. They learned that playing together can be fun and fun, and they had lots of fun together. From that day on, they always shared their toys and having fun together.Once upon a time, in a small town, there lived a boy named Tim. Tim had a favorite toy. Tim loved to play with his cars. One day, he saw a toy car that looked like a real car.\nTim asked his mom, \"Mom, can I have that toy car?\"\nMom smiled"],"k":0},{"p":"Tom and Sam were brothers who liked to play outside. One day, they saw a big dog in the park. The dog had a steak in his mouth. Tom and Sam both wanted the steak.","t":["They started to fight over the steak.\n\"Give me the steak!\" they shouted at the dog.\nThe dog did not listen. He jumped on the steak and tried to bite it. Tom and Sam were scared. They tried to scare the dog away. But the dog was too strong. He pushed Tom and Sam and took the steak from him. He ran away with the steak.\nTom and Sam cried for help. They wanted their steak back. They saw a man with a dog. He was the dog's owner. He came to the park and saw the dog. He picked up the dog and threw the steak in the air. The dog ran after the steak. He bit the man in the head and bit his arm.\nTom and Sam were very sad. They cried and cried. They wished they had listened to Sam. They wished they had not fought over the dog. They wished they had been nice to the owner. They wished they had listened","\"Let's go get my ball!\" Sam said.\n\"No, no, no!\" Sam said. \"The dog is for us. He is our friend!\"\nSam was scared. He did not like the big dog. He thought the dog could not. He wanted to be friends with Sam. He thought the big dog was not so bad. He barked and ran away.\n\"Hey, you are mean!\" Sam shouted. He ran away from the giant. He wanted to say sorry.\nBut then, the big dog saw Ben and Sam. They ran after the dog. They were scared and scared. They ran as fast as they could. They picked up their toys and threw them. They wanted to go back to the big dog.\n\"Spot, no! Go away!\" Tom shouted. \"Why are you fighting?\"\nThe big dog barked and shook. He jumped on them with its feet. He got out of the"],"k":0},{"p":"Ben and Jen are twins. They like to play in the garden. They find a big bag of beans. They want to know how many beans are in the bag.\n\n\"Let's weigh","t":["them and make a tower!\" Ben says.\n\"OK, but be careful. And don't take them too fast.\" Jen says.\nThey take a handful of beans and put them in the bag. They make a tower with the beans. They take turns to put them in the pile.\nBut then, a big wind comes. It blows the beans away. It is very strong. It catches more beans and higher. It reaches the pile of beans.\n\"Oh no, our tower!\" Jen says.\n\"Oh no, our tower is gone!\" Ben says.\nThey hear their mom coming. They are scared. They do not want their mom to see the beans.\n\"What happened, Sam?\" Mom asks.\n\"The beans are not stable. The beans are too heavy and too close. They are too heavy to carry me.\" Ben says.\n\"Can you help me, Ben?\" Jen asks.","the fruits and spoons with water,\" Lily says. She makes a face in the bag. Ben likes to stir the apples with water to eat.\nThey take some bread and give them to the basket. The water comes near the basket. It starts to bite.\n\"Let's go to the park!\" Ben says. He opens the basket. He finds a nice spot under the tree. He holds the leaves and puts it in the basket.\nLily and Ben hold the apples and run down. They run to the tree. They forget about the fruits.\n\"Come on, Ben,\" Lily says. \"The tree is not good for us.\"\n\"That's a good idea,\" Ben says. \"Let's do it again. Maybe we can find something to eat.\"\nThey run to the tree and look behind the tree. They see some flowers: worms and birds. They are happy and proud.\nThey thank the owl and say goodbye"],"k":0},{"p":"Lily likes to talk to her grandma, who lives far away. She misses her a lot. Sometimes, she calls her on the phone, but sometimes, she wants to show her something. Then,","t":["she brings her phone to school and plays.\nOne day, Lily goes to the park with her mom and dad. She sees a big slide, a swing, and a sandbox. She runs to the sandbox and sees a small pond. She runs to the pond and jumps in. She feels the water and the sea. She makes funny noises and laughs.\nBut then, she sees something else in the pond. It is a big, shiny thing. It is round and round and has a long tail. It looks like a butterfly. Lily feels a shock. She wonders what it is. She pulls her phone out of the pond and sees that it is not a butterfly. It is a fish!\nLily is confused. She asks her mom, who is sitting on a bench nearby. Her mom smiles and says, \"It is a fish, Lily. It belongs to another fish. They are very friendly. They swim and do tricks. They have a net and a","she puts on her shoes, and says goodbye to her mom.\nHer mom smiles and hugs her. She says, \"Thank you, Lily! You are very kind and generous. You are my friend.\"\nLily hugs her mom and says, \"Thank you, mom. I love you too.\"\nHer mom hugs her back and says, \"I love you too, Lily. You're so sweet and kind. You worked very hard and help me. You are the best mom I can do great.\"\nLily says, \"Thank you, mom. I love you too.\"Anna and Ben are twins. They like to play with their toys and books. But they do not like to share. They always fight over who wants to be the fastest.\nOne day, Mom comes home from work. She sees them yelling with toys. She smiles and says, \"What is this? Go to the store. It is too high for you. You are"],"k":0},{"p":"Tom and Mia are twins. They like to play in the park with their mom. Mom says they have to behave and listen to her. She says it is important to be safe and kind.","t":["Anna and Ben put on their shoes and go out to the park. It is warm and warm outside. They are quiet and happy. They play with their toys and books. They are having fun.\nThey run and jump and spin. They laugh and run. They say, \"Whee, vroom, vroom!\" They laugh and scream. They forget to fly. They have fun.\nBut then, a big dog comes. The dog is brown and loud. He likes to chase them and chase them. He barks and barks. He does not know how to swim. He wants to go home.\nAnna and Ben run to the dog, but they don't see the dog. The dog is hungry. It jumps off the fence and tries to get them. But the dog is fast and strong. He sees the stick and runs after Ben. He grabs the stick and sees it and chases it.\n\"Go away, dog!\" Ben shouts. He tries to","One day, they see a big dog with a collar. The dog is brown and furry. It has a collar with a tag. Tom and Mia are curious. They want to see the dog closer.\n\"Can we go, Mom?\" Tom asks.\n\"No, you no, you are too little. The dog might bite you or run away,\" Mom says.\nBut Tom and Mia are curious. They go to the dog. The dog sees them. It wags its tail. It runs to them.\n\"Hello, dog! You are friendly. You can play with us,\" Tom says.\nThe dog barks. It licks their faces. It is happy.\nTom and Mia giggle. They say hello to the dog. They show it their toys. The dog licks their faces. It likes them.\nThey have fun in the park. They are happy.Lily and Ben like to play with crayons and paper. They"],"k":1},{"p":"Ben and Lily were playing in the garden. They found a big skull under a bush. It was white and hard and had many teeth.\n\n\"Wow, look at this!\" Ben said.","t":["\"It is so pretty!\"\n\"Can we take it?\" Lily asked.\n\"No, it's too high and cold. I want to play with it,\" Ben said.\nThey each grabbed the rock and ran to the leaf. They wanted to catch it and touch it.\nBut the worm did not like to be near the water. It wanted to play with them. It jumped away and did not care. It jumped out of the tree and made a splash.\n\"Uh-oh!\" Ben cried. \"This is not a toy, it's a snake. It is a snake!\"\nLily ran to her mom and hugged her. She did not want to play with the worm. She thought they were scary and selfish. She took the hose and hugged the snake.\n\"Mom, mom, help us!\" they cried. \"The snake is gone!\"\nMom came to the garden. She saw the sunflower and the flower","\"It looks like a candy skull. Maybe it has a message inside. Maybe it is from a brave and strong tree.\"\nLily wanted to touch the skull too. She ran to Ben and reached out her hand. Ben followed her, but he was scared.\n\"No, Lily, don't touch that!\" Ben shouted. \"It might be hard. Please, don't touch it. We'll be careful.\"\nBut Lily did not listen. She reached out her hand to the skull. She wanted to see her own words. She did not see the hole in the ground. She fell down and hurt her knee. She cried out in pain.\nBen ran to her and helped her up. He said, \"Are you okay, Lily? I'm sorry you got hurt. Do you want to help me?\"\nLily nodded. She was sad and hurt, but she did not want to help Ben. She wanted to be his friend. She went"],"k":1},{"p":"Lily and Ben were on a trip with their mom and dad. They stayed in a big hotel with many rooms and a pool. Lily and Ben liked the pool a lot. They put on their swimsuit","t":["s and got in their car.\nOne day, they saw a big truck with a picture of a red bird on it. It was red and shiny and had a long neck. Lily and Ben wanted to ride on the balloon and see what it was like to fly. They ran to the car and climbed on the boat. The boat went slow and far.\nLily and Ben were happy. They ran to the boat and climbed on it. They pushed it to the other side and saw a frog. The frog liked the boat. But Lily and Ben did not like the boy. They wanted to ride with them.\n\"This is my boat,\" Lily said.\n\"I want to see the duck,\" Ben said. \"Maybe we can find a dolphin. Maybe it is looking for other animals.\"\nThey walked to the edge of the pond and got out of the water. They reached their arms and pulled their feet. They hoped someone would come back too","s and hats and got in the car.\n\"Are we ready to go, mom?\" Lily asked.\n\"Not yet, sweetie. We have to hurry. This is a cold trip,\" mom said. She had a bag and a snacks from the kitchen.\nLily and Ben watched as mom and dad drove away. They were not restless anymore. They were excited to see the hotel and the park and the food.\n\"Can we look at the hotel, mom?\" Ben asked.\n\"Of course, you can. But you have to be quiet and stay close to me,\" mom said.\nLily and Ben nodded. They were not happy. They wanted to see the hotel. But they knew they had to listen to mom and dad. They put on their floaties and got in the car.\nThey drove for a while. It was very cold outside. They saw big waves and small people. They heard loud sirens and heard"],"k":1},{"p":"Tom likes to wander in the park. He likes to see the birds, the flowers and the big trees. He likes to run and jump and play with his ball. He is very fit and has","t":["fun.\nOne day, they go to the park. The big tree is very high and fast. The tree is very high and fast. The tree is very big and strong. Tom and his team are curious and clap their hands. They want to show their ball to their friends.\nBut when they go to the mountain, they see that the pond is closed. The trees are too big for the big tree to reach. They look sad and upset. They want to go back to the park. But they are also scared of the hill. The big tree is gone.\nThe big tree comes to another park. The tree is big and strong. It has no leaves. The tree is wet and heavy. A big, black animal comes out of the tree and barks. The hole is very hot. It hits the wall. It hurts the house and the rocks. It tries to scare Tom and his friends.\nTom and his friends try to get out of","fun.\nOne day, he sees a new kid in the park. He is big and mean. He has a ball and a net and a net. He says, \"This is my ball. You can't catch it. It is mine.\"\nThe new kid is sad and angry. He says, \"No, it is mine. I saw it first. It is mine now. You are mean and selfish. I want to play with it.\"\nTom and the new kid chase Tom. They run and run and laugh. They are faster and faster. They do not see a big rock. They fall over with the net. They hit the ball. They hurt themselves and their arms and legs.\nTom is shocked and scared. He cries, \"Ow, ow, ow. You hurt me. You are bad. You hurt my friend. I am sorry. I was not nice. I was selfish. I did not care about your friend. Please"],"k":1},{"p":"Tim and Sam are young brothers. They like to play golf with their dad. Dad has a big bag with many sticks. He lets Tim and Sam use the small sticks. They hit the ball and","t":["the ball starts to roll.\n\"Bang, vroom, zoom, shoot, zoom!\" Tim says.\n\"Yes, Tim, I did it!\" Kim says.\nThey put the ball back block in the box. They close the box. They see the ball and the blocks. They see the ball and the road. They have fun.\n\"Look, Tim, I have a ball!\" Kim says.\n\"Where is our ball?\" Tim asks.\n\"I don't know. Maybe they are good than us!\" Sue says.\nThey look around. They see a ball. It is red and soft. They want to have it.\n\"Let's play with the ball!\" Tim says. \"We can make a fort with the ball!\"\n\"No, let's do it!\" Mia says. \"We can pull the ball!\"\nThey take the ball and the ball and run away. They have fun.","hit it hard. They laugh and say, \"This is fun!\"\nBut then, a big dog comes. The dog is angry. It barks and runs to Tim and Sam. Sam and Sam are scared. They cry and scream. They run to their dad.\nDad sees the big dog. He is brave. He runs to the big dog. He calls the dog. He asks for help. He says, \"Go away, bad dog! Leave Tim and Sam alone!\"\nThe big dog does not go away. It runs away. Sam and Sam are happy. They hug dad and say, \"We are safe now, dad! The dog is gone!\"\nDad hugs them and says, \"Don't worry, boys. The dog is gone. Come on, let's go and see the ball. Maybe we can find a better place to play.\"Sara and Ben were playing with blocks in the living room. They liked to build towers and houses"],"k":1},{"p":"Tom and Mia are friends. They like to play outside. But today it is wet. The rain is falling from the sky. They cannot go to the park.\n\n\"Let's play with","t":["the ball!\" Lila says.\n\"OK!\" Ben says.\nThey run to the boy. They are good kids. They have fun.\nThey see a sign. It has a picture of a girl. She looks happy.\n\"Look, a girl!\" Tom says.\n\"Yes, Tom, it is. She is a baby. She is a dog,\" Mia says.\nThey touch the dog. The man comes with the ball. He puts it in a bag. He smiles.\n\"Hello, boy!\" Tom says.\n\"Hello, Sam. Do you see your scarf?\" Mia asks.\n\"Yes, I do. It is very pretty. Do you like it?\" Leo says.\n\"Yes, I do. Do you want to play with it?\" Ben says.\n\"I want to play with you!\" Mia says.\n\"Okay, I see. Why do you want to","my doll!\" Tom says. He takes the doll from Mia. \"I am the princess. You are my friend.\"\n\"No, you are not!\" Mia says. She puts the doll on her doll. \"You are too fast. You are the queen. You are a baby. You are silly.\"\nTom and Mia start to argue. They pull the doll from each other. They make a big mess. They do not smile.\nA lady sees them. She comes to them. She is wearing a hat and a scarf. She has a big smile.\n\"Hello, can I see your doll?\" she asks. \"Why are you fighting?\"\n\"We are sorry. We were fighting. We wanted to have fun,\" Tom says. \"We are friends.\"\nThe lady looks at the doll. She smiles. She has an idea.\n\"Why don't you both play a game?\" she asks. \"You can take"],"k":1},{"p":"Once upon a time, there was a lonely boy named Tim. He lived in a small house with his mommy and daddy. Tim did not have many friends, so he played with his toys all day","t":["long.\nOne day, Tim found a big, red box. He was very happy. He showed his mom and dad, \"Look at my new purple box!\" His mom said. Tim was so happy and hugged his mom. They all learned that sharing is good.\nLater that day, Tim's mom told him to go to the park. Tim was very happy and played with his new toy. He ran back to the park, and his mom saw the pretty toy. She was happy because the small one was fixed. Tim played with his new toy and had a wonderful day.One day, a little boy named Tim went to play outside. He saw a big tree with many red. He wanted to climb the tree. Tim tried to climb the tree, but it was too high. He had an idea.\nTim tried to climb the tree first, but it was too high. He tried to climb higher, but he could not reach. Tim felt sad","long.\nOne day, Tim met a girl named Sue. Sue saw that Tim was sad. She asked him why. Tim said, \"I have no friends to play with!\" Sue wanted to help Tim, so she had an idea. She said, \"Let's play a game, but you must be quiet and polite to them.\"\nTim said, \"I will be quiet.\" Sue said, \"Okay, we can play.\" Tim sat down and listened to Sue. They had a lot of fun playing and laughing together. And then, they played a game of catch, and Tim was happy.Once upon a time, there was a little girl named Lucy. She had a toy dog named Buddy. Lucy loved to play with Buddy every day. One day, they went to a big park. Lucy saw a big slide and wanted to play on it.\nLucy and Buddy played on the slide all day. They ran and played together. Lucy was very careful"],"k":1},{"p":"Ben and Mia liked to play in the park. They liked to swing, slide and run. But their favorite thing was to climb the big oak tree. The oak tree had many branches and leaves.","t":["They thought it was very pretty and fun.\nOne day, they saw a big dog near the oak tree. The dog was brown and furry. It had a long tail and a loud bark. The dog barked and ran towards them. Ben and Mia were scared, but also curious. They wanted to talk to the dog.\n\"Hello, doggy!\" Ben said in a soft voice. \"Do you want to play with us?\"\nThe dog barked and nodded. It came closer to the oak tree. Ben and Mia thought it was funny. They tried to say hello to the dog.\n\"Hi, doggy!\" they said. \"We are Mia and Ben. Do you want to be our friend?\"\nThe dog was happy. It nodded and licked their faces. It liked Ben and Mia. It was friendly too.\nBen and Mia and the dog played in the oak tree. They had fun and became friends. They learned that being kind and","One day, they found a new tree in the park. It was very high, and they looked for a place to find the nest. They saw many birds and birds. They also saw a big pond with red leaves. They wanted to go there, but they were scared.\nThey looked for the tree, but they could not find one. They saw the tree, the green house, with the green and yellow leaves. They decided to stay there. They crawled and walked, and looked for bugs. They saw a big tree with a branch and a big tree. They were very happy.\nBut then, they heard a loud noise. They looked under trees and bushes, but they saw a big bird. The bird had sharp teeth, and a long tail. It looked angry and tired. Tom and Mia both wanted to eat the bird. They ran after the bird, but it was too late. They could not find them.\nThey started to feel very"],"k":0},{"p":"Ben and Lily were twins who liked to play in the garden. One day, they saw a big melon growing on a vine. They wanted to eat it, but their mom said they had to wait","t":["until it was ripe.\n\"Can we have some melon, mom?\" Ben asked.\n\"Sorry, honey, we have to wait for the right time. We have to wait until we can have some,\" mom said.\nLily and Ben were sad. They liked melon, but they did not want to wait. They cried and hugged their mom.\n\"Mom, can we have melon now?\" Ben asked.\n\"No, sweetie, we have to wait for it to grow. Maybe it will grow into a big yellow melon,\" mom said.\nBen and Lily sighed. They were bored and angry. They did not want to wait for the melon to grow. They wanted to make their own. They wanted to make their mom happy.\nThey decided to wait and see. They had an idea. They waited until the farmer was not looking and took a basket. They went inside the house and opened the door.\nThey saw their","until after dinner.\n\"Come on, Lily, Ben, it is not safe. It is for kids,\" mom said.\n\"But you have to share and be nice,\" Lily said.\n\"But I want to see what is inside. I don't know,\" Ben said.\nThey looked around and saw a small house with a lot of green clouds. They wanted to play with it. They took a bucket and a bucket and a bucket and a bucket. But they did not know how to use the shell.\n\"Let's build a bridge!\" Ben said. \"I know what an umbrella is.\"\n\"Maybe there might be something for us to carry.\" Lily said.\nThey ran to the hole and asked their mom. She was not happy.\n\"Sorry, kids,\" they said. \"We didn't know they would ever like it.\"\nBut then they saw a man walking towards them. He had a"],"k":0},{"p":"Sam liked to travel with his dad in the big car. They would go to different places and see new things. Sometimes they would stop and have a picnic in the grass. Sam loved to eat sandwiches","t":["and fruit and crackers. He would eat juice and apple bananas and apples. He would laugh when he saw a bird in the sky.\nOne day, Sam and his dad went to the park. They had a picnic with sandwiches and fruit. Sam ate his sandwich and had a lot of fun. He saw a big tree with a brown branch on the side. He wanted to climb the tree and see where the branch was. He thought there were fruits and nuts and nuts and nuts. He would be hungry and noisy when he climbed the tree.\nSam climbed the tree slowly and carefully. He looked around and saw many things. He saw birds and squirrels and birds. He saw a bird flying by the tree. He saw a squirrel on the branch. He saw a squirrel on a branch and climbed on a branch. He saw the squirrel's tail and nut. He smiled and waved at the squirrel.\nTim climbed on the branch and looked around. He saw the squirrel on",", water, because he did not like to play with his toys or eat.\nOne day, Sam saw a big bird by the fence. He was a bird who had never seen before. Tom wanted to say hello, so he picked up the bird and said, \"Hi, I'm Bob. I want to play with you!\" Sam was scared and ran away. The bird saw Bob and tried to catch him. Sam felt sad and stopped playing.\nSam saw Sam's sad face and knew that Tom was right. He decided to be friends with Tom from getting higher. They played with the ball for a little while and had fun with the ball. They were happy and became friends. They played together every day and had many more fun days together.Once upon a time, there was a little elephant named Sue. She lived in a big forest with her family. One day, Amy saw a black tree in the forest. She did not know who it, because it"],"k":0},{"p":"Lily and Tom are twins. They like to play in the park. They have a big ball and a small bike. They take turns to kick the ball and ride the bike.\n\nOne day","t":[", they see a big hill near the park. They want to ride the hill and see what is on the other side. They think it is safe. They start to walk up the hill.\n\"Look, Lily, there are flowers and trees and flowers!\" Tom says. He points to a beautiful purple flower. The flower is red and white and has many petals.\n\"Wow, Tom, that is cool!\" Lily says. She points to a flower that is red and yellow. She sees a blue flower and takes it. She puts it in her hair. She feels very happy.\nBut then, a big boy comes. He is older than Tom and Lily. He sees the ball and the boy. He wants to play with them. He walks towards them and says, \"Hey, that's my ball! Give it back!\"\nTom and Lily are scared. They do not want to give their ball back. They do not want to be nice.",", they see a big boat around the pond. The boat is heavy and hard. Tom and Lily want to try it. They run to the car and take turns.\nBut the boat is very high and fast. Tom and Lily cannot stop. They are sad and angry. They do not like the boat. They think it is a bad toy.\n\"Let's go on the boat!\" Tom says. He is brave. He does not want to share. He wants to go back to the big boat.\n\"No, Tim, I want to go on the boat!\" Kim says. She pushes the boat. \"The boat is dangerous!\" she says.\nTom is sad. He does not like the boat. He likes the boat. He does not want to sail.\n\"I will not do it again. I will try to go to the boat!\" Jen says. She thinks it is fun to move the boat. She says sorry to Tom"],"k":0},{"p":"Tom and Lily liked to play in the big armchair in the living room. They pretended it was a boat and they could sail to faraway places. They used pillows and blankets to make sails and flags.","t":["They had a lot of fun exploring the world and watching the birds go.\nBut then, they heard a loud noise. It was a big truck truck coming into the room. It was a truck drove towards the park. The truck driver was driving with a mean man. He had a big truck for a long time. He saw a truck and wanted to call for the truck. He grabbed the truck and drove to the truck. He drove and jumped the truck. He ran to the driver's truck and said, \"Hello, hello, truck! I'm a driver in the car! Thank you for giving me some popcorn. Do you want to see it?\"\nThe truck driver looked up and saw the truck. He smiled and gave him a hug. He said, \"This is the truck driver. He is fun and nice. He is not scary. He is very happy in his truck. He is very friendly. Can we play?\"\nThe driver smiled. He","One day, they found a shiny rock in the corner. It was round and brown and had a hole in it. It looked like a snake. They were curious, so they put the rock in the hole and pretended to be a boat.\n\"Let's go to the jungle,\" Lily said. \"Maybe we can find some treasure or some jewels.\"\n\"OK,\" Tom said. \"But how do we get there? We don't want to get lost.\"\nLily thought for a moment. She saw a doll come out of the hole in the armchair and had a book in her hand. They looked at each other and laughed.\n\"Maybe we can use this,\" she said. \"Let's find a treasure and a necklace. They are our treasure.\"\nTom and Lily agreed to go with their mom. They followed the book to a corner of the room. They saw a big chair with some books and a lamp. They were curious"],"k":1},{"p":"Lily was a little girl who liked to play with her dolls. She had a big dollhouse with many rooms and furniture. She also had a doll that was a prince. He wore a shiny crown and","t":["a pink crown and a crown.\nOne day, she found a doll in the park. It was a purple doll. It was red and shiny and soft. Lily wanted to play with it. She asked her mom, \"Can I go to the park now?\"\nHer mom said, \"Yes, you can. Maybe you can see some ducks. But sometimes you have to be quiet and not go to the candy. I'll give you some candy and candy for you.\"\nLily nodded and said, \"OK, mom. I will do that. And I will let the lady sit on the couch and watch her. There is a man who is bald and mean. He is a doctor. He is a naughty boy and he is our friend. He has a big truck and a big smile. I will be polite and give him food and water. I have to go to your friends' birthday. Do you want to hear a story?\"\nLily nodded and","a crown on his head. He was her best friend.\nOne day, Lily's mom said they were going to visit her aunt. Lily was very happy. She packed her backpack with her favorite doll. She took her favorite doll, Teddy. Lily liked Teddy. He was soft and cute.\nWhen they got to the door, Lily ran to the door. She opened the door and hugged her. \"Hi, Lily! I'm your aunt! I'm so happy to see you!\" she said. Lily hugged Teddy and smiled. She gave him a kiss on the cheek. \"Thank you, Auntie! You're the best!\" she said. She felt very happy.\nWhen they arrived at her aunt's house, she gave Lily a big hugs. She gave her a big box of toys. Lily was so excited. She opened the box and took out something inside. It was a small teddy bear. It was soft and cuddly. Lily hugged the teddy bear"],"k":1},{"p":"Tom and Sam are friends. They like to play with balls and nets. They have a big net and a small net. They want to see who has the bigger net.\n\nTom says","t":[", \"No, Jill, don't do that. You are not. You are going to the park with me. You are a baby!\"\nLily says, \"Yes, I will go with you. You are a good friend.\"\nThey pull the net. The fish likes it. It is soft and soft. It is soft.\nThey pretend to see the fish. They want to catch it. They run to the duck and grab its hand. They run to the water. But the fish is fast. It jumps on them. It lands on the sand. It jumps into the water. It splashes water on the pond.\nThe fish swims away. It bites it. It is angry. It is not hurt. It is happy.\nLily and Tom are sad. They see something. It is a shiny fish. It is a fish. It is looking for the fish. It is hungry. It has no flag. It is angry and friendly",", \"I have the bigger net. I put one net in the net. You have to catch the ball.\" Sam says, \"No, I have the bigger net. You have the small net.\" Tom says, \"You have the bigger net. You have the bigger net.\" Sam says, \"No, I have the bigger net. You have the bigger net. You have the bigger net.\"\nTom and Sam are sad and angry. They do not like to play with Tom anymore. They think Tom is mean and rude. They say, \"You are not nice, Tom. You are not our friend. You are mean. You do not share. You are selfish.\"\nTom runs away from Sam. He looks for another net. He finds one and throws it in the sky. He throws the net over it and catch the small net. He flies to Sam and says, \"Sam, get the net back. It is not a good net. Come and get"],"k":1},{"p":"Once upon time there was a little girl named Grace. Grace was a very happy child and always smiled. One day Grace did something wrong and made her mommy very angry. Grace's mommy yelled at her","t":["and said, \"You need to be extra careful with it.\"\nSo Polly wanted to know what was in the world so she went to the shop and said, \"I want to see what I think!\"\nSo she took the invitation and began to walk. She saw a big slide that was very dirty in her hands. She asked her daddy, \"What is that noise?\"\n\"That's a thunder\", said Lilly. Her father said that it was a dream and said, \"Let's go to the swings soon and have some hot medicine. Then you will feel better.\"\nElla was so excited, she ran to her daddy and asked for a hug. The sun was shining and the birds said, \"We could have a nice day!\" Sophie was so happy and she was very happy.Once upon a time there was a poor girl called Anna. She liked to pretend. One day, Anna wanted to go on an adventure. She packed on her shoes",", \" Grace! You have made a big mess and you need to be punished!\"\nGrace was very sad and she said she was sorry. She was afraid of what she had done. She was never allowed to do it again, no matter how much she wanted it.\nThe end.Once upon a time, there was a girl named Susie. She was three years old and loved to explore.\nOne day, Susie's mom said, \"Susie, I told you to not go outside if you're not allowed to go outside again.\"\nSusie was scared and she wanted to stay outside. But her mom said, \"If you're scared of the dark, you can do it! I promise.\"\nSo Susie got up and went outside. She ran around in circles and jumped high. Then, she saw the sun rise in the sky. She was so happy and knew she could do it.\nBut then something bad happened. The sun shone"],"k":1},{"p":"Once upon a time there was a little girl. She was very young, only three years old. She loved to play outside, and explore the garden. Today she saw something strange. There was a","t":["big circle in the ground. She was so excited she ran over to take a closer look. She opened the door and started to giggle.\nSuddenly, she heard a voice. It said, \"Hello! What are you doing here to be so high?\". The little girl looked up and saw a small animal swimming around. The lizard was curious, so she waved back and said, \"Hello, little girl! What are you doing here?\"\nThe little girl looked up and saw a funny looking little mouse. The lion was looking at her and smiled. He said, \"I am looking for something to help you. I must be very careful and I'm just a mouse.\"\nThe girl smiled and said, \"That's wonderful, you must be brave and make new discoverence. If you are persistent and try to be very brave and never stop.\" The little girl nodded and they stood in the jungle together, laughing and having lots of fun!Once upon a time","big, blue mushroom. She was excited and wanted to get closer.\nBut when she got closer, she noticed it was very scary. It was very big and scary! The girl was so scared that she ran.\nLuckily, she was brave and kept going towards the mushroom. She was very careful and she could do anything it scared her.\nBut she was also curious about the mushroom. She took a few steps closer and finally reached out her hand. Suddenly she felt something pull her way away. She opened her hand and saw that it was a big, mean old wolf!\nThe wolf growled and said, \"You can't eat me!\" The little girl was scared and cried for help. But it was too late, the wolf was already guarded and caught her. The little girl never got to see the mushroom again.Once there was a small girl who wanted to have a birthday. She asked her mom and dad if she could have one. Her"],"k":1},{"p":"Anna and Ben were playing with their dolls. Anna had a princess doll with a pink dress and a crown. Ben had a pirate doll with a hook and a hat.\n\n\"Let's pretend","t":["that the princess is a pirate!\" Anna said. \"I can fly the dragon!\"\n\"Okay!\" Ben said. \"But be careful, don't drop it!\"\nThey took their dolls and sticks and started to make them into a tower. They used a stick as a flag and a stick for a door, and a stick for a sword. They also made a bridge with blocks and a stick. They put their dolls inside the castle.\n\"There, now it's my turn to climb!\" Anna said. She climbed on her boat and ran to the porch.\nShe held her doll and Ben on her waist. They held hands and ran around the garden. They had fun, but they were also angry. They wanted their dolls back.\n\"Stop, stop, stop!\" mom said. \"You are breaking my dolls!\"\nShe did not hear them. She was busy with her work. She was making a cake for dad's dad's","we are explorers,\" Ben says. He picks up a bottle with a heart and a hat. They pretend the doll is going to a spaceship park.\n\"Hello, I am Ben. Do you like your doll?\" Anna asks.\n\"Yes, I am. Can we play with your doll?\" Ben asks.\n\"Sure, you can play with me. I have a car and a doll. I am a princess. I have a friend and a scarf. Do you want to play with me?\" Anna says.\n\"Yes, I would like a tea. What do you want to do?\" Ben asks.\n\"I have a truck in my toy box. Can I drive the toy dog?\" Anna asks.\n\"Sure, but be careful. She will be gentle and gentle,\" Ben says. He gives her the doll and takes it to a box. He puts it on. He says goodbye with the new doll.\nAnna and"],"k":0},{"p":"Lily and Ben are kids who like to play in the park. They like to swing, slide and run. One day, they see a big dog in the park. The dog is black and white","t":["and has a long tail. The dog is friendly and wags its tail.\n\"Can we pet the dog?\" Lily asks Ben.\n\"OK, but be careful. The dog might be scared or angry,\" Ben says.\nLily and Ben run to the dog. They sit by the dog and watch the dog. The dog sniffs the dog's fur and licks it. Lily and Ben giggled. They petted the dog's fur and the dog licked their faces.\n\"Can we play with you?\" Ben asks.\n\"Sure, but we have to find our mom,\" Lily says.\nThey walk around the park, looking for their mom and dad. They do not see them. They do not see them. They do not see the dog.\nThen, they see a big truck. The truck has a window and a sign. The sign says \"Danger\". They hear a voice.\n\"Hello, kids. Do you want","and shiny. It wags a leash and runs to them.\n\"Hello, dogs!\" Anna says. \"Do you want to play with us?\"\nThe dog barks and wags its tail. It does not like the big park. He wants to play too. He wants to play with them.\n\"Come on, let's go to the big dog!\" Anna says. \"We can play together and have fun!\"\n\"OK, Ben, you can play with us!\" Anna says. \"It is fun!\"\nBut the big dog does not come away. It climbs down and shakes. Anna and Ben are sad. They want to go outside and hug the big dog. They see a big tree with a lot of green air. They run on the hill and look for their mom.\n\"Mom, look!\" Anna says. \"Mom, the sky is so big and scary. She will be home soon.\"\n\"Don't worry,"],"k":0},{"p":"Lily liked to play with her phone. It was a toy phone, but it looked like a real one. She could press the buttons and hear different sounds. Sometimes she pretended to talk to her friends","t":[".\nOne day, she found a new toy in the box. It was a shiny, shiny, cozy dress. It looked like fun. Lily wanted to show her friends that she was so special and special. She put on the new dress and the scarf from the bottom. She asked her mom and dad if they could go to the store to buy a new toy for her and a big bag of toys.\nLily looked at her new doll and her new doll. She imagined how much it was better to have something new and that she had a doll for her. She went to find her new doll and took it to the living room. She showed it to her mom and said, \"Look, Mommy, I have a new toy for you!\" Her mom and dad smiled and said, \"Wow, Lily. You are so nice! I love you and I love you.\"\nLily and her mom went back to the box and Sara had a new doll. She had","and make funny noises.\nOne day, Lily's mom was making lunch for lunch. She told Lily to be quiet and calm. She said, \"Come on, Lily. I have something important for you.\" Lily was curious. She liked surprises. She followed her mom's instructions.\nBut when Lily went to the kitchen, she saw something on the table. It was a cookie. It looked yummy. Lily was curious. She opened the oven door and took the cookie. She ate it with a big smile. She said, \"Mmm, this is good. I like cookies.\"\nHer mom was surprised. She said, \"Wow, Lily! You are a good hearer. You did a good job helping me. You are very smart. Do you want to try some?\" Lily nodded again. She wanted to taste the cookie. She was hungry. She took a big bite from the cookie. It was brown and soft. She said, \"Mmm, this"],"k":1},{"p":"Tom and Sue like to play in the garden. They dig in the dirt and look for bugs. One day, they find a long, slimy worm. Tom picks it up and shows it to Sue","t":[".\n\"Look, Sue, a worm!\" Tom says. \"It is long and slimy. Do you want to see it?\"\nSue shakes her head. \"No, Tom, let's not touch it. It might bite us or bite. Maybe it wants to be our friend.\"\nBut Tom does not listen. He takes a little bit of the worm and puts it in his mouth. He makes a loud noise like \"Achoo!\" \"Achoo!\"\nSue laughs. She thinks Tom is funny. She laughs too.\nThey keep digging in the dirt and the dirt. They have fun. But then, Tom sees something shiny in the dirt. He picks it up with his mouth. It is round and smooth. \"What is this?\" Tom asks.\nSue shows him. \"It is a worm. It is big and strong. It does not hurt us or our yard. It is just different from us. It is also smooth",".\n\"Look, Tom, a crystal!\" Lily says. She wants to make a wish too. She pulls Tom to make the flower.\nTom runs towards a tree and climbs on it. He gets out and gets a worm. The worm falls on the leaf and makes a loud noise. The worm falls down.\n\"Ow, ow, ow!\" Sam says. He points to the plant and falls down. He is sad.\n\"What happened, Tom, Sam?\" Lily asks. She picks up the pieces and the worm.\n\"I'm sorry, Tom. Are you okay?\" she asks.\nTom nods. He knows Lily is wrong. He is foolish. He hugs Lily and says sorry.\n\"Thank you, Lily. You are nice. You are a good friend. You are a good friend too. Let's play something else.\" she says.\nTom and Lily play together for a while. They are happy"],"k":0},{"p":"Sara likes to write. She writes with her crayons on paper. She writes her name, and the names of her toys, and the things she sees. She writes big and small, and in many","t":[". She is proud of her drawings.\nBut she also feels not happy. She is very sad. She does not want to lose her pictures. She wants to play with her crayons. She wants to make her mom happy.\nShe does not want to make her mom sad. She wants to draw it and try to make her cry. She can write a big heart together. She puts on her pink dress. She says to her mom, \"I want to draw a picture of my pictures. It is big and beautiful and pretty. I want to draw it for you. It is very pretty.\"\nHer mom smiles and says \"OK, Lily. You are very kind and creative. You will like her. You can do it again. You are very creative and smart. You can make new things together. But you have to be careful with them. You have to be gentle and fair. You have to say thank you to me. You have to be nice and","letters, like her friends or her dad or her cat.\nOne day, Sara goes to the park with her mom. She sees a big box with a picture of a dinosaur on it. She wants to write on it, but she does not know how. She asks her mom for help.\n\"Mom, can you help me?\" Sara says. \"I want to go to the park and draw. I don't know how to write.\"\nMom smiles and gives Sara a paper. She shows Sara how to write the letters on the paper. Sara nods and writes a small paper on the paper. She writes \"I love you and I love you, mom\" on the paper.\n\"Thank you, Sara. You are a good girl. You are a good girl. Let's go to the park and draw and draw.\" Mom says.\nThey go to the park. Sara plays on the swings. She is happy. She has a new friend"],"k":1}];
+
+  var ROUND = 10;
+  var op = document.getElementById("op-text");
+  var texts = [document.getElementById("t0"), document.getElementById("t1")];
+  var heads = [document.getElementById("h0"), document.getElementById("h1")];
+  var verds = [document.getElementById("v0"), document.getElementById("v1")];
+  var cols  = [document.getElementById("col0"), document.getElementById("col1")];
+  var picks = document.getElementById("picks");
+  var reveal = document.getElementById("reveal");
+  var mark = document.getElementById("mark");
+  var revText = document.getElementById("rev-text");
+  var nextBtn = document.getElementById("next");
+  var round = document.getElementById("round");
+  var final = document.getElementById("final");
+  var tbN = document.getElementById("tb-n");
+  var tbTotal = document.getElementById("tb-total");
+  var tbScore = document.getElementById("tb-score");
+
+  var order = [];      /* which pairs this round, in order */
+  var idx = 0;         /* how far through the round */
+  var right = 0;       /* correct answers so far */
+  var answered = 0;    /* pairs answered, ties included */
+  var ANS = -1;        /* slot showing the readable model, for the pair on screen */
+
+  function shuffle(a){
+    for(var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function paragraphs(node, s){
+    node.innerHTML = "";
+    var parts = String(s).split("\n");
+    for(var i = 0; i < parts.length; i++){
+      if(!parts[i]) continue;
+      var p = document.createElement("p");
+      p.textContent = parts[i];
+      node.appendChild(p);
+    }
+  }
+
+  function scoreLine(){
+    if(!answered){ tbScore.textContent = "no answers yet"; return; }
+    tbScore.innerHTML = "you have got <b>" + right + "</b> of <b>" + answered + "</b> right";
+  }
+
+  function show(){
+    var item = PAIRS[order[idx]];
+    var flip = Math.random() < 0.5 ? 1 : 0;   /* which slot of t goes on the left */
+
+    op.textContent = item.p;
+    paragraphs(texts[0], item.t[flip]);
+    paragraphs(texts[1], item.t[1 - flip]);
+
+    /* the ordinary model sits at item.k, so the readable one is at 1 - item.k */
+    ANS = ((1 - item.k) === flip) ? 0 : 1;
+
+    heads[0].textContent = "Completion A";
+    heads[1].textContent = "Completion B";
+    verds[0].textContent = "";
+    verds[1].textContent = "";
+    cols[0].className = "col";
+    cols[1].className = "col";
+    picks.classList.remove("hidden");
+    reveal.classList.add("hidden");
+    tbN.textContent = String(idx + 1);
+    scoreLine();
+  }
+
+  function answer(choice){
+    var readable = ANS, ordinary = 1 - ANS;
+    heads[readable].textContent = "Completion " + (readable ? "B" : "A");
+    heads[ordinary].textContent = "Completion " + (ordinary ? "B" : "A");
+    verds[readable].textContent = "the readable model, 512 symbols";
+    verds[ordinary].textContent = "the ordinary model";
+    cols[readable].className = "col named win";
+    cols[ordinary].className = "col named";
+
+    answered++;
+    var got = (choice === ANS);
+    if(got) right++;
+
+    if(choice === -1){
+      mark.className = "mark skip";
+      mark.textContent = "No answer";
+      revText.textContent = "That counts as a miss in your score. The judge was not allowed to pass either, and it used its tie option once in about 300 comparisons.";
+    } else if(got){
+      mark.className = "mark yes";
+      mark.textContent = "Right";
+      revText.textContent = "The readable model is the one now marked in red.";
+    } else {
+      mark.className = "mark no";
+      mark.textContent = "Wrong";
+      revText.textContent = "The readable model is the one now marked in red. It gets picked over the ordinary one in about 15% of judged comparisons.";
+    }
+
+    picks.classList.add("hidden");
+    reveal.classList.remove("hidden");
+    nextBtn.textContent = (idx + 1 >= order.length) ? "See your score" : "Next pair";
+    nextBtn.focus();
+    scoreLine();
+  }
+
+  function finish(){
+    var pct = Math.round((right / answered) * 100);
+    document.getElementById("fin-head").textContent =
+      "You got " + right + " of " + answered + " right.";
+    document.getElementById("fin-sub").textContent =
+      "That is " + pct + "%. Here it is next to the judge's number on the same task, and next to the floor.";
+    document.getElementById("bl-you").textContent = "You, " + answered + " pairs";
+    document.getElementById("bv-you").textContent = pct + "%";
+    document.getElementById("bf-you").style.width = pct + "%";
+    document.getElementById("bf-judge").style.width = "85.4%";
+    document.getElementById("bf-null").style.width = "51.7%";
+    round.classList.add("hidden");
+    final.classList.remove("hidden");
+    tbScore.innerHTML = "final: <b>" + right + "</b> of <b>" + answered + "</b>";
+    tbN.textContent = String(order.length);
+  }
+
+  function start(){
+    var all = [];
+    for(var i = 0; i < PAIRS.length; i++) all.push(i);
+    order = shuffle(all).slice(0, Math.min(ROUND, PAIRS.length));
+    idx = 0; right = 0; answered = 0;
+    tbTotal.textContent = String(order.length);
+    final.classList.add("hidden");
+    round.classList.remove("hidden");
+    show();
+  }
+
+  document.getElementById("pick0").addEventListener("click", function(){ answer(0); });
+  document.getElementById("pick1").addEventListener("click", function(){ answer(1); });
+  document.getElementById("pickT").addEventListener("click", function(){ answer(-1); });
+  nextBtn.addEventListener("click", function(){
+    idx++;
+    if(idx >= order.length){ finish(); } else { show(); }
+  });
+  document.getElementById("again").addEventListener("click", function(){
+    start();
+    document.getElementById("test").scrollIntoView({block:"start"});
+  });
+
+  start();
+
+  /* ---- hover definitions ----
+     Positioned with position:fixed and clamped to the viewport, so a definition near
+     the edge of a 390px screen cannot push the page sideways. */
+  var pop = document.getElementById("dfn-pop");
+  var open = null;
+  var pinned = false;
+  var terms = [].slice.call(document.querySelectorAll(".dfn"));
+
+  terms.forEach(function(t){
+    t.setAttribute("aria-expanded","false");
+    t.setAttribute("aria-describedby","dfn-pop");
+    t.addEventListener("mouseenter", function(){ showDfn(t); });
+    t.addEventListener("mouseleave", function(){ if(open === t && !pinned && document.activeElement !== t) hideDfn(); });
+    t.addEventListener("focus", function(){ showDfn(t); });
+    t.addEventListener("blur", function(){ if(!pinned) hideDfn(); });
+    t.addEventListener("click", function(ev){
+      ev.preventDefault();
+      if(open === t && pinned){ hideDfn(); }
+      else { showDfn(t); pinned = true; }
+    });
+  });
+
+  function showDfn(t){
+    if(open) open.setAttribute("aria-expanded","false");
+    open = t;
+    t.setAttribute("aria-expanded","true");
+    pop.innerHTML = "";
+    var b = document.createElement("b");
+    b.textContent = t.getAttribute("data-t");
+    pop.appendChild(b);
+    pop.appendChild(document.createTextNode(t.getAttribute("data-d")));
+    pop.classList.add("on");
+    pop.setAttribute("aria-hidden","false");
+    place(t);
+  }
+  function hideDfn(){
+    pinned = false;
+    if(open) open.setAttribute("aria-expanded","false");
+    open = null;
+    pop.classList.remove("on");
+    pop.setAttribute("aria-hidden","true");
+  }
+  function place(t){
+    var r = t.getBoundingClientRect();
+    var w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = r.left + r.width/2 - w/2;
+    left = Math.max(12, Math.min(left, window.innerWidth - w - 12));
+    var top = r.top - h - 9;
+    if(top < 8) top = r.bottom + 9;
+    pop.style.left = left + "px";
+    pop.style.top = top + "px";
+  }
+  window.addEventListener("resize", function(){ if(open) place(open); });
+  window.addEventListener("scroll", function(){ if(open) place(open); }, true);
+  document.addEventListener("keydown", function(ev){ if(ev.key === "Escape") hideDfn(); });
+  document.addEventListener("click", function(ev){
+    if(open && !ev.target.classList.contains("dfn")) hideDfn();
+  });
+})();
+</script>
+</body>
+</html>

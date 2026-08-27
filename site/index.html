@@ -380,6 +380,7 @@ a.tile .go{
     <a class="brand" href="#top"><span class="dot"></span>Ralytable<small>/ raly</small></a>
     <nav class="nav-links">
       <a href="#demos">Demos</a>
+      <a href="./blind-test.html">Blind test</a>
       <a class="hide-s" href="#error">The error</a>
       <a class="hide-s" href="#how">How it works</a>
       <a class="hide-s" href="#measured">What we measured</a>
@@ -479,6 +480,18 @@ a.tile .go{
 <span class="d-help">help: declare `Sentences` at dimension 147</span></pre>
         </div>
         <span class="go">playground/ →</span>
+      </a>
+
+      <a class="tile rv" href="./blind-test.html">
+        <span class="tno">The blind test</span>
+        <h3>Can you tell the readable model from the ordinary one?</h3>
+        <p>Read a pair of story completions, pick which one came from the model with 512 symbols, and see your score next to the judge's 85.4%. Our own idea loses this one.</p>
+        <div class="tile-art" aria-hidden="true">
+<pre>    A  the kite flies, then flies again
+    B  a kite, a balloon, a drum, a trumpet
+    <span class="d-err">judge picks A in 85.4% of pairs</span></pre>
+        </div>
+        <span class="go">blind-test.html →</span>
       </a>
     </div>
   </div>
@@ -793,6 +806,7 @@ scene = torch.<span class="fn">zeros</span>(D)
       <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments">Experiments</a>
       <a href="https://github.com/RaphaelKhalid/ralytable/blob/main/docs/prior-art.md">Prior art</a>
       <a href="./interpretability.html">Inside the model</a>
+      <a href="./blind-test.html">Blind test</a>
     </nav>
     <nav>
       <b>Project</b>
