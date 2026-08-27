@@ -190,11 +190,35 @@ def pairwise(rows, out):
                f"{a_picks} times: {fmt(p, lo, hi, 3)}. Side assignment was "
                f"randomised per comparison by a seeded RNG, so under no position "
                f"bias this is 0.5. "
-               + ("It is not, so the judge favours one slot and the pairwise "
-                  "numbers below are read with that in mind."
+               + ("It is not, so the judge has a real slot preference; the "
+                  "per-comparison breakdown below shows whether that preference "
+                  "differs between the comparison types, which is what would "
+                  "actually distort the result."
                   if not (lo <= 0.5 <= hi) else
                   "0.5 is inside the interval, so no position bias is detected.")
                + "\n")
+    out.append("| comparison type | decisive n | first-slot pick rate [95% CI] |")
+    out.append("|---|---|---|")
+    for tag in ("main", "null", "ceiling"):
+        sub = [r for r in prs if r["tag"] == tag and r["parsed"]["winner"] != "TIE"]
+        if sub:
+            k = sum(1 for r in sub if r["parsed"]["winner"] == "A")
+            out.append(f"| {tag} | {len(sub)} | {fmt(*wilson(k, len(sub)), 3)} |")
+    out.append("\nA slot preference of the same size in every comparison type -- "
+               "including the null, where the two arms are draws from the same "
+               "distribution -- is an additive offset of the instrument. Because "
+               "sides were randomised, such an offset cannot manufacture a "
+               "win-rate difference between arms; it would have to differ "
+               "between comparison types to do that.\n")
+
+    tie_rate = sum(1 for r in prs if r["parsed"]["winner"] == "TIE") / max(len(prs), 1)
+    out.append(f"**Tie-rate caveat.** The judge answered TIE on {tie_rate:.1%} of "
+               "all comparisons, including when shown two DENSE seeds -- draws "
+               "from the same distribution, where 'indistinguishable' is the "
+               "truthful answer. So this judge will not use the tie option, and "
+               "a low tie rate in the main test is not evidence of a real "
+               "difference. The null control is the reference for what "
+               "indistinguishable looks like on this instrument.\n")
 
     out.append("| comparison | n | wins left | wins right | ties | "
                "left win rate among decisive [95% CI] |")
