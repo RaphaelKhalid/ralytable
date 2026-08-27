@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from .archive import ArchiveEntry
+from .ar0 import DEFAULT_SEEDS, regenerate_report, run_ar0
 from .ledger import AppendOnlyLedger
 from .runner import ExperimentRunner
 from .schema import CandidateContract, OPERATOR_WEIGHTS, POLICY_VERSION, canonical_json
@@ -197,7 +198,13 @@ def calibrate(args: argparse.Namespace) -> None:
 
 def serve(args: argparse.Namespace) -> None:
     from .dashboard_server import serve_dashboard
-    serve_dashboard(args.root, args.port)
+    serve_dashboard(args.root, args.port, phase=args.phase)
+
+
+def do_ar0(args: argparse.Namespace) -> None:
+    seeds = tuple(int(value.strip()) for value in args.seeds.split(",") if value.strip()) or DEFAULT_SEEDS
+    run_id, path = run_ar0(args.root, repo_root(), seeds=seeds, budget=args.budget, environment=args.environment, include_gpu=not args.no_gpu)
+    print(json.dumps({"run_id": run_id, "path": str(path), "report": str(path / "REPORT.md"), "dashboard": f"http://127.0.0.1:{args.port}/"}, sort_keys=True))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -212,8 +219,11 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("report"); common(p)
     p = sub.add_parser("status"); common(p)
     p = sub.add_parser("resume"); common(p); p.add_argument("run_id")
-    p = sub.add_parser("dashboard"); common(p); p.add_argument("--port", type=int, default=8787)
+    p = sub.add_parser("dashboard"); common(p); p.add_argument("--port", type=int, default=8787); p.add_argument("--phase", choices=("smoke", "ar0"), default="smoke")
     p = sub.add_parser("prepare-flagship"); common(p)
+    p = sub.add_parser("ar0"); common(p); p.add_argument("--seeds", default=",".join(str(seed) for seed in DEFAULT_SEEDS)); p.add_argument("--budget", type=int, default=64); p.add_argument("--environment", choices=("local", "wsl"), default="local"); p.add_argument("--no-gpu", action="store_true"); p.add_argument("--port", type=int, default=8787)
+    p = sub.add_parser("ar0-dashboard"); common(p); p.add_argument("--port", type=int, default=8787)
+    p = sub.add_parser("ar0-report"); common(p)
     args = parser.parse_args(argv)
     if args.command == "init":
         run_id, path, ledger = load_or_create_run(args.root, args.profile); freeze(run_id, path, ledger); ledger.close(); print(path)
@@ -224,4 +234,9 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "resume": resume(args)
     elif args.command == "dashboard": serve(args)
     elif args.command == "prepare-flagship": prepare_flagship(args)
+    elif args.command == "ar0": do_ar0(args)
+    elif args.command == "ar0-dashboard":
+        from .dashboard_server import serve_dashboard
+        serve_dashboard(args.root, args.port, phase="ar0")
+    elif args.command == "ar0-report": print(regenerate_report(args.root))
     return 0

@@ -8,12 +8,14 @@ import unittest
 from pathlib import Path
 
 from tools.autoresearch_next.archive import ArchiveEntry, MapElitesArchive
+from tools.autoresearch_next.ar0 import recovery_check, run_trial
 from tools.autoresearch_next.evaluator_contract import EvaluatorContract
 from tools.autoresearch_next.ledger import AppendOnlyLedger
 from tools.autoresearch_next.policy import PolicyManager
 from tools.autoresearch_next.schema import CandidateContract
 from tools.autoresearch_next.runner import gpu_owner
 from tools.autoresearch_next.trust_kernel import ProtectedPathError, TrustKernel
+from tools.autoresearch_next.meta_landscapes import make_landscapes
 
 
 class TrustKernelTests(unittest.TestCase):
@@ -90,6 +92,20 @@ class CandidateTests(unittest.TestCase):
             self.assertGreater(payload["throughput"], 0)
             self.assertLessEqual(payload["learned_parameters"], 9_000_000)
             self.assertEqual(payload["exact_trace_replay"], 1.0)
+
+
+class AR0Tests(unittest.TestCase):
+    def test_landscapes_have_enumerable_declared_optima(self):
+        landscapes = make_landscapes()
+        for landscape in landscapes.values():
+            self.assertEqual(len(landscape.enumerate_optima()), landscape.optimum_count)
+
+    def test_paired_trial_is_reproducible_and_resume_exact(self):
+        landscape = make_landscapes()["epistatic_crossover"]
+        first = run_trial(landscape, "adaptive_ucb", 11, 24)
+        second = run_trial(landscape, "adaptive_ucb", 11, 24)
+        self.assertEqual(first["curve"], second["curve"])
+        self.assertTrue(recovery_check(landscape, "adaptive_ucb", 11, 24)["recovery_resume_match"])
 
 
 if __name__ == "__main__":
