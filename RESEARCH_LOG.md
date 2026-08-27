@@ -78,3 +78,16 @@ deliberate, disclosed exception for iterative diagnostic optimization. Future ru
 predeclare <=9M learned parameters, raw-controller/full-system/deterministic-null
 scores, search/test-time budget, and separate latency fields. No public benchmark
 was run or published in this integration.
+
+HumanEval+ execution checkpoint: the official EvalPlus 0.3.1 loader smoke passed
+with 164 tasks. The complete deterministic-pass baseline was attempted locally but
+native Windows cannot satisfy the official evaluator's POSIX `resource` and
+`signal.setitimer`/`SIGALRM` timeout path. It was stopped without modifying the
+harness or claiming pass@1. The adapter and append-only result-record/dashboard
+code are in `experiments/16_humaneval_plus_baseline/`; the shortest route to a
+valid number is a POSIX run with EvalPlus 0.3.1 and the same generated samples.
+The baseline has zero learned parameters, no generation/search budget, and no
+Raly compiler/runtime. Future candidate records must preserve raw/full/null,
+compile rate, pass@1, parameters, search budget, expansions, inference/search/total
+latency, wall time, and failure categories. Any HumanEval+-optimized result must
+be labeled HumanEval+-tuned; MBPP+ and LiveCodeBench were not run.
