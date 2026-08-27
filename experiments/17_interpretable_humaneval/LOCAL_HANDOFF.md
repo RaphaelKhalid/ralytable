@@ -46,10 +46,35 @@ and reuse this venv for `python -m tools.autoresearch_next run --environment
 wsl`. The dependency-free candidate path is emergency/test-only and must not be
 presented as the primary tournament route.
 
+## Validated primary environment
+
+After the controlled host restart, the single approved recovery succeeded with
+the same command above. `pip check` reported no broken requirements. The
+validated environment is `torch==2.13.0+cu130`, CUDA is available on
+`NVIDIA GeForce RTX 4060 Laptop GPU`, and `torch.cuda.is_bf16_supported()` is
+`True`. A real BF16 forward/backward fused-AdamW step succeeded with loss
+`1.339094877243042`, peak allocated VRAM `0.03175497055053711 GiB`, and peak
+reserved VRAM `0.041015625 GiB`.
+
+The resolved package set was recorded by `pip freeze`; the important exact
+versions are torch 2.13.0+cu130, triton 3.7.1, cuda-toolkit 13.0.3.0,
+cuda-bindings 13.3.1, cuda-pathfinder 1.8.0, nvidia-cudnn-cu13 9.20.0.48,
+nvidia-cublas 13.1.1.3, nvidia-cusolver 12.0.4.66, and nvidia-cusparse
+12.6.3.3. The isolated EvalPlus 0.3.1 environment remains unchanged.
+
+Run the tournament from inside WSL so the ledger, partitions, hidden scores,
+and candidate artifacts remain under the scoped project directory. The
+repository is read from its existing checkout:
+
+```text
+wsl.exe -d Ubuntu -- bash -lc "cd /mnt/c/Users/rapha/.codex/worktrees/8bdb/mechinterp && PYTHONDONTWRITEBYTECODE=1 /home/rapha/ralytable-autoresearch-next/.venv/bin/python -m tools.autoresearch_next init --root /home/rapha/ralytable-autoresearch-next"
+wsl.exe -d Ubuntu -- bash -lc "cd /mnt/c/Users/rapha/.codex/worktrees/8bdb/mechinterp && PYTHONDONTWRITEBYTECODE=1 /home/rapha/ralytable-autoresearch-next/.venv/bin/python -m tools.autoresearch_next run --root /home/rapha/ralytable-autoresearch-next --environment wsl --arm both --experiments 10 --seconds 300"
+```
+
 ## Safety and recovery
 
 All artifacts and hidden proxy scores are outside Git. The GPU owner lock
-serializes candidate training and never kills another process. Candidate
+serializes candidate training and never kills a user process. Candidate
 contracts reject protected paths, answer/oracle material, hidden tests, and
 more than 9M learned parameters. Interrupted, timeout, OOM, and contract
 failures are appended to the ledger and the next candidate can resume.
