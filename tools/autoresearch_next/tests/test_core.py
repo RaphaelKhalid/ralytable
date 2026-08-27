@@ -38,8 +38,9 @@ class TrustKernelTests(unittest.TestCase):
             ledger.create_run("r", "test", "v1", d)
             c = CandidateContract("c").to_dict()
             ledger.experiment("e", "r", "greedy", c, "RUNNING")
-            ledger.experiment("e", "r", "greedy", c, "FAILED", {"failure": "timeout"}, "timeout")
             self.assertEqual(len(ledger.pending_experiments("r")), 1)
+            ledger.experiment("e", "r", "greedy", c, "FAILED", {"failure": "timeout"}, "timeout")
+            self.assertEqual(len(ledger.pending_experiments("r")), 0)
             with self.assertRaises(Exception):
                 ledger.db.execute("DELETE FROM experiments")
             self.assertEqual(len(ledger.snapshot("r")["experiments"]), 2)
