@@ -1,0 +1,27 @@
+{
+  "experiment": "python_source_repair_gate",
+  "attempts": [
+    {
+      "status": "discard",
+      "result": "smoke aborted before model execution",
+      "reason": "negative=false inputs omitted threshold, making drop_threshold identical to unique_values"
+    },
+    {
+      "status": "discard",
+      "result": "generator audit aborted",
+      "reason": "duplicates=false shifted values could repeat the threshold"
+    },
+    {
+      "status": "discard",
+      "result": "generator audit aborted",
+      "reason": "negative=true shifted values omitted threshold, making drop_threshold identical to identity"
+    }
+  ],
+  "correction": "fixed predicate-specific inputs to include threshold while preserving predicate truth and non-sorted order",
+  "validation": {
+    "tasks": 1000,
+    "candidate_collisions": 0,
+    "predicate_mismatches": 0,
+    "status": "keep"
+  }
+}

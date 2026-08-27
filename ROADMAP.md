@@ -14,6 +14,25 @@ Reasoning models also moved the interesting computation out into text, across th
 
 And teachers got cheap. DeepSeek V4 Flash is $0.03 per million input tokens, so distilling a small student is no longer something only a lab can afford; $10 buys around 130 million output tokens.
 
+## Overnight result, 2026-08-27
+
+Experiment 13 found a real but narrow result. Typed legality plus public-example
+search lifted a learned sketch from 52.1% raw to 89.6% full-system hidden pass
+on a generated synthetic composition family, while the deterministic null also
+reached 89.6%. A state-only controller was causally load-bearing in a synthetic
+control: erasing its executable abstract state changed 50.0% of raw decisions,
+while an irrelevant placebo preserved 100%. These are separate raw learned,
+verified full-system, symbolic, and deterministic-null measurements, not a
+general coding result.
+
+The two-parameter predicate-gate follow-ups are supplied-bit identity/routing
+controls, not semantic inference. The `semantic_rule_gate` and
+`repository_bundle_gate` placebo controls are tautological and invalid for
+causal promotion. Historical latency starts after inference and is not
+end-to-end. All Experiment 13/14 tasks are synthetic or generated; the actual
+Raly compiler/runtime is not in the execution path. Call this Raly-style or
+Raly-inspired work.
+
 ## What I already measured
 
 Before writing a line of the language, on real data:
@@ -60,14 +79,14 @@ A typed VSA DSL that catches what PyTorch can't see.
 - [x] Role schema types, so the type knows which roles are bound in even though the values are runtime; unbinding a role the vector doesn't carry won't compile
 - [x] Static nesting depth checks that force a `cleanup` before retrieval degrades
 - [ ] Differentiable end to end (needs the IR and a backend)
-- [x] Error messages good enough to be the reason people use it (179 tests, rustc-style UI tests)
+- [x] Error messages good enough to be the reason people use it (198 tests, rustc-style UI tests)
 - [x] Browser playground (`playground/`), the compiler as wasm
 
 Gate: one VSA experiment that is visibly easier in Raly than in fifty lines of `jax.numpy`. If I can't produce that, the language is a cathedral and I stop.
 
 ### Phase 2, the curve
 
-This is the contribution nobody has claimed and it goes first.
+This is the measurement program that matters next, and it goes first.
 
 Train the same task across dense, weight sparse, discrete bottleneck, VSA structured and gate based models, and measure both how good each one is and how much of it a person or an auditing model can actually recover.
 
@@ -88,17 +107,17 @@ Small, local, legible.
 
 Gate: the reasoning core is readable and the model isn't useless. Both, or the thesis is wrong and I'll say so.
 
-The bar got sharper after the first toy model. It emits perfect dependency citations (`[3] from [1],[2]`) while producing arithmetic nonsense, which is finding 01 reproduced inside our own architecture: structure that is present but decorative. So the real gate is that the structure must be LOAD-BEARING. Change step 1 and step 3 has to change. The resampling method from `experiments/01` is how you test that, pointed at our own model, and nobody has run it on an architecture built to pass it.
+The bar got sharper after the first toy model. It emits perfect dependency citations (`[3] from [1],[2]`) while producing arithmetic nonsense, which is finding 01 reproduced inside our own architecture: structure that is present but decorative. So the real gate is that the structure must be load-bearing. Change step 1 and step 3 has to change. Experiment 13 makes the same distinction on generated controls; the next test must remove the supplied-label shortcut.
 
 ### Phase 4, legible RLHF
 
-This is the part I'm most excited about.
+This is a later hypothesis, not a current result.
 
 RLHF rewards outcomes because outcomes are all a reward model can see. The reasoning that produced the answer is opaque so it goes ungraded, and that is exactly how you end up training a model to reach right answers through broken reasoning.
 
-If the reasoning core is legible then the reward model can see inside it. You grade the process instead of just the product; you penalise a right answer that came out of a derivation that doesn't hold, and you reward a sound step that happened to land wrong. A dense transformer can't do this because there's no readable process to grade. Ralytable can, because of the architecture.
+If a structured intermediate state is genuinely load-bearing, a process evaluator could inspect and reward it rather than only the final product. That is an untested hypothesis here. The current compiler has no runtime, and the current Python research is synthetic; neither supports a claim about process-supervised capability.
 
-That would make it the first case I know of where being interpretable makes a model better rather than just safer, which flips interpretability from a tax into an advantage.
+If it worked, it could make typed and inspectable structure useful for capability as well as auditing. That remains a killable hypothesis, not an established advantage.
 
 - [ ] Process level reward over the discrete reasoning trace
 - [ ] Preference data on reasoning structure, not just final answers
@@ -116,12 +135,29 @@ Gate: process supervised Ralytable beats outcome supervised Ralytable on held ou
 
 In order, cheapest and most decision-relevant first.
 
-1. **Is the structure load-bearing?** Resample a step in our own model's output and see whether the steps that cite it actually change. This is the sharpest open question in the project and it is about a day's work on data we already have.
-2. **Look inside the codebook.** I measured that codes carry role information and never once looked at what an individual code responds to. Cheap, and it is the difference between a number and an explanation.
-3. **Codebook provenance in the type system.** A learned codebook invalidates every capacity number the checker uses and it currently cannot tell. That is risk 2 below, and it is now a concrete missing feature rather than a worry.
-4. **Phase 2 properly.** Multiple seeds, real text rather than synthetic problems, a matched continuous bottleneck as a fairer control, and more than one architecture family. Last night was one family with one knob turned.
+1. **Break the supplied-state shortcut.** Use independent task specifications where state is necessary but not sufficient, and keep hidden answers scoring-only.
+2. **Test richer Python and repository-local repair.** Preserve raw learned, verified full-system, symbolic, and deterministic-null rows.
+3. **Look inside the codebook.** Measure what individual codes respond to, with the raw-character null beside every score.
+4. **Phase 2 properly.** Use real text, multiple seeds, a matched continuous bottleneck, and more than one architecture family.
 5. **An IR and a backend**, so Raly programs run instead of only type-checking.
-6. **Then Phase 4**, which is the one worth being excited about.
+6. **Then process supervision**, only if the preceding gates survive.
+
+### Public coding destination
+
+The explicit destination is a public coding-benchmark ladder. EvalPlus HumanEval+
+is the benchmark-guided discovery scoreboard: task-level failures may be inspected
+and optimized against, with that contamination disclosed. Its tuned score is not
+held-out evidence. EvalPlus MBPP+ is the cleaner cross-benchmark generalization
+check; BigCodeBench-Hard Complete is the practical stretch target; and a later,
+time-separated LiveCodeBench slice is the contamination/freshness audit.
+
+Autoresearch development uses separate frozen local proxy tasks. Public benchmark
+prompts and solutions stay out of training; HumanEval+ is the explicit, disclosed
+exception for iterative diagnostic optimization. Before any run, preregister
+learned parameters <=9M, raw-controller and full-system scores separately,
+search/test-time budget, inference/selection/scoring/end-to-end latency, and the
+deterministic-null comparison. This integration runs no public benchmark and claims
+no public benchmark result.
 
 ## How I work
 

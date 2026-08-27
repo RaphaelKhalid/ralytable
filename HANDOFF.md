@@ -7,13 +7,79 @@ exact way.
 
 ## What this is
 
-**Raly** is a programming language and compiler. **Ralytable** is the model built
-in it. Bet: within a few years you will not be allowed to deploy a model you
+**Raly** is a programming language and compiler. **Ralytable** is the model and
+research project around it; the overnight Python harnesses are Raly-style, not
+executed by the compiler. Bet: within a few years you will not be allowed to deploy a model you
 cannot explain, and everyone will be retrofitting explanations onto models that
 were never built to have one.
 
 Live: https://ralytable.vercel.app (landing, playground, blind test, codebook)
 Repo: https://github.com/RaphaelKhalid/ralytable
+
+## 2026-08-27 integration checkpoint
+
+The clean integration was sourced from the completed overnight worktree at
+commit `ef74feb27fffdeeebfa380f2f8b344bb17a4db7f` (descendant of `faaf00d`).
+It includes the committed Experiment 13 lineage, paused Experiment 14,
+Experiment 15 dashboard, Experiment 11 lineage, preregistrations, generator
+audits, and append-only JSONL logs. Caches, weights, checkpoints, generated
+datasets, `.env`, W&B material, and `__pycache__` are intentionally excluded.
+
+### Corrected verdict
+
+Experiment 13 supports two narrow statements. First, typed legality plus
+public-example search can improve the selected program on a generated synthetic
+repair family: 52.1% raw learned pass versus 89.6% full-system hidden pass,
+while the deterministic null also reaches 89.6%. Second, the larger state-only
+controller is a candidate mechanism that is causally load-bearing in a
+synthetic control: state erasure changes 50.0% of raw decisions and an
+irrelevant placebo preserves 100%. Raw learned, verified full-system,
+symbolic, and deterministic-null scores stay separate.
+
+The two-parameter predicate gates are supplied-bit identity/routing controls,
+not semantic inference. In `semantic_rule_gate` and `repository_bundle_gate`,
+the nuisance-placebo controls are tautological because nuisance is absent from
+the gate; those causal rates are historical and invalid for causal promotion.
+Every Experiment 13/14 task is synthetic or generated, even where the surface
+looks like Python or a repository. The actual Raly compiler/runtime is not in
+the execution path, so describe this work as Raly-style or Raly-inspired, not
+Raly-based.
+
+### Measurement and reproduction
+
+The old `latency_ms` field begins after model inference and includes old-loop
+evaluation work; it is not end-to-end latency. New `run.py` rows separate
+inference, selection, hidden scoring, and inference-through-selection. The
+invalidated oracle-null file remains at
+`experiments/13_autoresearch_raly_coder/research_log_invalidated_null_oracle.jsonl`;
+the valid log has 386 rows and the preserved invalid file has 12. Run the
+dependency-free record audit with:
+
+    C:\Users\rapha\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe experiments/13_autoresearch_raly_coder/measurement_audit.py --expected-valid 386
+
+The learned parameter gate is <=9M; the overnight maximum was 54,516. Machine
+facts remain RTX 4060 Laptop, 8.6GB VRAM, torch 2.6.0+cu124, bf16 autocast and
+fused AdamW. Experiment 14 is CPU-only smoke evidence, paused before its
+planned multi-seed run because file-backed imports exceeded the short budget.
+
+### Next decision
+
+Do not promote the architecture. The next smallest useful experiment removes
+the supplied label/state shortcut with independently specified tasks where
+executable state is necessary but not sufficient, while keeping hidden answers
+scoring-only. Then test richer Python or repository-local repair. Public GitHub
+and Vercel actions remain separate review steps; this integration is local only.
+
+The explicit public destination is a benchmark ladder. EvalPlus HumanEval+ is the
+benchmark-guided discovery scoreboard: task-level failures may be inspected and
+optimized against, with contamination disclosed, so its tuned score is not
+held-out evidence. EvalPlus MBPP+ is the cleaner cross-benchmark generalization
+check; BigCodeBench-Hard Complete is the practical stretch target; and a later,
+time-separated LiveCodeBench slice is the freshness audit. Autoresearch uses
+separate frozen local proxy tasks. Public prompts/solutions stay out of training;
+HumanEval+ is the deliberate, disclosed exception for iterative diagnosis. Future
+runs preregister <=9M parameters, raw/full/null scores, search budget, and separate
+latency fields. No public benchmark was run here.
 
 ## What exists and works
 
