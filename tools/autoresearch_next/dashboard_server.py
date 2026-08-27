@@ -19,11 +19,18 @@ AR0_HTML = """<!doctype html><meta charset=utf-8><title>Autoresearcher AR0</titl
 async function tick(){let r=await fetch('/api/status');let x=await r.json();let rows=x.rows||[];let summary=x.summary||{};let chosen=summary.chosen_policy||'not selected';s.textContent=`AR0 ${x.run.run_id} | ${rows.length} completed rows | chosen ${chosen} | loopback-only`;t.innerHTML=rows.slice(-100).reverse().map(e=>`<tr><td>${e.phase||'visible'}</td><td>${e.policy||''}</td><td>${e.seed||''}</td><td>${e.landscape||''}</td><td><code>${JSON.stringify(e.operator_yield||{})}</code></td><td>${e.best_so_far??''}</td><td>${e.auc_discovery??''}</td><td>${e.archive_coverage??''}/${e.qd_score??''}</td><td>${e.valid_proposal_rate??''}/${e.duplicate_rate??''}</td><td>${e.lineage_depth??''}</td><td>${e.status||'completed'}</td></tr>`).join('')}tick();setInterval(tick,2000)
 </script>"""
 
+AR1_HTML = """<!doctype html><meta charset=utf-8><title>Autoresearcher AR1</title>
+<style>body{font:15px system-ui;margin:2rem;background:#10151c;color:#e8edf2}table{border-collapse:collapse;width:100%}td,th{padding:.35rem .55rem;border-bottom:1px solid #384553;text-align:left;font-size:13px}code{color:#9dd7ff}</style>
+<h1>Autoresearcher AR1</h1><p id=s>loading...</p><table><thead><tr><th>phase</th><th>policy</th><th>seed</th><th>family</th><th>A</th><th>F</th><th>Q</th><th>valid/duplicate</th><th>lineage</th><th>status</th></tr></thead><tbody id=t></tbody></table><script>
+async function tick(){let r=await fetch('/api/status');let x=await r.json();let rows=x.rows||[];let summary=x.summary||{};s.textContent=`AR1 ${x.run.run_id} | ${rows.length} rows | gate ${summary.eligible_gate??'pending'} | loopback-only`;t.innerHTML=rows.slice(-120).reverse().map(e=>`<tr><td>${e.phase||''}</td><td>${e.policy||''}</td><td>${e.seed||''}</td><td>${e.family||''}</td><td>${e.A_fi??''}</td><td>${e.F_fi??''}</td><td>${e.Q_fi??''}</td><td>${e.valid_proposal_rate??''}/${e.duplicate_rate??''}</td><td>${e.lineage_depth??''}</td><td>${e.status||'completed'}</td></tr>`).join('')}tick();setInterval(tick,2000)
+</script>"""
+
 
 def latest_run(root: Path, phase: str = "smoke") -> Path:
-    marker = root / ("AR0_ACTIVE_RUN" if phase == "ar0" else "ACTIVE_RUN")
+    marker = root / ("AR0_ACTIVE_RUN" if phase == "ar0" else "AR1_ACTIVE_RUN" if phase == "ar1" else "ACTIVE_RUN")
     run_id = marker.read_text(encoding="utf-8").strip()
-    return root / (Path("ar0") / "runs" if phase == "ar0" else Path("runs")) / run_id
+    run_root = Path("ar0") / "runs" if phase == "ar0" else Path("ar1") / "runs" if phase == "ar1" else Path("runs")
+    return root / run_root / run_id
 
 
 def serve_dashboard(root: Path, port: int, phase: str = "smoke") -> None:
@@ -34,17 +41,17 @@ def serve_dashboard(root: Path, port: int, phase: str = "smoke") -> None:
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             if self.path == "/":
-                body = (AR0_HTML if phase == "ar0" else HTML).encode()
+                body = (AR0_HTML if phase == "ar0" else AR1_HTML if phase == "ar1" else HTML).encode()
                 self.send_response(200); self.send_header("Content-Type", "text/html; charset=utf-8"); self.end_headers(); self.wfile.write(body); return
             if self.path == "/api/status":
                 payload = ledger.snapshot(run_id)
-                if phase == "ar0":
+                if phase in ("ar0", "ar1"):
                     rows = []
                     result_path = run_path / "results.jsonl"
                     if result_path.exists():
                         rows = [json.loads(line) for line in result_path.read_text(encoding="utf-8").splitlines() if line.strip()]
                     summary_path = run_path / "summary.json"
-                    payload = {"phase": "ar0", "run": payload["run"], "rows": rows, "summary": json.loads(summary_path.read_text(encoding="utf-8")) if summary_path.exists() else {}, "events": payload["events"]}
+                    payload = {"phase": phase, "run": payload["run"], "rows": rows, "summary": json.loads(summary_path.read_text(encoding="utf-8")) if summary_path.exists() else {}, "events": payload["events"]}
                 body = json.dumps(payload, sort_keys=True).encode()
                 self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(body); return
             self.send_error(404)

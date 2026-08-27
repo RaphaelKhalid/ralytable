@@ -9,6 +9,7 @@ from pathlib import Path
 
 from tools.autoresearch_next.archive import ArchiveEntry, MapElitesArchive
 from tools.autoresearch_next.ar0 import recovery_check, run_trial
+from tools.autoresearch_next.ar1 import AR1Trial, make_landscape
 from tools.autoresearch_next.evaluator_contract import EvaluatorContract
 from tools.autoresearch_next.ledger import AppendOnlyLedger
 from tools.autoresearch_next.policy import PolicyManager
@@ -106,6 +107,21 @@ class AR0Tests(unittest.TestCase):
         second = run_trial(landscape, "adaptive_ucb", 11, 24)
         self.assertEqual(first["curve"], second["curve"])
         self.assertTrue(recovery_check(landscape, "adaptive_ucb", 11, 24)["recovery_resume_match"])
+
+
+class AR1Tests(unittest.TestCase):
+    def test_ar1_instance_has_verified_optimum_and_cost_curve(self):
+        landscape = make_landscape("deceptive_local", 101)
+        self.assertEqual(landscape.dimension, 16)
+        result = AR1Trial(landscape, "adaptive_qd_ucb", 11, 24).run()
+        self.assertEqual(result["proposals"], 24)
+        self.assertEqual(len(result["curve"]), len(result["cost_curve"]) - 1)
+        self.assertGreaterEqual(result["A_fi"], 0.0)
+        self.assertLessEqual(result["A_fi"], 1.0)
+
+    def test_ar1_checkpoint_replay_is_exact(self):
+        from tools.autoresearch_next.ar1 import recovery_check
+        self.assertTrue(recovery_check(make_landscape("epistatic_crossover", 101), "adaptive_qd_ucb", 11, 24)["recovery_resume_match"])
 
 
 if __name__ == "__main__":
