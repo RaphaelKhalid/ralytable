@@ -1,0 +1,170 @@
+{
+  "schema": "raly-coder-api-census-v1",
+  "python": "3.12.13 (main, Aug  7 2026, 02:26:41) [MSC v.1944 64 bit (AMD64)]",
+  "stack": {
+    "runtime": "Python 3.12 standard library",
+    "source_model": "Python modules parsed with ast",
+    "test_runner": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_*.py"
+    ],
+    "network": "disabled by evaluator",
+    "shell": "not exposed to model"
+  },
+  "actions": {
+    "find_symbol": {
+      "api_count_in_action": 6,
+      "apis": [
+        "ast.parse",
+        "ast.walk",
+        "ast.FunctionDef",
+        "ast.AsyncFunctionDef",
+        "ast.ClassDef",
+        "ast.get_source_segment"
+      ]
+    },
+    "open_file": {
+      "api_count_in_action": 5,
+      "apis": [
+        "pathlib.Path.resolve",
+        "pathlib.Path.is_file",
+        "pathlib.Path.read_bytes",
+        "str.splitlines",
+        "hashlib.sha256"
+      ]
+    },
+    "read_region": {
+      "api_count_in_action": 5,
+      "apis": [
+        "pathlib.Path.resolve",
+        "pathlib.Path.is_file",
+        "pathlib.Path.read_bytes",
+        "str.splitlines",
+        "hashlib.sha256"
+      ]
+    },
+    "apply_patch": {
+      "api_count_in_action": 7,
+      "apis": [
+        "pathlib.Path.resolve",
+        "pathlib.Path.is_file",
+        "pathlib.Path.read_bytes",
+        "str.count",
+        "str.replace",
+        "pathlib.Path.write_text",
+        "hashlib.sha256"
+      ]
+    },
+    "run_tests": {
+      "api_count_in_action": 5,
+      "apis": [
+        "sys.executable",
+        "subprocess.run",
+        "subprocess.TimeoutExpired",
+        "subprocess.CompletedProcess",
+        "unittest.discover"
+      ]
+    },
+    "inspect_failure": {
+      "api_count_in_action": 3,
+      "apis": [
+        "re.search",
+        "str.splitlines",
+        "json.dumps"
+      ]
+    }
+  },
+  "unique_api_count": 21,
+  "unique_apis": [
+    {
+      "api": "ast.AsyncFunctionDef",
+      "signature": "AST node class"
+    },
+    {
+      "api": "ast.ClassDef",
+      "signature": "AST node class"
+    },
+    {
+      "api": "ast.FunctionDef",
+      "signature": "AST node class"
+    },
+    {
+      "api": "ast.get_source_segment",
+      "signature": "(source, node, *, padded=False)"
+    },
+    {
+      "api": "ast.parse",
+      "signature": "(source, filename='<unknown>', mode='exec', *, type_comments=False, feature_version=None)"
+    },
+    {
+      "api": "ast.walk",
+      "signature": "(node)"
+    },
+    {
+      "api": "hashlib.sha256",
+      "signature": "(string=b'', *, usedforsecurity=True)"
+    },
+    {
+      "api": "json.dumps",
+      "signature": "(obj, *, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None, sort_keys=False, **kw)"
+    },
+    {
+      "api": "pathlib.Path.is_file",
+      "signature": "(self)"
+    },
+    {
+      "api": "pathlib.Path.read_bytes",
+      "signature": "(self)"
+    },
+    {
+      "api": "pathlib.Path.resolve",
+      "signature": "(self, strict=False)"
+    },
+    {
+      "api": "pathlib.Path.write_text",
+      "signature": "(self, data, encoding=None, errors=None, newline=None)"
+    },
+    {
+      "api": "re.search",
+      "signature": "(pattern, string, flags=0)"
+    },
+    {
+      "api": "str.count",
+      "signature": "unavailable"
+    },
+    {
+      "api": "str.replace",
+      "signature": "(self, old, new, count=-1, /)"
+    },
+    {
+      "api": "str.splitlines",
+      "signature": "(self, /, keepends=False)"
+    },
+    {
+      "api": "subprocess.CompletedProcess",
+      "signature": "(args, returncode, stdout=None, stderr=None)"
+    },
+    {
+      "api": "subprocess.TimeoutExpired",
+      "signature": "(cmd, timeout, output=None, stderr=None)"
+    },
+    {
+      "api": "subprocess.run",
+      "signature": "(*popenargs, input=None, capture_output=False, timeout=None, check=False, **kwargs)"
+    },
+    {
+      "api": "sys.executable",
+      "signature": "unavailable"
+    },
+    {
+      "api": "unittest.discover",
+      "signature": "unavailable"
+    }
+  ]
+}
