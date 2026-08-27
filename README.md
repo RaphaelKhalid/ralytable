@@ -25,7 +25,7 @@ That is the real Rust compiler cross-compiled to WebAssembly, 102KB. Type Raly, 
 | Grammar and parser | done, error recovery, tree total over input |
 | Browser playground | done |
 | Name resolution | done, scopes, two namespaces, suggestions |
-| Type system | done, all four properties, 179 tests, zero warnings |
+| Type system | done, all four properties, 198 tests, zero warnings |
 | A first model | a 6.4M toy that cannot reason; see finding 06 |
 | IR, codegen | not built |
 | The model | not built |
@@ -88,6 +88,8 @@ Everything here was measured, not cited, and independently re-derived before I b
 | [04](experiments/04_capacity/FINDINGS.md) | VSA bundling capacity at D=1000 is about 31 items, roughly 3x what a literature summary implied. |
 | [05](experiments/05_real_embeddings/FINDINGS.md) | Real embeddings are worse at this than random noise. Average 10 MiniLM sentence vectors and you recover 3. Effective dimension is 110 of a nominal 384, and mean-centring recovers only half. |
 | [07](experiments/07_retrieval_cost/FINDINGS.md) | And it costs real accuracy. On BEIR scifact, averaging chunks into document vectors drops recall from 0.877 to 0.619 with realistic grouping, and 70-76% of that loss is the averaging itself rather than coarser granularity, isolated with a max-pooling control. mpnet has twice MiniLM's nominal dimension, the same effective dimension, and the same cost; nominal D predicts nothing. |
+| [08](experiments/08_tinystories/FINDINGS.md) | On real text the discrete bottleneck costs 0.63 cross-entropy and 9.9 points of accuracy at matched parameters, three seeds each, non-overlapping intervals. All 512 codes stayed live, so this is the cost of the bottleneck working. It overturns finding 06, which measured a third of that on a synthetic corpus. |
+| [09](experiments/09_story_quality/FINDINGS.md) | And the stories are worse to read, not just worse on paper. Blind judging against a threshold committed before any text existed: dense wins 85.4% of pairwise comparisons. The failure is not grammar, it is losing track of what is being talked about. A [blind test](https://ralytable.vercel.app/blind-test.html) lets you try it yourself. |
 | [06](experiments/06_discrete_core/FINDINGS.md) | A discrete bottleneck costs about 3 points of top-1 accuracy and buys 3.3 points of role legibility over what the raw character already tells you, at matched parameters. Cross-entropy actually improves, so the two capability metrics disagree and both are real. Bigger alphabets get more capable and more legible together, which is the opposite of the tradeoff I expected. |
 | [02](experiments/02_committor/FINDINGS.md) | A negative result on my own idea: committor trajectories are not step-like and inherit the same position confound they were meant to remove. |
 
