@@ -94,6 +94,7 @@ Everything here was measured, not cited, and independently re-derived before I b
 | [02](experiments/02_committor/FINDINGS.md) | A negative result on my own idea: committor trajectories are not step-like and inherit the same position confound they were meant to remove. |
 | [13](experiments/13_autoresearch_raly_coder/FINDINGS.md) | Typed legality and public search can multiply performance on generated repair tasks, but the deterministic null often matches full-system correctness. A state-only controller is causally load-bearing in a synthetic control; the two-parameter predicate gates are supplied-bit routing, not semantic inference. |
 | [14](experiments/14_iterative_repo_repair/PAUSED_HANDOFF.md) | CPU-only smoke of file-backed iterative repair; paused before the planned multi-seed run. It remains a generated micro-repository control, not repository-level coding. |
+| [16](experiments/16_humaneval_plus_baseline/README.md) | Official EvalPlus 0.3.1 HumanEval+ adapter and local deterministic-pass baseline. Native Windows evaluation is blocked by EvalPlus's POSIX timeout path; no benchmark score is claimed. |
 
 ## Repo
 

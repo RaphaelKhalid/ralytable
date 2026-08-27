@@ -81,6 +81,28 @@ HumanEval+ is the deliberate, disclosed exception for iterative diagnosis. Futur
 runs preregister <=9M parameters, raw/full/null scores, search budget, and separate
 latency fields. No public benchmark was run here.
 
+### HumanEval+ baseline attempt
+
+The official EvalPlus 0.3.1 loader smoke passed and reported 164 HumanEval+ tasks.
+The complete `deterministic_pass_baseline` attempt was started locally but did not
+produce a score: EvalPlus's official evaluator imports POSIX `resource` and uses
+`signal.setitimer`/`SIGALRM`, which native Windows cannot provide. The run was
+stopped without weakening the evaluator, and no pass@1 number is reported. The
+smallest honest adapter is committed at
+`experiments/16_humaneval_plus_baseline/zero_baseline.py`; it emits `pass` for
+runtime-loaded task keys only and is a null baseline, not a model.
+
+The same directory contains `result_record.schema.json`, an append-only record
+runner, and a loopback-only dashboard. Launch it with a record path outside the
+repository; use a POSIX environment (WSL or Linux) for the official evaluator.
+The shortest valid route is to install EvalPlus 0.3.1 there, run the adapter with
+`--evaluate --output <temp-samples> --record <temp-record>`, and open
+`http://127.0.0.1:8766/` via `dashboard_server.py`. A future candidate runner must
+freeze EvalPlus 0.3.1 and the HumanEval+ release, keep mutable model/search code
+separate, and label any optimized result HumanEval+-tuned. Never rank candidates
+with evaluation tests or answers, and never hardcode task IDs, prompts, expected
+outputs, or solutions. MBPP+ and LiveCodeBench remain untouched.
+
 ## What exists and works
 
 **The compiler.** 8 crates, 198 tests, zero clippy warnings, fmt clean. Lexer,
