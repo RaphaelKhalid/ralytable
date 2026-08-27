@@ -132,6 +132,7 @@ def main() -> int:
             elapsed = time.perf_counter() - started
             final_status = "completed" if completed.returncode == 0 else "failed"
             final_event = event_template(run_id, version, count, final_status, started_at)
+            final_event["completed_tasks"] = count
             final_event["wall_seconds"] = round(elapsed, 3)
             final_event["evaluator_returncode"] = completed.returncode
             final_event["provisional_pass_at_1"] = extract_pass_at_1(completed.stdout)
