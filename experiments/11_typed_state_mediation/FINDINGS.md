@@ -55,3 +55,26 @@ that the present state representation and action policy do not generalize to a
 new operation order. The next smoke should preregister an output-type constraint
 ablation: give both arms the same declared result type, allow `return` only for a
 slot of that type, and compare against the current unconstrained-return control.
+
+## Result-type ablation smoke
+
+The result-type constraint did not produce a reliable improvement in this smoke: it changed which answers were legal, but did not improve total held-out accuracy.
+
+| Controller | Typed return | Untyped return | Difference |
+| --- | ---: | ---: | ---: |
+| Transcript | 23/48 (47.9%) | 21/48 (43.8%) | +2 tasks |
+| Hard mediated | 4/48 (8.3%) | 6/48 (12.5%) | -2 tasks |
+| Combined | 27/96 (28.1%) | 27/96 (28.1%) | 0 tasks |
+
+The per-seed transcript differences were +3, +1, and -2 tasks. The mediated
+differences were 0, 0, and -2. This is too small and variable for an inferential
+claim, and the preregistered alpha is not applied to this smoke.
+
+The compiler constraint did prevent wrong-type returns without introducing
+executor errors, but the model still chose the wrong operation sequence or wrong
+source slot. That separates two benefits: type safety is working as an
+intervention, while planning generalization remains unsolved.
+
+Raw unconstrained pass rate was 0/96 for both controllers. The current system
+therefore depends heavily on constrained decoding, which should be treated as a
+core part of the architecture rather than hidden in the parse metric.
