@@ -1,7 +1,7 @@
 # Preregistration: Raly Coder first coding experiment
 
-Status: **draft until committed on its own reviewable change**. Do not run the
-confirmatory comparison from an uncommitted plan.
+Status: **locked in PR #31**. Do not alter this plan or run the confirmatory
+comparison without a new versioned preregistration and reviewable change.
 
 Date written: 2026-08-27
 Benchmark: `raly-coder-v1`, specified in
