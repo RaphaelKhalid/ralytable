@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -57,7 +58,8 @@ class AppendOnlyLedger:
     def __init__(self, path: Path):
         self.path = path
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(str(path), timeout=30)
+        self.db = sqlite3.connect(str(path), timeout=30, check_same_thread=False)
+        self._lock = threading.RLock()
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
         self.db.executescript("""
@@ -119,8 +121,9 @@ class AppendOnlyLedger:
         return list(self.db.execute("SELECT * FROM experiments WHERE run_id=? AND status IN ('RUNNING','INTERRUPTED') ORDER BY seq", (run_id,)))
 
     def snapshot(self, run_id: str) -> dict[str, Any]:
-        rows = lambda table: [dict(r) for r in self.db.execute(f"SELECT * FROM {table} WHERE run_id=? ORDER BY rowid", (run_id,))]
-        return {"run": dict(self.db.execute("SELECT * FROM runs WHERE run_id=?", (run_id,)).fetchone()),
-                "experiments": rows("experiments"), "events": rows("events"),
-                "artifacts": rows("artifacts"), "partitions": rows("partitions"),
-                "archive": rows("archive_entries"), "policies": rows("policy_events")}
+        with self._lock:
+            rows = lambda table: [dict(r) for r in self.db.execute(f"SELECT * FROM {table} WHERE run_id=? ORDER BY rowid", (run_id,))]
+            return {"run": dict(self.db.execute("SELECT * FROM runs WHERE run_id=?", (run_id,)).fetchone()),
+                    "experiments": rows("experiments"), "events": rows("events"),
+                    "artifacts": rows("artifacts"), "partitions": rows("partitions"),
+                    "archive": rows("archive_entries"), "policies": rows("policy_events")}

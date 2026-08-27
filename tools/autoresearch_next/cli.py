@@ -99,8 +99,8 @@ def do_run(args: argparse.Namespace) -> None:
     run_id, path, ledger = load_or_create_run(args.root)
     if not (path / "partitions.json").exists():
         freeze(run_id, path, ledger)
-    use_wsl = args.environment == "wsl" or (args.environment == "auto" and os.name == "nt")
-    ledger.event(run_id, "execution_environment", {"requested": args.environment, "use_wsl": use_wsl, "torch_venv": "/home/rapha/ralytable-autoresearch-next/.venv/bin/python" if use_wsl else None})
+    use_wsl = args.environment == "wsl" and os.name == "nt"
+    ledger.event(run_id, "execution_environment", {"requested": args.environment, "use_wsl_subprocess": use_wsl, "orchestrator_host": "wsl" if os.name != "nt" else "windows", "torch_venv": "/home/rapha/ralytable-autoresearch-next/.venv/bin/python" if args.environment == "wsl" else None})
     runner = ExperimentRunner(repo_root(), path / "artifacts", ledger, run_id, use_wsl=use_wsl)
     arms = ["greedy", "evolve"] if args.arm == "both" else [args.arm]
     for arm in arms:
@@ -136,7 +136,13 @@ def report(args: argparse.Namespace) -> None:
         val = lambda k: max((m.get(k) for m in metrics if m.get(k) is not None), default=None)
         promoted = next((p for p in promotions if p.get("arm") == arm), {})
         lines.append(f"| {arm} | {len(arm_rows)} | {val('raw_learned_score')} | {promoted.get('blind_proxy_score')} | 0.0 |")
-    lines += ["", "## Official benchmark status", "", "HumanEval+ official score: not run in this sandbox; the frozen deterministic null from Experiment 16 is base 0.000 and plus 0.000 on 164 tasks. Any future optimized score must be labeled HumanEval+-tuned.", "", "## Recovery and lineage", "", f"Experiments recorded: {len(rows)}; failures: {sum(r['status'] == 'FAILED' for r in rows)}.", "The ledger is append-only under normal candidate access. Protected paths, artifact hashes, partition manifest, and hidden-score hashes are recorded.", "", "## Limitations", "", "The candidate is a nine-parameter CPU fallback and does not generate Python. WSL/PyTorch/GPU were unavailable in this host, so the requested 300-second GPU budget was not viable. The blind and final values are synthetic proxy scores, not EvalPlus scores."]
+    all_metrics = [json.loads(r["metrics_json"]) for r in completed]
+    device = next((m.get("extra", {}).get("device") for m in all_metrics if m.get("extra", {}).get("device")), "unknown")
+    mean_vram = sum(m.get("peak_vram_gb", 0.0) for m in all_metrics) / len(all_metrics) if all_metrics else None
+    mean_throughput = sum(m.get("throughput", 0.0) for m in all_metrics) / len(all_metrics) if all_metrics else None
+    max_causal = max((m.get("causal_intervention_rate", 0.0) for m in all_metrics), default=None)
+    min_placebo = min((m.get("placebo_preservation", 0.0) for m in all_metrics), default=None)
+    lines += ["", "## Official benchmark status", "", "HumanEval+ official score: not run; the frozen deterministic null from Experiment 16 is base 0.000 and plus 0.000 on 164 tasks. Any future optimized score must be labeled HumanEval+-tuned.", "", "## Recovery and lineage", "", f"Experiment attempt records: {len(rows)}; completed runs: {len(completed)}; failures: {sum(r['status'] == 'FAILED' for r in rows)}.", "The ledger is append-only under normal candidate access. Protected paths, artifact hashes, partition manifest, and hidden-score hashes are recorded.", "", "## Resource and causal summary", "", f"Primary device: {device}; mean peak allocated VRAM: {mean_vram}; mean throughput: {mean_throughput}; maximum intervention change rate: {max_causal}; minimum placebo preservation: {min_placebo}.", "", "## Limitations", "", "The candidate has nine learned parameters and does not generate Python programs. Blind and final values are synthetic code-validation proxy scores, not EvalPlus scores. One seed per candidate makes this smoke run exploratory, and no T3 fully interpretable claim is made."]
     out = path / "REPORT.md"
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     (path / "snapshot.json").write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")
