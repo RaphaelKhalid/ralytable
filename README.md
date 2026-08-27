@@ -2,7 +2,7 @@
 
 I think that within a few years you won't be allowed to deploy a model you can't explain, and almost nobody is building for that yet.
 
-**Raly** is a language whose type system understands what a model represents. **Ralytable** is the model built in it. The name is the pitch; a model you can actually relate to, because you can read what it's doing.
+**Raly** is a language whose type system describes what a model represents. **Ralytable** is the wider model and research project. The name is the pitch: typed and inspectable structure rather than a post-hoc explanation.
 
 Full plan and honest risks: [ROADMAP.md](ROADMAP.md).
 
@@ -26,7 +26,7 @@ That is the real Rust compiler cross-compiled to WebAssembly, 102KB. Type Raly, 
 | Browser playground | done |
 | Name resolution | done, scopes, two namespaces, suggestions |
 | Type system | done, all four properties, 198 tests, zero warnings |
-| A first model | a 6.4M toy that cannot reason; see finding 06 |
+| Models | a 6.4M toy plus a 29.5M TinyStories baseline and 512-code variant; none can reason |
 | IR, codegen | not built |
 | The model | not built |
 
@@ -92,6 +92,8 @@ Everything here was measured, not cited, and independently re-derived before I b
 | [09](experiments/09_story_quality/FINDINGS.md) | And the stories are worse to read, not just worse on paper. Blind judging against a threshold committed before any text existed: dense wins 85.4% of pairwise comparisons. The failure is not grammar, it is losing track of what is being talked about. A [blind test](https://ralytable.vercel.app/blind-test.html) lets you try it yourself. |
 | [06](experiments/06_discrete_core/FINDINGS.md) | A discrete bottleneck costs about 3 points of top-1 accuracy and buys 3.3 points of role legibility over what the raw character already tells you, at matched parameters. Cross-entropy actually improves, so the two capability metrics disagree and both are real. Bigger alphabets get more capable and more legible together, which is the opposite of the tradeoff I expected. |
 | [02](experiments/02_committor/FINDINGS.md) | A negative result on my own idea: committor trajectories are not step-like and inherit the same position confound they were meant to remove. |
+| [13](experiments/13_autoresearch_raly_coder/FINDINGS.md) | Typed legality and public search can multiply performance on generated repair tasks, but the deterministic null often matches full-system correctness. A state-only controller is causally load-bearing in a synthetic control; the two-parameter predicate gates are supplied-bit routing, not semantic inference. |
+| [14](experiments/14_iterative_repo_repair/PAUSED_HANDOFF.md) | CPU-only smoke of file-backed iterative repair; paused before the planned multi-seed run. It remains a generated micro-repository control, not repository-level coding. |
 
 ## Repo
 
@@ -105,11 +107,23 @@ experiments/   every experiment, with its findings and the code to reproduce
 
 ## What's next
 
-1. **Is the structure load-bearing?** The toy model emits perfect dependency citations while producing arithmetic nonsense, which is finding 01 reproduced inside my own architecture. Structure that is present but decorative. Resampling a step and checking whether the steps citing it actually change is the sharpest open question here, and it is a day's work.
-2. **Look inside the codebook.** I measured that codes carry role information and never looked at what any single code responds to.
-3. **Codebook provenance in the type system.** A learned codebook invalidates every capacity number the checker uses and it cannot currently tell.
-4. **Phase 2 properly:** more seeds, real text, a matched continuous control, more than one architecture family.
+1. **Break the label/state shortcut.** Test independently specified tasks where executable state is necessary but not sufficient, with a held-out verifier and no supplied answer bit.
+2. **Test richer Python and repository-local repair.** Keep raw learned, verified full-system, symbolic, and deterministic-null results separate.
+3. **Look inside the codebook.** I measured that codes carry role information and never looked at what any single code responds to.
+4. **Phase 2 properly:** more seeds, real text, a matched continuous control, and more than one architecture family.
 5. **An IR and a backend**, so Raly programs run rather than only type-check.
+
+The explicit public destination is a coding-benchmark ladder. EvalPlus HumanEval+
+is the benchmark-guided discovery scoreboard: task-level failures may be inspected
+and optimized against, with that contamination disclosed, so its tuned score is not
+held-out evidence. EvalPlus MBPP+ is the cleaner cross-benchmark generalization
+check; BigCodeBench-Hard Complete is the practical stretch target; and a later,
+time-separated LiveCodeBench slice is the freshness audit. Autoresearch development
+uses separate frozen local proxy tasks, and public prompts/solutions never enter
+training. Before any run, preregister <=9M learned parameters, raw-controller versus
+full-system scores, search/test-time budget, separate latency fields, and the
+deterministic-null comparison. No public benchmark run or result is part of this
+integration.
 
 Full plan in [ROADMAP.md](ROADMAP.md).
 
