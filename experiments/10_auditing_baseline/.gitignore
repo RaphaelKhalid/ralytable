@@ -1,0 +1,5 @@
+results/*
+!results/tables.md
+!results/summary_*.json
+__pycache__/
+*.pyc
