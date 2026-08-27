@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ralytable, a compiler that knows what a vector holds</title>
-<meta name="description" content="Two demos: the Raly compiler running in your browser, and every one of the 1024 symbols a trained model learned, pulled out of the checkpoint and made clickable.">
+<meta name="description" content="A browser compiler, a clickable model codebook, and measured research on typed, inspectable structure.">
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Ralytable">
 <meta property="og:description" content="A compiler that knows what a vector holds. Two live demos.">
@@ -385,6 +385,7 @@ a.tile .go{
       <a class="hide-s" href="#how">How it works</a>
       <a class="hide-s" href="#measured">What we measured</a>
       <a href="#limits">Limits</a>
+      <a class="hide-s" href="./research.html">Research</a>
       <a class="ghost" href="https://github.com/RaphaelKhalid/ralytable">GitHub</a>
     </nav>
   </div>
@@ -397,13 +398,12 @@ a.tile .go{
   <div class="wrap hero-in">
     <h1>A compiler that knows <em>what a vector holds</em>.</h1>
     <p class="sub">
-      Machine learning tools see a
-      <button type="button" class="dfn" data-t="Vector" data-d="A fixed-length list of numbers.">vector</button>
-      as a list of numbers and check that the lengths match. They cannot see that the list is a bag
-      that holds thirty-one things and already has seven in it. Put a thirty-second one in and nothing
-      throws, nothing crashes, and the model quietly gets worse.
+      Machine learning tools see a <button type="button" class="dfn" data-t="Vector" data-d="A fixed-length list of numbers.">vector</button>
+      as numbers and check its length. They do not see the measured capacity of the bag, so an overfilled
+      representation can quietly degrade. <b>Raly</b> puts that count in the type: overfill it and the
+      program stops at compile time. The compiler runs here; the research shows where typed, inspectable
+      structure helps, and where it does not.
     </p>
-    <p class="sub"><b>Raly</b> puts the count in the type. Overfill the bag and the program does not compile.</p>
     <div class="cta">
       <a class="btn primary" href="#demos">Try the compiler <span class="arr">↓</span></a>
       <a class="btn" href="./interpretability.html">Look inside a trained model <span class="arr">→</span></a>
@@ -425,15 +425,13 @@ a.tile .go{
     <p class="lede">
       This is the compiler's front door, built to
       <button type="button" class="dfn" data-t="WebAssembly" data-d="A binary program format that web browsers run at close to native speed.">WebAssembly</button>
-      and running inside this page. Nothing is sent anywhere. Edit the code and the errors redraw
-      on every keystroke, squiggles under the exact characters at fault, click a message to jump to it.
+      and running inside this page. Nothing is sent anywhere. Edit the code and errors redraw on every
+      keystroke, with squiggles under the exact characters at fault.
     </p>
     <p class="lede">
-      This build carries the whole front end: the part that reads characters, the parser, the part
-      that resolves names, and the type checker, plus the part that draws errors. It calls the same
-      function the command line calls, which is why the carets line up identically. The file it
-      opens with is the capacity error, and you can fix it in place: drop one item from the bundle
-      and the error goes away as you type.
+      This is the full front end: lexer, parser, name resolution, type checker, and diagnostics. It is
+      the same Rust compiler as the command line build, compiled to WebAssembly. Start with the capacity
+      error, remove one item, and watch the diagnostic disappear.
     </p>
 
     <div class="frame rv" style="margin-top:30px">
@@ -452,16 +450,15 @@ a.tile .go{
     <p class="eyebrow">Demo two</p>
     <h2 class="big">Every symbol a trained model learned, in a list you can click.</h2>
     <p class="lede">
-      We trained a small model whose middle layer has to pick one of 1024 fixed symbols at every
-      character. That makes the inside of the model countable. We pulled all 1024 out of the saved
-      checkpoint and put them on a page.
+      A small model must choose one of 1024 fixed symbols at every character. That makes its middle
+      layer countable. We pulled the whole codebook from the checkpoint and made it clickable.
     </p>
 
     <div class="tiles">
       <a class="tile rv" href="./interpretability.html" id="interp">
         <span class="tno">Inside the model</span>
         <h3>All 1024 symbols, clickable.</h3>
-        <p>Click any symbol to see what it fires on, how often, and where it lands in a real reasoning trace.</p>
+        <p>See what each symbol fires on, how often, and where it lands in a generated trace.</p>
         <div class="tile-art" aria-hidden="true">
           <div class="dots">
             <i style="background:#5aa9e6"></i><i style="background:#c7625c"></i><i style="background:#4ad493"></i><i style="background:#5aa9e6;opacity:.7"></i><i style="background:#c7625c;opacity:.5"></i><i style="background:#4ad493;opacity:.8"></i><i style="background:#5aa9e6;opacity:.4"></i><i style="background:#c7625c;opacity:.9"></i><i style="background:#4ad493;opacity:.3"></i><i style="background:#5aa9e6;opacity:.8"></i><i style="background:#c7625c;opacity:.6"></i><i style="background:#4ad493;opacity:.5"></i><i style="background:#5aa9e6;opacity:.9"></i><i style="background:#c7625c;opacity:.35"></i><i style="background:#4ad493;opacity:.7"></i><i style="background:#5aa9e6;opacity:.55"></i><i style="background:#c7625c;opacity:.8"></i><i style="background:#4ad493;opacity:.45"></i><i style="background:#5aa9e6;opacity:.65"></i><i style="background:#c7625c;opacity:.3"></i><i style="background:#4ad493;opacity:.9"></i><i style="background:#5aa9e6;opacity:.5"></i><i style="background:#c7625c;opacity:.7"></i><i style="background:#4ad493;opacity:.6"></i>
@@ -473,7 +470,7 @@ a.tile .go{
       <a class="tile rv" href="./playground/">
         <span class="tno">The compiler, full size</span>
         <h3>Nine sample files, most of them broken.</h3>
-        <p>Load one and read a real error before you write a line, then edit it and watch the message move.</p>
+        <p>Load a broken example, read the error, edit the line, and watch the message move.</p>
         <div class="tile-art" aria-hidden="true">
 <pre><span class="d-src">    bundle(a, b, c, d)</span>
 <span class="d-caret">    ^^^^^^^^^^^^^^^^^^</span> <span class="d-err">4 items, space holds 3</span>
@@ -485,7 +482,7 @@ a.tile .go{
       <a class="tile rv" href="./blind-test.html">
         <span class="tno">The blind test</span>
         <h3>Can you tell the readable model from the ordinary one?</h3>
-        <p>Read a pair of story completions, pick which one came from the model with 512 symbols, and see your score next to the judge's 85.4%. Our own idea loses this one.</p>
+        <p>Pick the 512-symbol completion. The blind judge chose the dense control in 85.4% of pairs.</p>
         <div class="tile-art" aria-hidden="true">
 <pre>    A  the kite flies, then flies again
     B  a kite, a balloon, a drum, a trumpet
@@ -677,30 +674,24 @@ scene = torch.<span class="fn">zeros</span>(D)
       the results are negative and they ship the same as the rest.
     </p>
 
-    <div class="grid g4" style="margin-top:38px">
+    <div class="grid g3" style="margin-top:38px">
       <div class="card rv">
         <span class="tag">04 · capacity</span>
         <h3>Thirty-one items at width 1000.</h3>
-        <p>Retrieval holds above 95% up to thirty-one items bundled into one vector of width 1000, roughly three times what a literature summary implied. Four widths measured, and this is the number the compiler prints.</p>
+        <p>Retrieval stays above 95% up to thirty-one items bundled into a width-1000 vector, roughly three times a literature baseline. Four widths were measured; this is the number the compiler prints.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/04_capacity/FINDINGS.md">experiments/04 →</a>
       </div>
       <div class="card rv">
         <span class="tag">07 · retrieval cost</span>
         <h3>Averaging passages into one vector costs a quarter of search accuracy.</h3>
-        <p>On a standard search benchmark, mean-pooling eight passages into a single document vector drops the hit-rate from 0.877 to 0.619 with topically coherent groups. About 76% of that loss is the averaging itself, isolated with a max-scoring control. A model with twice the width paid the same cost.</p>
+        <p>On BEIR scifact, mean-pooling eight passages drops recall from 0.877 to 0.619. A max-scoring control attributes about 76% of the loss to averaging itself; doubling nominal width does not remove the cost.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/07_retrieval_cost/FINDINGS.md">experiments/07 →</a>
       </div>
       <div class="card rv">
         <span class="tag">06 · discrete core</span>
         <h3>Legibility costs about three points of accuracy.</h3>
-        <p>Forcing the middle of the model through 1024 fixed symbols moved top-1 accuracy from 0.8383 to 0.8065 at matched parameters, and made the model <em>less</em> surprised by its own text, not more. Bigger alphabets got more capable and more legible together, which is the opposite of what we expected.</p>
+        <p>At matched parameters, forcing the middle through 1024 symbols moved top-1 accuracy from 0.8383 to 0.8065. Bigger alphabets became more capable and more legible together; the bottleneck is a measured tax, not a free win.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/06_discrete_core/FINDINGS.md">experiments/06 →</a>
-      </div>
-      <div class="card rv">
-        <span class="tag">01 · claimed vs causal</span>
-        <h3>A model's account of its own reasoning is not the causal graph.</h3>
-        <p>Across 6,955 steps, the dependency graph a model writes out correlates with what actually mattered at +0.203, and at +0.015 once you account for how far into the answer each step sits. Position alone gets -0.551. Structure has to be built in, not asked for.</p>
-        <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/01_claimed_vs_causal/FINDINGS.md">experiments/01 →</a>
       </div>
     </div>
 
@@ -726,8 +717,23 @@ scene = torch.<span class="fn">zeros</span>(D)
     </p>
 
     <p class="lede" style="margin-top:28px">
-      Three more findings are in the repository, including a negative result on this project's own idea.
-      <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)">All seven findings →</a>
+      The full findings, including the negative result on this project's own idea, live in the repository.
+      <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)">All experiments →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ==================================================== OVERNIGHT RESEARCH -->
+<section id="research">
+  <div class="wrap sec">
+    <p class="eyebrow">Overnight research</p>
+    <h2 class="big">A useful boundary, not a victory lap.</h2>
+    <p class="lede">
+      On generated repair tasks, typed legality and public search lifted a learned sketch from 52.1%
+      raw pass to 89.6% full-system pass; the deterministic null reached the same 89.6%. A state-only
+      controller was causally load-bearing in a synthetic control, changing 50.0% of raw decisions
+      under state erasure. The two-parameter gates are supplied-bit routing, not semantic inference.
+      All of this is Raly-style Python research, not the Raly compiler/runtime. The public destination is EvalPlus HumanEval+ for disclosed diagnostic optimization, then MBPP+ for cleaner generalization, with BigCodeBench-Hard Complete and a later LiveCodeBench freshness audit. <a href="./research.html" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)">Read the compact audit →</a>
     </p>
   </div>
 </section>
@@ -750,7 +756,7 @@ scene = torch.<span class="fn">zeros</span>(D)
           <li><span class="mk yes">✓</span><span><b>Lexer</b> that turns any input at all, including arbitrary bytes, into tokens without panicking.</span></li>
           <li><span class="mk yes">✓</span><span><b>Parser</b> written by hand, recovers from bad syntax, and produces a tree that covers the whole file.</span></li>
           <li><span class="mk yes">✓</span><span><b>Name resolution</b> with two namespaces and proper scopes. Using a name before it is defined gets its own message. Suggestions stay quiet unless they are confident.</span></li>
-          <li><span class="mk yes">✓</span><span><b>Type checking</b> for all four properties: width, family, how full, and which slots. <b>179 tests, zero warnings.</b></span></li>
+          <li><span class="mk yes">✓</span><span><b>Type checking</b> for all four properties: width, family, how full, and which slots. <b>198 tests, zero warnings.</b></span></li>
           <li><span class="mk yes">✓</span><span><b>Browser playground</b>: the whole front end as 286KB of WebAssembly, the capacity error live, no install.</span></li>
           <li><span class="mk no">·</span><span><b>Code generation</b> does not exist. <code>raly</code> checks programs; it cannot run them.</span></li>
           <li><span class="mk no">·</span><span><b>Ralytable itself</b> is not built. What exists is the 6.4M-parameter model the second demo takes apart.</span></li>
@@ -761,19 +767,12 @@ scene = torch.<span class="fn">zeros</span>(D)
     <div class="limits rv">
       <p class="eyebrow" style="margin-bottom:0">Limits, stated once</p>
       <ul>
-        <li><b>The model in the second demo cannot reason.</b> It is 6.4M parameters trained for six
-          minutes on 4,042 synthetic word problems. It writes correctly formatted arithmetic nonsense.
-          The demo is about seeing what it is doing, not about what it can do.</li>
-        <li><b>One seed per configuration, one corpus, one teacher.</b> There are no error bars on
-          finding 06.</li>
-        <li><b>That corpus is synthetic and formulaic</b>, which almost certainly makes its structure
-          easier to encode than real text would be.</li>
-        <li><b>The capacity numbers come from random codebooks.</b> A codebook learned by gradient
-          descent has no pressure to stay spread out, and whether the numbers survive training is the
-          open question that gates the whole idea.</li>
-        <li><b>Findings 05 and 07 cover four small encoders on three datasets</b>, all English, all
-          short passages, all mean pooling. They are claims about those models on that data.</li>
-        <li><b>Nothing here runs.</b> There is no code generator, so Raly programs type-check and stop.</li>
+        <li><b>The demo model cannot reason.</b> It is a 6.4M-parameter toy trained on 4,042 synthetic word problems; it formats arithmetic nonsense. The demo shows structure, not capability.</li>
+        <li><b>The overnight coding result is synthetic.</b> Generated integer-list, Python, and repository-shaped tasks are not general coding or a public benchmark.</li>
+        <li><b>Raw and verified scores differ.</b> Public search can repair a weak learned proposal, and the deterministic null can match the final score. They are reported separately.</li>
+        <li><b>One result is still missing.</b> The Raly compiler type-checks but has no IR, code generator, or runtime backend. The overnight Python harness did not call it.</li>
+        <li><b>The public destination is explicit.</b> HumanEval+ is a disclosed diagnostic scoreboard, MBPP+ the cleaner cross-benchmark check, then BigCodeBench-Hard Complete and a later LiveCodeBench freshness audit. No public result is claimed here.</li>
+        <li><b>The older findings are bounded.</b> Small corpora, seeds, encoders, and mean-pooling conditions describe those experiments, not every model or dataset.</li>
       </ul>
     </div>
   </div>
@@ -815,9 +814,8 @@ scene = torch.<span class="fn">zeros</span>(D)
       <a href="#how">How it works</a>
     </nav>
     <p class="foot-note">
-      Ralytable is the project and the model. Raly is the language and compiler. MIT licensed.
-      The compiler checks programs and cannot yet run them, and the trained model is a 6.4M-parameter
-      one that cannot reason. Every number on this page is reproducible from the repository.
+      Ralytable is the project. Raly is the language and compiler. MIT licensed. The compiler checks
+      programs but cannot run them; every number on this page is reproducible from the repository.
     </p>
   </div>
 </footer>

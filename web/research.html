@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ralytable research audit</title>
+<meta name="description" content="A compact, skeptical summary of the overnight Raly-style research run.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08090b;--panel:#0f1216;--line:#242b35;--fg:#e8ecf1;--muted:#a7b0bd;--dim:#6d7683;--accent:#c7625c;--ok:#4ad493;--warn:#f4c66d;--mono:"JetBrains Mono",monospace;--disp:"Space Grotesk",sans-serif;--body:Inter,system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--body)}main,header,footer{max-width:920px;margin:auto;padding:28px 24px}header{padding-top:72px}h1,h2{font-family:var(--disp);line-height:1.08;letter-spacing:-.03em}h1{font-size:clamp(38px,7vw,72px);max-width:12ch;margin:10px 0 20px}h2{font-size:28px;margin:0 0 12px}p{max-width:70ch;color:var(--muted)}a{color:var(--fg);text-decoration-color:var(--accent);text-underline-offset:3px}.eyebrow{color:var(--accent);font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase}.stamp{font:12px var(--mono);color:var(--dim)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0 54px}.card,.bottom{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}.card strong{display:block;font:700 25px var(--mono);color:var(--fg)}.card span{color:var(--dim);font-size:13px}.section{border-top:1px solid var(--line);padding:46px 0}.callout{border-left:2px solid var(--accent);padding:4px 0 4px 18px}.good{color:var(--ok)}.warn{color:var(--warn)}ul{padding-left:20px;color:var(--muted)}li{margin:8px 0}footer{border-top:1px solid var(--line);color:var(--dim);font-size:13px;padding-bottom:64px}@media(max-width:650px){header,main,footer{padding-left:18px;padding-right:18px}.grid{grid-template-columns:1fr}header{padding-top:46px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Overnight research · 2026-08-27</div>
+  <h1>A useful boundary, not a victory lap.</h1>
+  <p class="callout">Experiment 13 found a narrow result on synthetic, generated repair tasks. Typed legality and public-example search improved the selected program, while a deterministic null often matched the final score. A state-only controller was causally load-bearing in one synthetic control. General coding was not established.</p>
+  <p class="stamp">386 valid rows · 12 oracle-contaminated rows preserved separately · largest learned model 54,516 parameters</p>
+</header>
+<main>
+  <div class="grid">
+    <div class="card"><strong>52.1% → 89.6%</strong><span>raw learned sketch → full-system hidden pass</span></div>
+    <div class="card"><strong>89.6%</strong><span>deterministic-null full-system baseline</span></div>
+    <div class="card"><strong>50.0%</strong><span>raw decisions changed by state erasure</span></div>
+  </div>
+
+  <section class="section">
+    <h2>What survives</h2>
+    <p>The strongest result is a small state-only controller whose executable abstract state changes half of its raw decisions while an irrelevant placebo stays fixed. That is evidence that a declared state can be causally load-bearing in a synthetic control. It does not establish open-ended coding ability, and public verification can mask raw weakness.</p>
+    <ul><li><span class="good">Keep:</span> typed state slots, explicit legality, and separate raw/full evaluation.</li><li><span class="warn">Test next:</span> tasks where state is necessary but not sufficient, with independently specified labels.</li><li><span class="warn">Do not promote:</span> general Python or repository coding from generated microtasks.</li></ul>
+  </section>
+
+  <section class="section">
+    <h2>Corrections that matter</h2>
+    <p>The two-parameter predicate gate is supplied-bit identity/routing, not semantic inference. The `semantic_rule_gate` and `repository_bundle_gate` placebo controls are tautological because nuisance is absent from the gate; their historical causal rates are invalid for promotion. Historical latency starts after inference and is not end-to-end. New runs separate inference, selection, scoring, and end-to-end-through-selection.</p>
+    <p>Experiment 14 is a CPU-only smoke checkpoint and is paused before its planned multi-seed run. The actual Raly compiler/runtime is not in the overnight execution path: this is Raly-style or Raly-inspired research.</p>
+  </section>
+
+  <section class="section">
+    <h2>Public destination</h2>
+    <p>EvalPlus HumanEval+ is the benchmark-guided discovery scoreboard: task-level failures may be inspected and optimized against, with contamination disclosed, so its tuned score is not held-out evidence. EvalPlus MBPP+ is the cleaner cross-benchmark generalization check; BigCodeBench-Hard Complete is the practical stretch target; a later, time-separated LiveCodeBench slice is the freshness audit.</p>
+    <p>Autoresearch uses separate frozen local proxy tasks. Public prompts and solutions stay out of training; HumanEval+ is the deliberate, disclosed exception for iterative diagnosis. Future runs preregister <=9M parameters, raw/full/null scores, search/test-time budget, and separate latency fields. No public benchmark was run here.</p>
+  </section>
+
+  <section class="section bottom">
+    <h2>Read the record</h2>
+    <p>The full dashboard, append-only JSONL, invalidated oracle log, preregistrations, generator audits, and reproduction commands remain in the repository.</p>
+    <p><a href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/13_autoresearch_raly_coder/FINDINGS.md">Experiment 13 findings →</a><br><a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments/15_research_summary_dashboard">Full dashboard source →</a><br><a href="./index.html">Back to the project →</a></p>
+  </section>
+</main>
+<footer>Ralytable is the project; Raly is the language and compiler. The compiler type-checks but does not yet execute programs. All overnight claims are local, synthetic, and reproducible from the repository.</footer>
+</body>
+</html>
