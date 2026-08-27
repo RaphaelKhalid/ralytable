@@ -118,7 +118,13 @@ class AppendOnlyLedger:
         self.db.commit()
 
     def pending_experiments(self, run_id: str) -> list[sqlite3.Row]:
-        return list(self.db.execute("SELECT * FROM experiments WHERE run_id=? AND status IN ('RUNNING','INTERRUPTED') ORDER BY seq", (run_id,)))
+        return list(self.db.execute("""
+            SELECT e.* FROM experiments e
+            JOIN (SELECT experiment_id, MAX(seq) AS latest_seq
+                  FROM experiments WHERE run_id=? GROUP BY experiment_id) latest
+              ON e.seq = latest.latest_seq
+            WHERE e.status IN ('RUNNING','INTERRUPTED') ORDER BY e.seq
+        """, (run_id,)))
 
     def snapshot(self, run_id: str) -> dict[str, Any]:
         with self._lock:
