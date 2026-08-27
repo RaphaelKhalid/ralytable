@@ -103,6 +103,12 @@ separate, and label any optimized result HumanEval+-tuned. Never rank candidates
 with evaluation tests or answers, and never hardcode task IDs, prompts, expected
 outputs, or solutions. MBPP+ and LiveCodeBench remain untouched.
 
+Do not start that loop from this task. The next phase should begin in a fresh
+isolated worktree using the Luna-high setting, with the evaluator and benchmark
+release frozen before any task-level failure inspection. Keep the mutable model,
+adapter, and search code separate from the frozen baseline record, and label every
+optimized result HumanEval+-tuned.
+
 ## What exists and works
 
 **The compiler.** 8 crates, 198 tests, zero clippy warnings, fmt clean. Lexer,
