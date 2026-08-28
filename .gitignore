@@ -19,6 +19,7 @@ reviews/**/*.json
 reviews/**/*packet.txt
 data/math-rollouts/
 data/hf_cache/
+data/private/raly-coder-v1/
 experiments/05_real_embeddings/cache/
 compiler/target/
 compiler/crates/raly-wasm/target/
@@ -26,6 +27,7 @@ experiments/06_discrete_core/corpus.jsonl
 experiments/06_discrete_core/STOP
 experiments/07_retrieval_cost/cache/
 run.log
+experiments/12_raly_coder/runs/
 experiments/08_tinystories/cache/
 experiments/08_tinystories/ckpt/
 experiments/08_tinystories/STOP
