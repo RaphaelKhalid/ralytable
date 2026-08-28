@@ -19,6 +19,7 @@ from typing import Any
 from .archive import ArchiveEntry
 from .ar0 import DEFAULT_SEEDS, regenerate_report, run_ar0
 from .ar1 import run_ar1
+from .ar2 import resume_ar2, run_ar2
 from .ledger import AppendOnlyLedger
 from .runner import ExperimentRunner
 from .schema import CandidateContract, OPERATOR_WEIGHTS, POLICY_VERSION, canonical_json
@@ -220,13 +221,16 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("report"); common(p)
     p = sub.add_parser("status"); common(p)
     p = sub.add_parser("resume"); common(p); p.add_argument("run_id")
-    p = sub.add_parser("dashboard"); common(p); p.add_argument("--port", type=int, default=8787); p.add_argument("--phase", choices=("smoke", "ar0"), default="smoke")
+    p = sub.add_parser("dashboard"); common(p); p.add_argument("--port", type=int, default=8787); p.add_argument("--phase", choices=("smoke", "ar0", "ar1", "ar2"), default="smoke")
     p = sub.add_parser("prepare-flagship"); common(p)
     p = sub.add_parser("ar0"); common(p); p.add_argument("--seeds", default=",".join(str(seed) for seed in DEFAULT_SEEDS)); p.add_argument("--budget", type=int, default=64); p.add_argument("--environment", choices=("local", "wsl"), default="local"); p.add_argument("--no-gpu", action="store_true"); p.add_argument("--port", type=int, default=8787)
     p = sub.add_parser("ar0-dashboard"); common(p); p.add_argument("--port", type=int, default=8787)
     p = sub.add_parser("ar0-report"); common(p)
     p = sub.add_parser("ar1"); common(p); p.add_argument("--environment", choices=("local", "wsl"), default="local"); p.add_argument("--gpu", action="store_true")
     p = sub.add_parser("ar1-dashboard"); common(p); p.add_argument("--port", type=int, default=8791)
+    p = sub.add_parser("ar2"); common(p); p.add_argument("--environment", choices=("local", "wsl"), default="local"); p.add_argument("--gpu", action="store_true")
+    p = sub.add_parser("ar2-resume"); common(p); p.add_argument("run_id")
+    p = sub.add_parser("ar2-dashboard"); common(p); p.add_argument("--port", type=int, default=8792)
     args = parser.parse_args(argv)
     if args.command == "init":
         run_id, path, ledger = load_or_create_run(args.root, args.profile); freeze(run_id, path, ledger); ledger.close(); print(path)
@@ -248,4 +252,13 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "ar1-dashboard":
         from .dashboard_server import serve_dashboard
         serve_dashboard(args.root, args.port, phase="ar1")
+    elif args.command == "ar2":
+        run_id, path = run_ar2(args.root, repo_root(), environment=args.environment, include_gpu=args.gpu)
+        print(json.dumps({"run_id": run_id, "path": str(path), "report": str(path / "REPORT.md"), "dashboard": "http://127.0.0.1:8792/"}, sort_keys=True))
+    elif args.command == "ar2-resume":
+        run_id, path = resume_ar2(args.root, repo_root(), args.run_id)
+        print(json.dumps({"run_id": run_id, "path": str(path), "report": str(path / "REPORT.md"), "dashboard": "http://127.0.0.1:8792/"}, sort_keys=True))
+    elif args.command == "ar2-dashboard":
+        from .dashboard_server import serve_dashboard
+        serve_dashboard(args.root, args.port, phase="ar2")
     return 0

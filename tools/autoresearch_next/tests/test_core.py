@@ -10,6 +10,7 @@ from pathlib import Path
 from tools.autoresearch_next.archive import ArchiveEntry, MapElitesArchive
 from tools.autoresearch_next.ar0 import recovery_check, run_trial
 from tools.autoresearch_next.ar1 import AR1Trial, make_landscape
+from tools.autoresearch_next.ar2 import AR2Trial, make_landscape as make_ar2_landscape, recovery_check as ar2_recovery_check, verify_receipt_chain, verify_receipt_stream
 from tools.autoresearch_next.evaluator_contract import EvaluatorContract
 from tools.autoresearch_next.ledger import AppendOnlyLedger
 from tools.autoresearch_next.policy import PolicyManager
@@ -122,6 +123,27 @@ class AR1Tests(unittest.TestCase):
     def test_ar1_checkpoint_replay_is_exact(self):
         from tools.autoresearch_next.ar1 import recovery_check
         self.assertTrue(recovery_check(make_landscape("epistatic_crossover", 101), "adaptive_qd_ucb", 11, 24)["recovery_resume_match"])
+
+
+class AR2Tests(unittest.TestCase):
+    def test_ar2_landscape_certifies_optimum_and_receipts(self):
+        landscape = make_ar2_landscape("sparse_portals_v2", 1201)
+        result = AR2Trial(landscape, "stagnation_aware_map_elites", 17, 24).run()
+        self.assertEqual(result["proposals"], 24)
+        self.assertGreaterEqual(result["A_fi"], 0.0)
+        self.assertLessEqual(result["A_fi"], 1.0)
+        self.assertEqual(result["receipt_count"], 24)
+
+    def test_ar2_recovery_and_receipt_tamper_detection(self):
+        landscape = make_ar2_landscape("epistatic_bridge_v2", 1403)
+        self.assertTrue(ar2_recovery_check(landscape, "stagnation_aware_map_elites", 17, 24)["recovery_resume_match"])
+        trial = AR2Trial(landscape, "map_elites_fixed", 17, 24)
+        trial.run()
+        self.assertTrue(verify_receipt_chain(trial.history))
+        self.assertTrue(verify_receipt_stream(trial.history, expected_budget=24))
+        corrupted = list(trial.history)
+        corrupted[3] = dict(corrupted[3], score=123.0)
+        self.assertFalse(verify_receipt_chain(corrupted))
 
 
 if __name__ == "__main__":
