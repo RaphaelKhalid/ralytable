@@ -372,6 +372,60 @@ a.tile .go{
 .scroller{overflow-x:auto}
 .scroller::-webkit-scrollbar{height:9px}
 .scroller::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
+
+/* ---------------------------------------------------------- research cockpit */
+.research{background:linear-gradient(180deg,var(--bg-2),var(--bg));}
+.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.section-head .eyebrow{margin-bottom:0}
+.live-badge,.run-badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-2);border-radius:999px;padding:6px 10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2);white-space:nowrap}
+.live-badge{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,var(--line-2))}
+.pulse{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 0 color-mix(in srgb,currentColor 40%,transparent);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,currentColor 40%,transparent)}50%{box-shadow:0 0 0 5px transparent}}
+.research-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:18px;margin-top:34px}
+.run-card,.lab-card{border:1px solid var(--line-2);border-radius:12px;background:var(--panel);overflow:hidden}
+.run-card{padding:clamp(20px,3vw,30px);position:relative}
+.run-card::after{content:"";position:absolute;right:-55px;top:-55px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 18%,transparent),transparent 68%);pointer-events:none}
+.run-meta,.run-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;position:relative;z-index:1}
+.run-badge{color:var(--accent);border-color:var(--accent-dim)}
+.run-meta time,.run-foot{font-family:var(--mono);font-size:11px;color:var(--fg-3)}
+.run-card h3{font-size:clamp(22px,3vw,31px);margin-top:28px;max-width:17ch}
+.run-card p{color:var(--fg-2);font-size:14.5px;max-width:52ch;margin-top:12px;position:relative;z-index:1}
+.run-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;position:relative;z-index:1}
+.run-metric{border-top:1px solid var(--line);padding-top:11px}
+.run-metric b{display:block;font-family:var(--mono);font-size:20px;font-weight:500;color:var(--fg)}
+.run-metric span{display:block;margin-top:3px;font-size:11.5px;color:var(--fg-3)}
+.progress{height:7px;background:var(--bg-2);border-radius:99px;overflow:hidden;margin-top:28px;position:relative;z-index:1}
+.progress span{display:block;height:100%;width:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent-dim),var(--accent));transition:width .35s ease}
+.run-foot{margin-top:10px}
+.mini-btn{font:inherit;font-family:var(--mono);font-size:10.5px;color:var(--fg-2);background:none;border:1px solid var(--line-2);border-radius:5px;padding:5px 8px;cursor:pointer}
+.mini-btn:hover{color:var(--fg);border-color:var(--accent)}
+.lab-card{padding:0}
+.lab-head{padding:14px 16px;border-bottom:1px solid var(--line);background:var(--panel-2);font-family:var(--mono);font-size:11px;color:var(--fg-2);display:flex;justify-content:space-between;gap:10px}
+.lab-head span:last-child{color:var(--fg-3)}
+.lab-body{padding:20px}
+.lab-title{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3)}
+.spark{display:flex;align-items:end;gap:4px;height:100px;margin-top:18px;padding-top:8px;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0,transparent 24px,var(--line) 25px)}
+.spark i{display:block;flex:1;min-width:4px;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--accent),var(--accent-dim));opacity:.9;animation:rise .8s both}
+@keyframes rise{from{height:0!important;opacity:0}to{opacity:.9}}
+.lab-legend{display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--fg-3)}
+.evidence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.evidence{border:1px solid var(--line);border-radius:9px;padding:15px 16px;background:color-mix(in srgb,var(--panel) 76%,transparent)}
+.evidence b{display:block;font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500}
+.evidence span{display:block;margin-top:7px;color:var(--fg-2);font-size:13.5px;line-height:1.45}
+.research-note{margin-top:16px;color:var(--fg-3);font-family:var(--mono);font-size:11px;line-height:1.6}
+.research-note strong{color:var(--fg-2);font-weight:500}
+
+/* --------------------------------------------------------- compiler dock */
+.compiler-dock{position:fixed;right:18px;bottom:18px;z-index:80;width:min(440px,calc(100vw - 36px));border:1px solid var(--line-2);border-radius:12px;background:var(--panel);box-shadow:0 24px 70px -25px rgba(0,0,0,.8);overflow:hidden;transform:translateY(calc(100% - 48px));transition:transform .22s ease}
+.compiler-dock.open{transform:none}
+.dock-bar{height:48px;display:flex;align-items:center;gap:10px;padding:0 13px;background:var(--panel-2);font-family:var(--mono);font-size:11px;color:var(--fg-2);cursor:pointer}
+.dock-bar .pip{color:var(--ok)}
+.dock-bar .dock-state{margin-left:auto;color:var(--fg-3);font-size:10px}
+.dock-toggle{border:0;background:none;color:var(--fg-3);font:inherit;font-size:16px;line-height:1;cursor:pointer;padding:4px}
+.dock-toggle:hover{color:var(--fg)}
+.compiler-dock iframe{display:block;width:100%;height:360px;border:0;background:var(--bg)}
+@media(max-width:760px){.research-layout{grid-template-columns:1fr}.evidence-grid{grid-template-columns:1fr}.compiler-dock{right:12px;bottom:12px;width:calc(100vw - 24px)}.compiler-dock iframe{height:320px}}
+@media(prefers-reduced-motion:reduce){.pulse,.spark i{animation:none}.compiler-dock{transition:none}.progress span{transition:none}}
 </style>
 </head>
 <body>
@@ -379,6 +433,7 @@ a.tile .go{
   <div class="wrap nav-in">
     <a class="brand" href="#top"><span class="dot"></span>Ralytable<small>/ raly</small></a>
     <nav class="nav-links">
+      <a href="#research">Research loop</a>
       <a href="#demos">Demos</a>
       <a href="./blind-test.html">Blind test</a>
       <a class="hide-s" href="#error">The error</a>
@@ -409,13 +464,64 @@ a.tile .go{
       <a class="btn" href="./interpretability.html">Look inside a trained model <span class="arr">→</span></a>
     </div>
     <div class="statline">
-      <span><b>179</b> tests</span>
+      <span><b>198</b> compiler tests</span>
       <span><b>0</b> warnings</span>
-      <span><b>8</b> Rust crates</span>
-      <span><b>286KB</b> of it runs in your browser</span>
+      <span><b>3</b> seeds in the latest run</span>
+      <span><b>WASM</b> in your browser</span>
     </div>
   </div>
 </div>
+
+<!-- ================================================ RESEARCH COCKPIT -->
+<section id="research" class="research">
+  <div class="wrap sec">
+    <div class="section-head">
+      <p class="eyebrow">Autoresearcher / the loop</p>
+      <span class="live-badge"><i class="pulse"></i><span id="run-status">research run</span></span>
+    </div>
+    <h2 class="big" style="margin-top:18px">The site is a window onto the work, not a museum of conclusions.</h2>
+    <p class="lede">
+      This lane is wired for the metrics emitted by the training loop. It shows the latest real run,
+      its controls, and the result that would make us change direction.
+    </p>
+
+    <div class="research-layout">
+      <article class="run-card rv">
+        <div class="run-meta">
+          <span class="run-badge" id="run-kind">completed · 3 seeds</span>
+          <time id="run-updated">2026-08-27</time>
+        </div>
+        <h3 id="run-title">typed state mediation / corrected smoke</h3>
+        <p id="run-summary">A plumbing check for structured state, constrained generation, interventions, and checkpoint recovery. The model is not claimed to reason; this run only tells us the pipeline is connected.</p>
+        <div class="run-metrics">
+          <div class="run-metric"><b id="run-step">100/100</b><span>updates</span></div>
+          <div class="run-metric"><b id="run-pass">6/48</b><span>typed constrained</span></div>
+          <div class="run-metric"><b id="run-hard">0/48</b><span>hard mediation</span></div>
+        </div>
+        <div class="progress" aria-label="Run progress"><span id="run-progress"></span></div>
+        <div class="run-foot"><span id="run-device">RTX 4060 · checkpoints round-tripped</span><button class="mini-btn" id="refresh-run" type="button">refresh data</button></div>
+      </article>
+
+      <aside class="lab-card rv">
+        <div class="lab-head"><span>metrics.jsonl</span><span id="run-source">checked-in snapshot</span></div>
+        <div class="lab-body">
+          <div class="lab-title">training loss / last run</div>
+          <div class="spark" id="loss-chart" role="img" aria-label="Training loss chart"></div>
+          <div class="lab-legend"><span id="loss-start">loss 2.31</span><span id="loss-end">loss 1.74</span></div>
+          <div class="lab-title" style="margin-top:22px">what the run establishes</div>
+          <p id="run-verdict" style="margin-top:8px;color:var(--fg-2);font-size:14px;line-height:1.5">The executor and checkpoint path work. Capability evidence is still absent.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="evidence-grid">
+      <div class="evidence rv"><b>NULL</b><span>Raw unconstrained generation solved 0/48 in both arms.</span></div>
+      <div class="evidence rv"><b>CONTROL</b><span>Three 16-task oracle checks passed 16/16.</span></div>
+      <div class="evidence rv"><b>NEXT</b><span>Keep IR/backend work paused until the preregistration gate.</span></div>
+    </div>
+    <p class="research-note"><strong>Data contract:</strong> drop a fresh Autoresearcher export at <code>data/autoresearcher.json</code> and this panel will switch from the checked-in snapshot to the latest run. No credentials or model weights belong in the site.</p>
+  </div>
+</section>
 
 <!-- ==================================================== DEMO 1: PLAYGROUND -->
 <section id="demos">
@@ -820,6 +926,14 @@ scene = torch.<span class="fn">zeros</span>(D)
   </div>
 </footer>
 
+<aside class="compiler-dock" id="compiler-dock" aria-label="Background Raly compiler">
+  <div class="dock-bar">
+    <button class="dock-toggle" id="dock-toggle" type="button" aria-expanded="false" aria-controls="dock-frame" aria-label="Expand background compiler">⌃</button>
+    <span class="pip">●</span><span>raly compiler</span><span class="dock-state">backgrounded · wasm</span>
+  </div>
+  <iframe id="dock-frame" src="./playground/" title="Background Raly compiler" loading="eager"></iframe>
+</aside>
+
 <div id="dfn-pop" role="tooltip" aria-hidden="true"></div>
 
 <script>
@@ -900,6 +1014,63 @@ scene = torch.<span class="fn">zeros</span>(D)
   document.addEventListener("keydown", function(ev){ if(ev.key === "Escape") hide(); });
   document.addEventListener("click", function(ev){
     if(open && !ev.target.classList.contains("dfn")) hide();
+  });
+
+  /* ---- autoresearcher run lane ---- */
+  var fallbackRun = {
+    status: "research run", kind: "completed · 3 seeds", updated: "2026-08-27",
+    title: "typed state mediation / corrected smoke",
+    summary: "A plumbing check for structured state, constrained generation, interventions, and checkpoint recovery. The model is not claimed to reason; this run only tells us the pipeline is connected.",
+    step: 100, total: 100, typed: "6/48", hard: "0/48", device: "RTX 4060 · 2.05GB peak · checkpoints round-tripped",
+    source: "next_smoke/metrics.jsonl · checked-in snapshot", verdict: "The executor and checkpoint path work. Capability evidence is still absent.",
+    loss: [4.3403,1.7792,0.5563,0.0657,0.0422,0.0052,0.0011,0.0008,0.0004,0.0003,0.0003]
+  };
+  function drawRun(run){
+    document.getElementById("run-status").textContent = run.status || "research run";
+    document.getElementById("run-kind").textContent = run.kind || "completed";
+    document.getElementById("run-updated").textContent = run.updated || "latest";
+    document.getElementById("run-title").textContent = run.title || "latest autoresearcher run";
+    document.getElementById("run-summary").textContent = run.summary || "Metrics are connected; read the finding before drawing a conclusion.";
+    document.getElementById("run-step").textContent = (run.step || 0) + "/" + (run.total || run.step || 0);
+    document.getElementById("run-pass").textContent = run.typed || "—";
+    document.getElementById("run-hard").textContent = run.hard || "—";
+    document.getElementById("run-device").textContent = run.device || "local training run";
+    document.getElementById("run-source").textContent = run.source || "latest export";
+    document.getElementById("run-verdict").textContent = run.verdict || "Read the limitations before treating this as evidence.";
+    var pct = Math.min(100, Math.max(0, 100 * (run.step || 0) / Math.max(1, run.total || run.step || 1)));
+    document.getElementById("run-progress").style.width = pct + "%";
+    var loss = Array.isArray(run.loss) && run.loss.length ? run.loss : fallbackRun.loss;
+    document.getElementById("loss-start").textContent = "loss " + Number(loss[0]).toFixed(2);
+    document.getElementById("loss-end").textContent = "loss " + Number(loss[loss.length-1]).toFixed(2);
+    var lo = Math.min.apply(null, loss), hi = Math.max.apply(null, loss), chart = document.getElementById("loss-chart");
+    chart.textContent = "";
+    loss.forEach(function(value, i){
+      var bar = document.createElement("i");
+      var height = 18 + ((value - lo) / Math.max(.001, hi - lo)) * 68;
+      bar.style.height = height + "%";
+      bar.style.animationDelay = (i * 28) + "ms";
+      chart.appendChild(bar);
+    });
+  }
+  function loadRun(){
+    drawRun(fallbackRun);
+    if(!window.fetch || location.protocol.indexOf("http") !== 0) return;
+    fetch("./data/autoresearcher.json", {cache:"no-store"}).then(function(r){
+      if(!r.ok) throw 0;
+      return r.json();
+    }).then(drawRun).catch(function(){ /* checked-in fallback is intentional */ });
+  }
+  document.getElementById("refresh-run").addEventListener("click", loadRun);
+  loadRun();
+
+  /* ---- background compiler dock ---- */
+  var dock = document.getElementById("compiler-dock");
+  var dockToggle = document.getElementById("dock-toggle");
+  dockToggle.addEventListener("click", function(){
+    var expanded = dock.classList.toggle("open");
+    dockToggle.setAttribute("aria-expanded", String(expanded));
+    dockToggle.setAttribute("aria-label", expanded ? "Minimize background compiler" : "Expand background compiler");
+    dockToggle.textContent = expanded ? "⌄" : "⌃";
   });
 
   /* ---- links that must not break if their target is not deployed yet ---- */
