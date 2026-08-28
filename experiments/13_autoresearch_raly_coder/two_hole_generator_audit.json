@@ -1,0 +1,17 @@
+{
+  "experiment": "python_source_two_hole_gate",
+  "attempts": [
+    {
+      "status": "discard",
+      "result": "generator stopped before GPU use",
+      "reason": "some sampled action pairs were not distinguishable on the three public cases"
+    }
+  ],
+  "correction": "resample action pairs until the target pair is uniquely identified by public outputs; do not inspect hidden outputs",
+  "validation": {
+    "tasks": 1000,
+    "predicate_pairs": 9,
+    "public_target_ambiguities": 0,
+    "status": "keep"
+  }
+}

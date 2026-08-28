@@ -1,18 +1,136 @@
 # Handoff
 
 Written at the end of a long session so the next one starts cold without losing
-anything. Read `PROJECT_GUIDE.md` first. `CLAUDE.md` and `AGENTS.md` point to it;
-it holds the shared methodology and collaboration rules.
+anything. Read `CLAUDE.md` (or `AGENTS.md`, same content) first: it holds the
+methodology rules, each written after a result here turned out wrong in that
+exact way.
 
 ## What this is
 
-**Raly** is a programming language and compiler. **Ralytable** is the model we
-are trying to build with it. The bet is that some useful model structure can be
-specified and tested during construction instead of explained only after the
-fact.
+**Raly** is a programming language and compiler. **Ralytable** is the model and
+research project around it; the overnight Python harnesses are Raly-style, not
+executed by the compiler. Bet: within a few years you will not be allowed to deploy a model you
+cannot explain, and everyone will be retrofitting explanations onto models that
+were never built to have one.
 
 Live: https://ralytable.vercel.app (landing, playground, blind test, codebook)
 Repo: https://github.com/RaphaelKhalid/ralytable
+
+## 2026-08-27 AR2 and next-run checkpoint
+
+AR2 is complete. The corrected valid run `ar2-20260827T234349Z-4c250f`
+performed 1,218 trials and produced 623,831 validated receipts. Fixed
+MAP-Elites remains the incumbent at R=29.33. Adaptive QD-UCB's +0.82 paired
+delta (95% CI -0.95 to 2.68) and the stagnation-aware controller's +0.41 delta
+(95% CI -0.27 to 1.09) do not support promotion. All receipt integrity and
+reproduction gates passed. This was CPU-only simulation; no GPU model was
+trained.
+
+The clean integration branch is `codex/autoresearch-ar2-roadmap`, stacked on
+`codex/raly-coder-foundation`. The next run is specified, but not authorized to
+execute, in `docs/plan-under-40m-humaneval-plus.md`. It compares the fixed
+MAP-Elites incumbent with Karpathy greedy keep/revert on a real, matched-compute
+under-40M Python training task; uses a 37-39M dense control and typed-state
+candidate; reports greedy HumanEval+ separately from causal reasoning gates; and
+keeps publication/submission outside present authorization.
+
+The product route now assumes commodity silicon. A future compact companion
+appliance may package existing ARM/Linux or NPU hardware, but custom silicon and
+a replacement phone are not current work. The model path should preserve
+standard operations and measure quantization, RAM, latency, and energy.
+
+## 2026-08-27 integration checkpoint
+
+The clean integration was sourced from the completed overnight worktree at
+commit `ef74feb27fffdeeebfa380f2f8b344bb17a4db7f` (descendant of `faaf00d`).
+It includes the committed Experiment 13 lineage, paused Experiment 14,
+Experiment 15 dashboard, Experiment 11 lineage, preregistrations, generator
+audits, and append-only JSONL logs. Caches, weights, checkpoints, generated
+datasets, `.env`, W&B material, and `__pycache__` are intentionally excluded.
+
+### Corrected verdict
+
+Experiment 13 supports two narrow statements. First, typed legality plus
+public-example search can improve the selected program on a generated synthetic
+repair family: 52.1% raw learned pass versus 89.6% full-system hidden pass,
+while the deterministic null also reaches 89.6%. Second, the larger state-only
+controller is a candidate mechanism that is causally load-bearing in a
+synthetic control: state erasure changes 50.0% of raw decisions and an
+irrelevant placebo preserves 100%. Raw learned, verified full-system,
+symbolic, and deterministic-null scores stay separate.
+
+The two-parameter predicate gates are supplied-bit identity/routing controls,
+not semantic inference. In `semantic_rule_gate` and `repository_bundle_gate`,
+the nuisance-placebo controls are tautological because nuisance is absent from
+the gate; those causal rates are historical and invalid for causal promotion.
+Every Experiment 13/14 task is synthetic or generated, even where the surface
+looks like Python or a repository. The actual Raly compiler/runtime is not in
+the execution path, so describe this work as Raly-style or Raly-inspired, not
+Raly-based.
+
+### Measurement and reproduction
+
+The old `latency_ms` field begins after model inference and includes old-loop
+evaluation work; it is not end-to-end latency. New `run.py` rows separate
+inference, selection, hidden scoring, and inference-through-selection. The
+invalidated oracle-null file remains at
+`experiments/13_autoresearch_raly_coder/research_log_invalidated_null_oracle.jsonl`;
+the valid log has 386 rows and the preserved invalid file has 12. Run the
+dependency-free record audit with:
+
+    C:\Users\rapha\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe experiments/13_autoresearch_raly_coder/measurement_audit.py --expected-valid 386
+
+The learned parameter gate is <=9M; the overnight maximum was 54,516. Machine
+facts remain RTX 4060 Laptop, 8.6GB VRAM, torch 2.6.0+cu124, bf16 autocast and
+fused AdamW. Experiment 14 is CPU-only smoke evidence, paused before its
+planned multi-seed run because file-backed imports exceeded the short budget.
+
+### Next decision
+
+Do not promote the architecture. The next smallest useful experiment removes
+the supplied label/state shortcut with independently specified tasks where
+executable state is necessary but not sufficient, while keeping hidden answers
+scoring-only. Then test richer Python or repository-local repair. Public GitHub
+and Vercel actions remain separate review steps; this integration is local only.
+
+The explicit public destination is a benchmark ladder. EvalPlus HumanEval+ is the
+benchmark-guided discovery scoreboard: task-level failures may be inspected and
+optimized against, with contamination disclosed, so its tuned score is not
+held-out evidence. EvalPlus MBPP+ is the cleaner cross-benchmark generalization
+check; BigCodeBench-Hard Complete is the practical stretch target; and a later,
+time-separated LiveCodeBench slice is the freshness audit. Autoresearch uses
+separate frozen local proxy tasks. Public prompts/solutions stay out of training;
+HumanEval+ is the deliberate, disclosed exception for iterative diagnosis. Future
+runs preregister <=9M parameters, raw/full/null scores, search budget, and separate
+latency fields. No public benchmark was run here.
+
+### HumanEval+ baseline attempt
+
+The official EvalPlus 0.3.1 loader smoke passed and reported 164 HumanEval+ tasks.
+The complete `deterministic_pass_baseline` attempt was started locally but did not
+produce a score: EvalPlus's official evaluator imports POSIX `resource` and uses
+`signal.setitimer`/`SIGALRM`, which native Windows cannot provide. The run was
+stopped without weakening the evaluator, and no pass@1 number is reported. The
+smallest honest adapter is committed at
+`experiments/16_humaneval_plus_baseline/zero_baseline.py`; it emits `pass` for
+runtime-loaded task keys only and is a null baseline, not a model.
+
+The same directory contains `result_record.schema.json`, an append-only record
+runner, and a loopback-only dashboard. Launch it with a record path outside the
+repository; use a POSIX environment (WSL or Linux) for the official evaluator.
+The shortest valid route is to install EvalPlus 0.3.1 there, run the adapter with
+`--evaluate --output <temp-samples> --record <temp-record>`, and open
+`http://127.0.0.1:8766/` via `dashboard_server.py`. A future candidate runner must
+freeze EvalPlus 0.3.1 and the HumanEval+ release, keep mutable model/search code
+separate, and label any optimized result HumanEval+-tuned. Never rank candidates
+with evaluation tests or answers, and never hardcode task IDs, prompts, expected
+outputs, or solutions. MBPP+ and LiveCodeBench remain untouched.
+
+Do not start that loop from this task. The next phase should begin in a fresh
+isolated worktree using the Luna-high setting, with the evaluator and benchmark
+release frozen before any task-level failure inspection. Keep the mutable model,
+adapter, and search code separate from the frozen baseline record, and label every
+optimized result HumanEval+-tuned.
 
 ## What exists and works
 
@@ -34,7 +152,7 @@ W&B mirroring, blind LLM judging, OOM and divergence recovery.
 
 ## What was found
 
-Ten experiments in `experiments/`, each with a `FINDINGS.md` whose first
+Nine experiments in `experiments/`, each with a `FINDINGS.md` whose first
 sentence is the verdict. The load-bearing ones:
 
 **01 — asking a model about its own reasoning does not work.** An LLM's stated
@@ -157,19 +275,3 @@ baseline, overdeterminedness by its definition, the committor by position, and
 the logit lens by a base model reading text. An impossible value is a bug, not an
 outlier; a dense model reporting a nonzero commitment loss is what caught a bf16
 precision bug.
-
-## Latest handoff: corrected Experiment 11 smoke (2026-08-27)
-
-The corrected smoke was run from an isolated copy of the three Experiment 11
-scripts with seeds 11, 23, and 37; 24 training tasks, 16 held-out
-`sort_unique_count` tasks, and 100 updates per arm. The transcript controller
-solved 6/48 typed constrained tasks and hard mediation solved 0/48; untyped
-constrained results were 5/48 and 0/48, respectively. Raw unconstrained
-generation solved 0/48 in both arms. All constrained outputs parsed without
-executor errors, all six adapters round-tripped, and three 16-task oracle checks
-passed 16/16.
-
-Artifacts, raw outputs, validation, and run metadata are preserved under
-`experiments/11_typed_state_mediation/corrected_smoke_20260827_01/`. The result
-is exploratory plumbing evidence only. Keep IR/backend work paused; do not
-start confirmatory training before the preregistration gate.
