@@ -232,13 +232,40 @@ fn check_escapes(file: FileId, src: &str, span: Span, diagnostics: &mut Diagnost
         match esc {
             'n' | 't' | 'r' | '0' | '\\' | '"' => {}
             'u' => {
-                // `\u{...}` — consume the braces so their contents are not
-                // re-examined as escapes.
+                // `\u{...}` — validate a Unicode scalar value while consuming
+                // the braces so their contents are not re-examined as escapes.
                 if chars.peek().map(|&(_, c)| c) == Some('{') {
-                    for (_, c) in chars.by_ref() {
+                    let _ = chars.next();
+                    let mut digits = String::new();
+                    let mut closed = false;
+                    let mut end = body.len();
+                    for (k, c) in chars.by_ref() {
                         if c == '}' {
+                            closed = true;
+                            end = k + c.len_utf8();
                             break;
                         }
+                        digits.push(c);
+                    }
+                    let scalar = u32::from_str_radix(&digits, 16).ok();
+                    let valid = closed
+                        && !digits.is_empty()
+                        && digits.chars().all(|c| c.is_ascii_hexdigit())
+                        && scalar.is_some_and(|value| {
+                            value <= 0x10FFFF && !(0xD800..=0xDFFF).contains(&value)
+                        });
+                    if !valid {
+                        diagnostics.push(
+                            Diagnostic::error(
+                                codes::INVALID_ESCAPE,
+                                "Unicode escape must name a valid scalar value",
+                            )
+                            .with_primary(
+                                Span::new(file, (base + i) as u32, (base + end) as u32),
+                                "invalid Unicode escape",
+                            )
+                            .with_help("write a value such as `\\u{1F600}`"),
+                        );
                     }
                 } else {
                     diagnostics.push(
