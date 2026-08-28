@@ -269,6 +269,16 @@ fn unicode_escape_requires_braces() {
         .any(|n| n.kind == raly_diag::NoteKind::Help && n.message.contains("u{1F600}")));
 }
 
+#[test]
+fn unicode_escape_rejects_non_scalar_values() {
+    for source in [r#""\u{}""#, r#""\u{110000}""#, r#""\u{D800}""#] {
+        let diags = errors(source);
+        assert_eq!(diags.len(), 1, "one diagnostic for {source:?}");
+        assert_eq!(diags[0].code.as_str(), "RALY1003");
+        assert!(diags[0].message.contains("valid scalar"));
+    }
+}
+
 // -- comments ----------------------------------------------------------------
 
 #[test]

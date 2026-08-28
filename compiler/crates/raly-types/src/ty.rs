@@ -241,9 +241,10 @@ impl Row {
     /// The labels of `self` that `other` lacks.
     pub fn missing_from(&self, other: &Row) -> Vec<DefId> {
         self.labels
-            .keys()
-            .copied()
-            .filter(|label| !other.contains(*label))
+            .iter()
+            .filter_map(|(&label, &count)| {
+                (other.labels.get(&label).copied().unwrap_or(0) < count).then_some(label)
+            })
             .collect()
     }
 }
@@ -470,6 +471,16 @@ mod tests {
         assert!(row.restrict(DefId(4)));
         assert!(!row.contains(DefId(4)));
         assert!(!row.restrict(DefId(4)), "restricting an absent label fails");
+    }
+
+    #[test]
+    fn row_missing_from_preserves_multiplicity() {
+        let mut want = Row::closed_empty();
+        want.extend(DefId(4));
+        want.extend(DefId(4));
+        let mut found = Row::closed_empty();
+        found.extend(DefId(4));
+        assert_eq!(want.missing_from(&found), vec![DefId(4)]);
     }
 
     #[test]

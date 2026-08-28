@@ -1,0 +1,2 @@
+error[RALY4007]: this vector does not carry the roles its type says it does
+EXIT_CODE=1

@@ -1,0 +1,5 @@
+space S = MAP[1024]
+type Bad = Vec[S, Int]
+type ScalarBad = Int[S]
+type AliasBase = Vec[S]
+type AliasBad = AliasBase[Int; load 40]

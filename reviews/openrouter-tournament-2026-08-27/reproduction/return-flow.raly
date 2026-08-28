@@ -1,0 +1,7 @@
+fn explicit() -> Int {
+    return 1
+}
+
+fn implicit() {
+    1
+}
