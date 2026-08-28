@@ -33,6 +33,20 @@ end-to-end. All Experiment 13/14 tasks are synthetic or generated; the actual
 Raly compiler/runtime is not in the execution path. Call this Raly-style or
 Raly-inspired work.
 
+## Autoresearcher verdict, 2026-08-27
+
+AR2 completed 1,218 trials with 623,831 validated receipts. Fixed MAP-Elites
+remains the researcher incumbent. Adaptive QD-UCB and the stagnation-aware
+variant had higher point estimates in places but neither produced a conclusive
+paired improvement, so neither is promoted. This was a CPU-only test of research
+policy, not GPU model training and not a coding-benchmark result.
+
+The next decisive test is no longer another simulated controller tournament. It
+is a compute-matched GPU experiment in which fixed MAP-Elites and Karpathy's
+greedy keep/revert method each train the same real under-40M student. The review
+protocol is in `docs/plan-under-40m-humaneval-plus.md`; execution remains gated
+on explicit approval.
+
 ## What I already measured
 
 Before writing a line of the language, on real data:
@@ -133,14 +147,21 @@ Gate: process supervised Ralytable beats outcome supervised Ralytable on held ou
 
 ## What's next
 
-In order, cheapest and most decision-relevant first.
+In order, cheapest and most decision-relevant first. The approved planning work
+does not itself authorize the overnight training run.
 
-1. **Break the supplied-state shortcut.** Use independent task specifications where state is necessary but not sufficient, and keep hidden answers scoring-only.
-2. **Test richer Python and repository-local repair.** Preserve raw learned, verified full-system, symbolic, and deterministic-null rows.
-3. **Look inside the codebook.** Measure what individual codes respond to, with the raw-character null beside every score.
-4. **Phase 2 properly.** Use real text, multiple seeds, a matched continuous bottleneck, and more than one architecture family.
-5. **An IR and a backend**, so Raly programs run instead of only type-checking.
-6. **Then process supervision**, only if the preceding gates survive.
+1. **Review the under-40M run contract.** Freeze data, evaluator, parameter
+   count, causal gates, and the equal-compute Karpathy-versus-MAP-Elites test.
+2. **Break the supplied-state shortcut on real Python.** Infer a typed plan from
+   the prompt; never supply the answer state; prevent an opaque raw-prompt bypass.
+3. **Train matched dense and typed-state students.** Preserve raw learned,
+   verifier-assisted, symbolic, and deterministic-null rows.
+4. **Evaluate capability and interpretability separately.** HumanEval+ is an
+   outcome score; counterfactual state interventions establish causal use.
+5. **Only after review, prepare a public artifact.** Weights, model card,
+   provenance, contamination disclosure, raw greedy score, and reproducibility.
+6. **Continue the language path.** Add an IR and backend so Raly programs run
+   rather than only type-check.
 
 ### Public coding destination
 
@@ -154,10 +175,28 @@ time-separated LiveCodeBench slice is the contamination/freshness audit.
 Autoresearch development uses separate frozen local proxy tasks. Public benchmark
 prompts and solutions stay out of training; HumanEval+ is the explicit, disclosed
 exception for iterative diagnostic optimization. Before any run, preregister
-learned parameters <=9M, raw-controller and full-system scores separately,
+learned parameters <40M, raw-controller and full-system scores separately,
 search/test-time budget, inference/selection/scoring/end-to-end latency, and the
 deterministic-null comparison. This integration runs no public benchmark and claims
 no public benchmark result.
+
+The immediate target is one approximately 37-39M Python-only student, not a
+premature size ladder. The scientific score uses the current frozen EvalPlus
+release; any public comparison also records the leaderboard's benchmark version.
+The stretch target is at least 17/164 HumanEval+ tasks (10.4%) with greedy,
+single-model decoding, plus an independent causal-state gate. That is a
+parameter-efficiency target, not a claim of frontier absolute performance.
+
+### Existing-silicon product direction
+
+Custom silicon is out of scope. If the model becomes a device, the credible
+route is a packaged local companion built from existing ARM/Linux or NPU modules:
+private storage, always-on capture and recall, tactile controls, offline behavior,
+and a readable local reasoning record. A sub-40M model easily fits commodity
+hardware; the product value is the complete appliance and interaction model, not
+the novelty of the chip. Sequence the bet as software, reference enclosure,
+companion appliance, then production hardware, while measuring quantization,
+RAM, latency, energy, and exportability during model research.
 
 ## How I work
 

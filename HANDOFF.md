@@ -16,6 +16,29 @@ were never built to have one.
 Live: https://ralytable.vercel.app (landing, playground, blind test, codebook)
 Repo: https://github.com/RaphaelKhalid/ralytable
 
+## 2026-08-27 AR2 and next-run checkpoint
+
+AR2 is complete. The corrected valid run `ar2-20260827T234349Z-4c250f`
+performed 1,218 trials and produced 623,831 validated receipts. Fixed
+MAP-Elites remains the incumbent at R=29.33. Adaptive QD-UCB's +0.82 paired
+delta (95% CI -0.95 to 2.68) and the stagnation-aware controller's +0.41 delta
+(95% CI -0.27 to 1.09) do not support promotion. All receipt integrity and
+reproduction gates passed. This was CPU-only simulation; no GPU model was
+trained.
+
+The clean integration branch is `codex/autoresearch-ar2-roadmap`, stacked on
+`codex/raly-coder-foundation`. The next run is specified, but not authorized to
+execute, in `docs/plan-under-40m-humaneval-plus.md`. It compares the fixed
+MAP-Elites incumbent with Karpathy greedy keep/revert on a real, matched-compute
+under-40M Python training task; uses a 37-39M dense control and typed-state
+candidate; reports greedy HumanEval+ separately from causal reasoning gates; and
+keeps publication/submission outside present authorization.
+
+The product route now assumes commodity silicon. A future compact companion
+appliance may package existing ARM/Linux or NPU hardware, but custom silicon and
+a replacement phone are not current work. The model path should preserve
+standard operations and measure quantization, RAM, latency, and energy.
+
 ## 2026-08-27 integration checkpoint
 
 The clean integration was sourced from the completed overnight worktree at
