@@ -175,11 +175,16 @@ impl<'a> Renderer<'a> {
             .unwrap_or(1);
         let bar = self.paint("|", BLUE, true);
         let pad = " ".repeat(width);
+        let primary_index = diag
+            .labels
+            .iter()
+            .position(|label| matches!(label.style, LabelStyle::Primary))
+            .unwrap_or(0);
 
         for (i, label) in diag.labels.iter().enumerate() {
             let file = self.sources.get(label.span.file);
             let loc = file.location(label.span.start);
-            let arrow = if i == 0 { "-->" } else { ":::" };
+            let arrow = if i == primary_index { "-->" } else { ":::" };
             let _ = writeln!(
                 out,
                 "{pad}{} {}:{}:{}",

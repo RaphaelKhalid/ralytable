@@ -363,27 +363,51 @@ impl<'a> Checker<'a> {
                     ret: Box::new(ret),
                 }
             }
-            TypeExprKind::Named { args, quals, .. } => {
+            TypeExprKind::Named { path, args, quals } => {
                 let args = args.clone();
                 let quals = describe_quals(quals);
+                let type_name = path
+                    .first()
+                    .map(|ident| self.ast.text(*ident).to_string())
+                    .unwrap_or_else(|| "type".to_string());
                 let Some(def) = self.resolved.type_ref(id) else {
                     return Ty::Error;
                 };
                 match self.resolved.def(def).kind {
                     DefKind::Error => Ty::Error,
                     DefKind::Space(item) => {
+                        self.reject_type_application(&type_name, args.len(), quals.len(), 0, span);
                         self.space_of_item(item).map(Ty::Space).unwrap_or(Ty::Error)
                     }
-                    DefKind::TypeAlias(item) => self.lower_alias(item, span),
-                    DefKind::Builtin(Builtin::Int) => Ty::Int,
-                    DefKind::Builtin(Builtin::Float) => Ty::Float,
-                    DefKind::Builtin(Builtin::Bool) => Ty::Bool,
-                    DefKind::Builtin(Builtin::Str) => Ty::Str,
+                    DefKind::TypeAlias(item) => {
+                        self.reject_type_application(&type_name, args.len(), quals.len(), 0, span);
+                        self.lower_alias(item, span)
+                    }
+                    DefKind::Builtin(Builtin::Int) => {
+                        self.reject_type_application(&type_name, args.len(), quals.len(), 0, span);
+                        Ty::Int
+                    }
+                    DefKind::Builtin(Builtin::Float) => {
+                        self.reject_type_application(&type_name, args.len(), quals.len(), 0, span);
+                        Ty::Float
+                    }
+                    DefKind::Builtin(Builtin::Bool) => {
+                        self.reject_type_application(&type_name, args.len(), quals.len(), 0, span);
+                        Ty::Bool
+                    }
+                    DefKind::Builtin(Builtin::Str) => {
+                        self.reject_type_application(&type_name, args.len(), quals.len(), 0, span);
+                        Ty::Str
+                    }
                     DefKind::Builtin(Builtin::Sym) => {
+                        self.reject_type_application(&type_name, args.len(), quals.len(), 1, span);
                         let space = self.space_argument(&args, "Sym", span);
                         Ty::Sym { space, role: None }
                     }
                     DefKind::Builtin(Builtin::Vec) => {
+                        if args.len() != 1 {
+                            self.reject_type_application(&type_name, args.len(), 0, 1, span);
+                        }
                         let space = self.space_argument(&args, "Vec", span);
                         let vec = self.build_vec(id, space, &quals, span);
                         Ty::vector(vec)
@@ -422,6 +446,38 @@ impl<'a> Checker<'a> {
         let ty = self.lower_type(target);
         self.alias_stack.pop();
         ty
+    }
+
+    fn reject_type_application(
+        &mut self,
+        name: &str,
+        actual_args: usize,
+        qualifier_count: usize,
+        expected_args: usize,
+        span: Span,
+    ) {
+        if actual_args != expected_args {
+            self.diagnostics.push(
+                Diagnostic::error(
+                    codes::BAD_ARGUMENT_COUNT,
+                    format!(
+                        "type `{name}` expects {expected_args} argument(s), found {actual_args}"
+                    ),
+                )
+                .with_primary(span, "invalid type application")
+                .with_help("remove the extra type arguments"),
+            );
+        }
+        if qualifier_count > 0 {
+            self.diagnostics.push(
+                Diagnostic::error(
+                    codes::UNKNOWN_TYPE_QUALIFIER,
+                    format!("type `{name}` does not accept qualifiers"),
+                )
+                .with_primary(span, "qualifier is not meaningful here")
+                .with_help("put `load`, `roles`, or `clean` on a vector type"),
+            );
+        }
     }
 
     fn space_of_item(&self, item: ItemId) -> Option<SpaceId> {
@@ -887,6 +943,15 @@ impl<'a> Checker<'a> {
         }
         match tail {
             Some(tail) => self.infer(tail),
+            None if stmts
+                .iter()
+                .any(|stmt| matches!(&self.ast.stmts[*stmt].kind, StmtKind::Return(_))) =>
+            {
+                self.return_types
+                    .last()
+                    .map(|(ty, _, _)| ty.clone())
+                    .unwrap_or(Ty::Error)
+            }
             None => Ty::Unit,
         }
     }

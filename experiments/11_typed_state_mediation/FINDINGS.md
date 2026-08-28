@@ -1,10 +1,25 @@
 # Smoke findings
 
-The corrected typed-state controller passes the smoke-learning gate: both the transcript and hard-mediated arms solve 15 of 16 hidden tasks, while the executor and intervention controls pass all 16 oracle tasks.
+The corrected Experiment 11 smoke completed successfully as an exploratory
+pipeline check: transcript control solved 6/48 held-out hidden tasks and hard
+mediation solved 0/48 under constrained decoding; raw unconstrained generation
+solved 0/48 in both arms. All six seed/arm checkpoints round-tripped, and the
+deterministic controls passed.
 
-This is an exploratory plumbing result, not evidence that typed mediation improves language-model capability. The run used 100 updates on 16 evaluation tasks, a cached Qwen2.5-0.5B-Instruct model, parameter-efficient fine-tuning, and constrained decoding. No confirmatory alpha or superiority claim applies to this smoke test.
+This is an exploratory plumbing result, not evidence that typed mediation
+improves language-model capability. The run used 100 updates on 16 evaluation
+tasks per seed, 24 training tasks per seed, three seeds (11, 23, 37), a cached
+Qwen2.5-0.5B-Instruct model, parameter-efficient fine-tuning, and constrained
+decoding. No confirmatory alpha or superiority claim applies to this smoke test.
 
-## What failed first
+The corrected run used a disjoint held-out-template split. Constrained typed
+and untyped outputs parsed without executor errors in all 96 trials per arm,
+but this syntactic success did not translate into hidden-task success. The
+smoke therefore supplies the requested operational evidence and a concrete
+reason to keep IR/backend work paused: the current mediated controller does
+not generalize on this toy task.
+
+## Historical pre-correction diagnosis
 
 The first mediated run solved 0/16 tasks. The controller repeatedly emitted `input values -> s0`. The initial state already contained `s0`, `input` did not change the state, and the action generator still offered `input` as a legal candidate. Therefore the mediated prompt was effectively identical after every step. This was an environment/state-machine bug, not evidence against hard mediation.
 
@@ -12,30 +27,58 @@ The first mediated run solved 0/16 tasks. The controller repeatedly emitted `inp
 
 The state now starts with an explicit input buffer. `input values -> s0` consumes that buffer into a typed `List[Int]` slot, and the action is no longer legal after consumption. The transition is visible in the serialized state and is owned by the deterministic interpreter.
 
-## Results
+## Review corrections
 
-| Arm | Hidden-task pass | Constrained parse rate | Loss | Peak GPU |
-| --- | ---: | ---: | ---: | ---: |
-| Transcript | 15/16 | 100% | 4.968 → 0.00014 | 2.12 GB |
-| Hard mediated | 15/16 | 100% | 6.567 → 0.00023 | 2.12 GB |
+- The corrected smoke uses a disjoint train/evaluation split. The prior
+  `tasks[:26]` versus `tasks[:16]` slicing reused 16 task objects across both
+  sets; the corrected path splits the generated task list into separate halves
+  and asserts that the task keys do not overlap.
+- Provenance is now opt-in in serialized state. It is available for an explicit
+  provenance ablation, but is not silently supplied to the controller in the
+  default representation.
+- The sampler accepts an explicit seed and the smoke path passes the run seed
+  through training, making repeated runs reproducible rather than implicitly
+  reusing one fixed training RNG.
+- Relevant integer corruption now changes the integer value, so the integer
+  intervention is no longer a no-op. These are protocol corrections, not new
+  capability results.
 
-Both adapters round-trip successfully. The deterministic executor passes 16/16 oracle tasks, and the relevant, irrelevant, and type-erasure intervention checks behave as expected.
+## Corrected results
+
+| Arm | Typed constrained pass | Untyped constrained pass | Raw pass | Constrained parse rate | Checkpoints |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Transcript | 6/48 | 5/48 | 0/48 | 100% | 3/3 |
+| Hard mediated | 0/48 | 0/48 | 0/48 | 100% | 3/3 |
+
+All six adapters round-trip successfully. The deterministic executor passes
+its oracle checks; the relevant integer intervention changes 9 to 10, the
+irrelevant intervention preserves the result, and provenance is omitted by
+default but included explicitly when requested.
 
 The 100% parse figure is conditional on constrained decoding. It means the decoder selected one legal operation, not that an unconstrained model would naturally produce valid Raly syntax.
 
 ## Limitations and next test
 
 - The two arms were trained and evaluated on the same small generated task family, so this is not a general coding or reasoning result.
-- There are only 16 hidden tasks and one seed.
+- There are only 48 held-out hidden tasks per arm and three seeds.
 - The controller can exploit a narrow operation vocabulary and repeated task template.
 - The state representation is still a toy list state, not a repository or coding environment.
 - No claim has been made about causal interpretability of the model's internal weights.
 
-Before scaling up, run the preregistered comparison with fresh tasks, held-out templates, multiple seeds, unconstrained-output logging, and the planned oracle, type-erasure, and placebo controls.
+Before scaling up, rerun the preregistered comparison on the corrected checkout
+with fresh tasks, held-out templates, multiple seeds, unconstrained-output
+logging, and the planned oracle, type-erasure, and placebo controls. The
+threshold is intentionally visible in the request; candidate-generation bias
+should be treated as an explicit limitation or tested in a separate ablation,
+not described as a private-threshold generalization result.
 
-## Held-out-template smoke
+## Held-out-template smoke (historical pre-correction)
 
-The held-out smoke finds a generalization failure in the current controller: hard mediation averages 6.25% constrained hidden-task accuracy versus 60.42% for the transcript controller across three seeds.
+The following held-out figures are historical pre-correction outputs and must
+not be read as results for the corrected protocol. They found a generalization
+failure in the then-current controller: hard mediation averaged 6.25%
+constrained hidden-task accuracy versus 60.42% for the transcript controller
+across three seeds.
 
 Training used three templates and evaluation used the unseen `sort_unique_count`
 template. The constrained decoder made syntax legal in every case, but that was
@@ -56,9 +99,12 @@ new operation order. The next smoke should preregister an output-type constraint
 ablation: give both arms the same declared result type, allow `return` only for a
 slot of that type, and compare against the current unconstrained-return control.
 
-## Result-type ablation smoke
+## Result-type ablation smoke (historical pre-correction)
 
-The result-type constraint did not produce a reliable improvement in this smoke: it changed which answers were legal, but did not improve total held-out accuracy.
+The following result-type figures are also historical pre-correction outputs.
+The result-type constraint did not produce a reliable improvement in that smoke:
+it changed which answers were legal, but did not improve total held-out
+accuracy.
 
 | Controller | Typed return | Untyped return | Difference |
 | --- | ---: | ---: | ---: |

@@ -120,7 +120,7 @@ def load_model(model_id: str):
 
 
 def train_smoke(model, tokenizer, device, pairs: list[tuple[str, str]], updates: int,
-                batch_size: int = 2, accum: int = 4) -> list[float]:
+                batch_size: int = 2, accum: int = 4, seed: int = 11) -> list[float]:
     records = []
     for prompt, target in pairs:
         p = tokenizer(prompt, add_special_tokens=True)["input_ids"]
@@ -134,7 +134,7 @@ def train_smoke(model, tokenizer, device, pairs: list[tuple[str, str]], updates:
         opt = torch.optim.AdamW(params, lr=2e-4)
     losses = []
     model.train()
-    rng = random.Random(11)
+    rng = random.Random(seed)
     for step in range(updates):
         total = 0.0
         for _ in range(accum):
@@ -310,8 +310,14 @@ def main() -> None:
         # Fresh base + adapter per arm. Reusing the trained adapter would make
         # the second arm inherit the first arm's training.
         model, tokenizer, device = load_model(args.model)
-        pairs = examples(tasks[:26], mode)
-        losses = train_smoke(model, tokenizer, device, pairs, args.updates)
+        split = len(tasks) // 2
+        train_tasks, eval_tasks = tasks[:split], tasks[split:]
+        train_keys = {(t.request, t.values, t.threshold, t.program) for t in train_tasks}
+        eval_keys = {(t.request, t.values, t.threshold, t.program) for t in eval_tasks}
+        if not eval_tasks or train_keys & eval_keys:
+            raise RuntimeError("smoke train/eval split is not disjoint")
+        pairs = examples(train_tasks, mode)
+        losses = train_smoke(model, tokenizer, device, pairs, args.updates, seed=20260827)
 
         # Round-trip the trainable adapter only. Saving the frozen base would
         # make this check needlessly large and is not what the full run needs.
@@ -325,7 +331,7 @@ def main() -> None:
                      all(torch.equal(restored[k], model.state_dict()[k].detach().cpu())
                          for k in restored))
         eval_rows = [run_controller(model, tokenizer, device, t, mode)
-                     for t in tasks[:16]]
+                     for t in eval_tasks]
         write_jsonl(OUT / f"{mode}_eval.jsonl", eval_rows)
         all_parse.extend(eval_rows)
         summary[mode] = {
@@ -333,7 +339,7 @@ def main() -> None:
             "loss_fell": losses[-1] < losses[0],
             "parse_rate": sum(x["parse_rate"] for x in eval_rows) / len(eval_rows),
             "model_hidden_test_pass": sum(hidden_tests(t, x["result"])
-                                           for t, x in zip(tasks[:16], eval_rows)),
+                                           for t, x in zip(eval_tasks, eval_rows)),
             "errors": sum(bool(x["errors"]) for x in eval_rows),
             "checkpoint_roundtrip": roundtrip,
         }

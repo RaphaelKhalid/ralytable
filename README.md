@@ -1,6 +1,8 @@
 # Ralytable
 
-I think that within a few years you won't be allowed to deploy a model you can't explain, and almost nobody is building for that yet.
+I think models will eventually need stronger evidence about what they are doing
+before deployment. Ralytable is an attempt to make that evidence part of the
+model and compiler, not an afterthought.
 
 **Raly** is a language whose type system understands what a model represents. **Ralytable** is the model built in it. The name is the pitch; a model you can actually relate to, because you can read what it's doing.
 
@@ -26,9 +28,10 @@ That is the real Rust compiler cross-compiled to WebAssembly, 102KB. Type Raly, 
 | Browser playground | done |
 | Name resolution | done, scopes, two namespaces, suggestions |
 | Type system | done, all four properties, 198 tests, zero warnings |
-| A first model | a 6.4M toy that cannot reason; see finding 06 |
+| First model | a 6.4M synthetic-text toy that cannot reason; see finding 06 |
+| Current model baseline | a 29.5M TinyStories dense model and matched 512-code variant; see findings 08 and 09 |
 | IR, codegen | not built |
-| The model | not built |
+| Ralytable-1 in Raly | not built; current models are Python research baselines |
 
 The diagnostics are the part I'd point at first:
 

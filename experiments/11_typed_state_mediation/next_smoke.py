@@ -100,7 +100,7 @@ def main() -> None:
             model, tokenizer, device = smoke.load_model(args.model)
             losses = smoke.train_smoke(
                 model, tokenizer, device, smoke.examples(train_tasks, mode),
-                args.updates,
+                args.updates, seed=seed,
             )
             roundtrip = adapter_roundtrip(
                 model, OUT / f"seed_{seed}_{mode}_adapter.pt", mode
