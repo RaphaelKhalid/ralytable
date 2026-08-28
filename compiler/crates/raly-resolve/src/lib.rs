@@ -506,18 +506,31 @@ impl<'a> Resolver<'a> {
         let recovered = expr.origin.is_recovered();
         match &expr.kind {
             ExprKind::Path(segments) => {
-                // Multi-segment paths belong to `import`, which does not
-                // resolve yet; saying so would be noise, so they are skipped.
-                let single = if segments.len() == 1 {
-                    Some(segments[0])
-                } else {
-                    None
-                };
-                if let Some(name) = single {
-                    if !recovered {
-                        let def = self.lookup_value_or_error(name.symbol, name.span);
-                        self.expr_refs.insert(id.raw(), def);
-                    }
+                if recovered {
+                    return;
+                }
+                if segments.len() == 1 {
+                    let name = segments[0];
+                    let def = self.lookup_value_or_error(name.symbol, name.span);
+                    self.expr_refs.insert(id.raw(), def);
+                } else if let (Some(first), Some(last)) = (segments.first(), segments.last()) {
+                    let path = segments
+                        .iter()
+                        .map(|segment| self.ast.text(*segment))
+                        .collect::<Vec<_>>()
+                        .join("::");
+                    self.diagnostics.push(
+                        Diagnostic::error(
+                            codes::UNRESOLVED_NAME,
+                            format!("qualified path `{path}` is not supported yet"),
+                        )
+                        .with_primary(
+                            first.span.merge(last.span),
+                            "qualified path cannot be resolved",
+                        )
+                        .with_help("use a name in the current scope until modules are implemented"),
+                    );
+                    self.expr_refs.insert(id.raw(), DefId::ERROR);
                 }
             }
             ExprKind::Group(inner) => {
@@ -604,11 +617,32 @@ impl<'a> Resolver<'a> {
                         _ => Vec::new(),
                     })
                     .collect();
+                if recovered {
+                    return;
+                }
                 if let Some(head) = head {
-                    if !recovered {
-                        let def = self.lookup_type_or_error(head.symbol, head.span);
-                        self.type_refs.insert(id.raw(), def);
-                    }
+                    let def = self.lookup_type_or_error(head.symbol, head.span);
+                    self.type_refs.insert(id.raw(), def);
+                } else if let (Some(first), Some(last)) = (path.first(), path.last()) {
+                    let path = path
+                        .iter()
+                        .map(|segment| self.ast.text(*segment))
+                        .collect::<Vec<_>>()
+                        .join("::");
+                    self.diagnostics.push(
+                        Diagnostic::error(
+                            codes::UNRESOLVED_TYPE,
+                            format!("qualified type path `{path}` is not supported yet"),
+                        )
+                        .with_primary(
+                            first.span.merge(last.span),
+                            "qualified type path cannot be resolved",
+                        )
+                        .with_help(
+                            "use a type name in the current scope until modules are implemented",
+                        ),
+                    );
+                    self.type_refs.insert(id.raw(), DefId::ERROR);
                 }
                 for arg in args {
                     self.resolve_type(arg);

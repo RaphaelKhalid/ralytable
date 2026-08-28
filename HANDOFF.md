@@ -1,16 +1,15 @@
 # Handoff
 
 Written at the end of a long session so the next one starts cold without losing
-anything. Read `CLAUDE.md` (or `AGENTS.md`, same content) first: it holds the
-methodology rules, each written after a result here turned out wrong in that
-exact way.
+anything. Read `PROJECT_GUIDE.md` first. `CLAUDE.md` and `AGENTS.md` point to it;
+it holds the shared methodology and collaboration rules.
 
 ## What this is
 
-**Raly** is a programming language and compiler. **Ralytable** is the model built
-in it. Bet: within a few years you will not be allowed to deploy a model you
-cannot explain, and everyone will be retrofitting explanations onto models that
-were never built to have one.
+**Raly** is a programming language and compiler. **Ralytable** is the model we
+are trying to build with it. The bet is that some useful model structure can be
+specified and tested during construction instead of explained only after the
+fact.
 
 Live: https://ralytable.vercel.app (landing, playground, blind test, codebook)
 Repo: https://github.com/RaphaelKhalid/ralytable
@@ -35,7 +34,7 @@ W&B mirroring, blind LLM judging, OOM and divergence recovery.
 
 ## What was found
 
-Nine experiments in `experiments/`, each with a `FINDINGS.md` whose first
+Ten experiments in `experiments/`, each with a `FINDINGS.md` whose first
 sentence is the verdict. The load-bearing ones:
 
 **01 — asking a model about its own reasoning does not work.** An LLM's stated
@@ -158,3 +157,19 @@ baseline, overdeterminedness by its definition, the committor by position, and
 the logit lens by a base model reading text. An impossible value is a bug, not an
 outlier; a dense model reporting a nonzero commitment loss is what caught a bf16
 precision bug.
+
+## Latest handoff: corrected Experiment 11 smoke (2026-08-27)
+
+The corrected smoke was run from an isolated copy of the three Experiment 11
+scripts with seeds 11, 23, and 37; 24 training tasks, 16 held-out
+`sort_unique_count` tasks, and 100 updates per arm. The transcript controller
+solved 6/48 typed constrained tasks and hard mediation solved 0/48; untyped
+constrained results were 5/48 and 0/48, respectively. Raw unconstrained
+generation solved 0/48 in both arms. All constrained outputs parsed without
+executor errors, all six adapters round-tripped, and three 16-task oracle checks
+passed 16/16.
+
+Artifacts, raw outputs, validation, and run metadata are preserved under
+`experiments/11_typed_state_mediation/corrected_smoke_20260827_01/`. The result
+is exploratory plumbing evidence only. Keep IR/backend work paused; do not
+start confirmatory training before the preregistration gate.

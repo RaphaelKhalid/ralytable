@@ -149,6 +149,18 @@ error[RALY1001]: name defined twice
 }
 
 #[test]
+fn the_primary_label_gets_the_arrow_even_when_added_second() {
+    let mut sources = SourceMap::new();
+    let file = sources.add("order.raly", "first\nsecond\n");
+    let diag = Diagnostic::error(codes::UNKNOWN_CHARACTER, "ordered labels")
+        .with_label(Label::secondary(Span::new(file, 0, 5), "context"))
+        .with_label(Label::primary(Span::new(file, 6, 12), "error here"));
+    let rendered = Renderer::new(&sources).render(&diag);
+    assert!(rendered.contains(" ::: order.raly:1:1"), "{rendered}");
+    assert!(rendered.contains(" --> order.raly:2:1"), "{rendered}");
+}
+
+#[test]
 fn a_zero_width_span_still_gets_one_caret() {
     let mut sources = SourceMap::new();
     let file = sources.add("eof.raly", "let x =");

@@ -1,0 +1,3 @@
+fn malformed() -> Str {
+    return "bad \u{110000}"
+}
