@@ -1,0 +1,18 @@
+{
+  "experiment": "python_source_prefix_gate",
+  "attempts": [
+    {
+      "status": "discard",
+      "result": "generator audit aborted before GPU use",
+      "reason": "sorted-prefix duplicate-free states made sort_values and unique_values observationally identical"
+    }
+  ],
+  "correction": "restricted sorted-prefix tasks to duplicate-bearing states while retaining other predicates across the remaining prefixes",
+  "validation": {
+    "tasks": 1000,
+    "prefix_families": ["absolute_prefix", "identity", "nonzero_prefix", "sorted_prefix"],
+    "candidate_collisions": 0,
+    "predicate_mismatches": 0,
+    "status": "keep"
+  }
+}

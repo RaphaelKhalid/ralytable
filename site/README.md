@@ -1,10 +1,11 @@
 # site/
 
-The public landing page for Ralytable. One file, no build step, no dependencies.
+The public landing page for Ralytable. Static files, no build step, no dependencies.
 
 ```
 site/
-└── index.html    everything — markup, CSS, JS, inline
+├── index.html    landing page and demos
+└── research.html compact overnight research audit and public benchmark destination
 ```
 
 ## Serve it
@@ -33,7 +34,8 @@ git subtree push --prefix site origin gh-pages
 ```
 
 **Cloudflare Pages / Netlify / Vercel.** Build command: none. Output directory:
-`site`.
+`site`. The deployable `web/` copy is synchronized from `site/` for the current
+repository layout.
 
 ## Conventions this page keeps
 
