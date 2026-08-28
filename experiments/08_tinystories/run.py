@@ -607,24 +607,37 @@ def main():
     print("  done.")
 
 
-def benchmark(cfg, meta, batch, device, n=12):
-    """Measure real step time so the budget is chosen from data, not from hope."""
+def benchmark(cfg, meta, batch, device, n=40):
+    """Measure real step time so the budget is chosen from data, not from hope.
+
+    This must mirror the training step EXACTLY, including the fp32 cross-entropy
+    recomputation that keeps CE separable from the commitment term. A first
+    version omitted it and under-measured by 40% (133 ms against a real 190 ms),
+    which would have turned a 3-hour budget into a 4.3-hour one. It also runs
+    40 steps rather than 12: the first dozen are dominated by cuBLAS autotuning
+    and the VQ's data-dependent codebook init, and are not representative.
+    """
     m = make_model(cfg, meta["vocab_size"], device)
     o = optimizer(m, lr=1e-4)
     smp = D.Sampler("train", cfg["ctx"], batch, device, seed=0)
+    warm = 15
+    t0 = time.time()
     for i in range(n):
-        if i == 4 and device == "cuda":
+        if i == warm and device == "cuda":
             torch.cuda.synchronize()
             t0 = time.time()
         x, y = smp()
         with torch.autocast("cuda", torch.bfloat16, enabled=(device == "cuda")):
-            _, loss, _ = m(x, y)
+            logits, loss, _ = m(x, y)
+        with torch.no_grad():
+            F.cross_entropy(logits.detach().reshape(-1, logits.size(-1)).float(),
+                            y.reshape(-1))
         o.zero_grad(set_to_none=True)
         loss.backward()
         o.step()
     if device == "cuda":
         torch.cuda.synchronize()
-    dt = (time.time() - t0) / (n - 4)
+    dt = (time.time() - t0) / (n - warm)
     del m, o
     torch.cuda.empty_cache()
     return dt
