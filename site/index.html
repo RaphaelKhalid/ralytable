@@ -8,14 +8,15 @@
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Ralytable — an interpretable model for HumanEval+">
 <meta property="og:description" content="A moonshot: improve on Karpathy's autoresearcher while keeping the model small enough to inspect end to end.">
-<meta property="og:image" content="https://ralytable.vercel.app/assets/seagull.png">
+<meta property="og:image" content="https://ralytable.vercel.app/assets/seagull.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://ralytable.vercel.app/assets/seagull.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="twitter:image" content="https://ralytable.vercel.app/assets/seagull.webp">
 <style>
 /* ------------------------------------------------------------------ tokens */
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Regular.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Bold.woff2") format("woff2");font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Italic.woff2") format("woff2");font-style:italic;font-weight:400;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-BoldItalic.woff2") format("woff2");font-style:italic;font-weight:700;font-display:swap}
 :root{
   --bg:#08090b;
   --bg-2:#0d0f12;
@@ -35,8 +36,8 @@
   --sel:rgba(230,173,121,.24);
 
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
-  --disp:"Space Grotesk",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
-  --body:"Inter",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --disp:"KaTeX Main","Latin Modern Roman","Computer Modern",Georgia,serif;
+  --body:"KaTeX Main","Latin Modern Roman","Computer Modern",Georgia,serif;
 
   --pad:clamp(20px,5vw,44px);
   --max:1180px;
@@ -72,7 +73,7 @@ body{
 ::selection{background:var(--sel)}
 img,svg{max-width:100%}
 a{color:inherit}
-h1,h2,h3,h4{font-family:var(--disp);font-weight:600;letter-spacing:-.022em;line-height:1.1;margin:0}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:700;letter-spacing:-.022em;line-height:1.1;margin:0}
 p{margin:0}
 code,pre,kbd{font-family:var(--mono)}
 
@@ -115,23 +116,19 @@ header.nav{
 @media(max-width:700px){.nav-links .hide-s{display:none}}
 
 /* ------------------------------------------------------------------- hero */
-.hero{min-height:clamp(650px,calc(100svh - 56px),860px);padding:clamp(54px,8vw,100px) 0 clamp(52px,7vw,84px);position:relative;overflow:hidden;background:#0a1117}
+.hero{min-height:clamp(650px,calc(100svh - 56px),860px);padding:clamp(54px,8vw,100px) 0 clamp(52px,7vw,84px);position:relative;overflow:hidden;background:#0a1117 url("./assets/seagull.webp") center center / cover no-repeat}
 .hero::before{
-  content:"";position:absolute;inset:0;opacity:.65;
-  background:radial-gradient(70% 90% at 0% 50%,rgba(230,173,121,.18),transparent 65%),linear-gradient(90deg,rgba(7,12,17,.9) 0%,rgba(7,12,17,.62) 52%,rgba(7,12,17,.2) 100%);
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(7,12,17,.88) 0%,rgba(7,12,17,.68) 38%,rgba(7,12,17,.18) 76%,rgba(7,12,17,.28) 100%),linear-gradient(0deg,rgba(7,12,17,.72) 0%,transparent 38%);
   pointer-events:none;
 }
-.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:clamp(34px,6vw,90px);align-items:center;min-height:inherit}
-.hero-copy{position:relative;z-index:2}
+.hero-in{position:relative;display:flex;align-items:center;min-height:inherit}
+.hero-copy{position:relative;z-index:2;max-width:700px}
 h1{font-size:clamp(39px,6.2vw,76px);letter-spacing:-.052em;max-width:13ch;font-weight:700}
 h1 em{font-style:normal;color:var(--accent)}
 .hero p.sub{margin-top:22px;max-width:57ch;font-size:clamp(15.5px,1.6vw,18px);color:#bdcbd4}
 .hero .eyebrow{color:#f0b785}
-.hero-visual{position:relative;z-index:1;min-height:clamp(340px,58vh,590px);border:1px solid rgba(238,242,244,.28);border-radius:18px;overflow:hidden;background:#17232c;box-shadow:0 30px 90px -34px rgba(0,0,0,.9);transform:rotate(1.2deg)}
-.hero-visual img{display:block;width:100%;height:100%;min-height:inherit;object-fit:cover;object-position:center;filter:saturate(.9) contrast(.96)}
-.hero-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,19,.02) 32%,rgba(8,14,19,.78) 100%);pointer-events:none}
-.hero-visual-note{position:absolute;left:18px;right:18px;bottom:17px;z-index:1;color:#edf2f4;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px}
-.hero-visual-note span:last-child{color:#b8c7ce}
+.hero-credit{position:absolute;right:clamp(20px,5vw,44px);bottom:18px;z-index:2;color:rgba(237,242,244,.84);font-family:var(--mono);font-size:11px;letter-spacing:.04em}
 .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 .btn{
   display:inline-flex;align-items:center;gap:8px;text-decoration:none;
@@ -147,7 +144,7 @@ h1 em{font-style:normal;color:var(--accent)}
   font-family:var(--mono);font-size:12px;color:var(--fg-3);
 }
 .statline b{color:var(--fg-2);font-weight:500}
-@media(max-width:860px){.hero{min-height:auto}.hero-in{grid-template-columns:1fr;gap:32px}.hero-visual{min-height:340px;transform:none;order:2}.hero-copy{padding-top:12px}}
+@media(max-width:860px){.hero{min-height:calc(100svh - 56px);background-position:58% center}.hero-copy{padding-top:12px}.hero-credit{right:20px;bottom:16px}}
 
 /* --------------------------------------------------------------- code panel */
 .panel{
@@ -485,10 +482,7 @@ a.tile .go{
         <span><b>Autoresearcher</b> loop</span>
       </div>
     </div>
-    <figure class="hero-visual">
-      <img src="./assets/seagull.png" alt="A gull flying over blue water with mountains behind it.">
-      <figcaption class="hero-visual-note"><span>Field note / open horizon</span><span>Raphael's photography</span></figcaption>
-    </figure>
+    <p class="hero-credit">by Raphael Khalid</p>
   </div>
 </div>
 
