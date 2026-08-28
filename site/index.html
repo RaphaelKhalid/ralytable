@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ralytable, a compiler that knows what a vector holds</title>
-<meta name="description" content="A browser compiler, a clickable model codebook, and measured research on typed, inspectable structure.">
+<title>Ralytable — the smallest fully interpretable model that can run HumanEval+</title>
+<meta name="description" content="Ralytable is trying to build the smallest fully interpretable coding model that can run HumanEval+, improving on Karpathy's autoresearcher.">
 <meta name="color-scheme" content="dark light">
-<meta property="og:title" content="Ralytable">
-<meta property="og:description" content="A compiler that knows what a vector holds. Two live demos.">
+<meta property="og:title" content="Ralytable — an interpretable model for HumanEval+">
+<meta property="og:description" content="A moonshot: improve on Karpathy's autoresearcher while keeping the model small enough to inspect end to end.">
+<meta property="og:image" content="https://ralytable.vercel.app/assets/seagull.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ralytable.vercel.app/assets/seagull.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -23,13 +26,13 @@
   --fg:#e8ecf1;
   --fg-2:#a7b0bd;
   --fg-3:#6d7683;
-  --accent:#c7625c;
-  --accent-fill:#a70900;
-  --accent-dim:#750600;
+  --accent:#e6ad79;
+  --accent-fill:#e6ad79;
+  --accent-dim:#765c45;
   --accent-ink:#ffffff;
   --err:#ff6b5b;
   --ok:#4ad493;
-  --sel:rgba(167,9,0,.24);
+  --sel:rgba(230,173,121,.24);
 
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
   --disp:"Space Grotesk",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
@@ -40,19 +43,19 @@
 }
 /* An explicit light palette so the page is never a dark card on a white host. */
 :root[data-theme="light"]{
-  --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
+  --bg:#f6f3ee; --bg-2:#ebe8e1; --panel:#ffffff; --panel-2:#f5f2ec;
   --line:#e2ded6; --line-2:#cfc9be;
   --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-  --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
-  --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
+  --accent:#275f78; --accent-fill:#275f78; --accent-dim:#bed0d7; --accent-ink:#ffffff;
+  --err:#b94332; --ok:#1c7a4f; --sel:rgba(39,95,120,.16);
 }
 @media (prefers-color-scheme:light){
   :root:not([data-theme="dark"]){
-    --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
+    --bg:#f6f3ee; --bg-2:#ebe8e1; --panel:#ffffff; --panel-2:#f5f2ec;
     --line:#e2ded6; --line-2:#cfc9be;
     --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-    --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
-    --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
+    --accent:#275f78; --accent-fill:#275f78; --accent-dim:#bed0d7; --accent-ink:#ffffff;
+    --err:#b94332; --ok:#1c7a4f; --sel:rgba(39,95,120,.16);
   }
 }
 
@@ -112,16 +115,23 @@ header.nav{
 @media(max-width:700px){.nav-links .hide-s{display:none}}
 
 /* ------------------------------------------------------------------- hero */
-.hero{padding:clamp(44px,7vw,80px) 0 clamp(40px,6vw,64px);position:relative;overflow:hidden}
+.hero{min-height:clamp(650px,calc(100svh - 56px),860px);padding:clamp(54px,8vw,100px) 0 clamp(52px,7vw,84px);position:relative;overflow:hidden;background:#0a1117}
 .hero::before{
-  content:"";position:absolute;inset:-40% 30% auto -30%;height:120%;
-  background:radial-gradient(60% 50% at 30% 40%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 70%);
+  content:"";position:absolute;inset:0;opacity:.65;
+  background:radial-gradient(70% 90% at 0% 50%,rgba(230,173,121,.18),transparent 65%),linear-gradient(90deg,rgba(7,12,17,.9) 0%,rgba(7,12,17,.62) 52%,rgba(7,12,17,.2) 100%);
   pointer-events:none;
 }
-.hero-in{position:relative}
-h1{font-size:clamp(31px,5.4vw,58px);letter-spacing:-.038em;max-width:17ch;font-weight:700}
+.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:clamp(34px,6vw,90px);align-items:center;min-height:inherit}
+.hero-copy{position:relative;z-index:2}
+h1{font-size:clamp(39px,6.2vw,76px);letter-spacing:-.052em;max-width:13ch;font-weight:700}
 h1 em{font-style:normal;color:var(--accent)}
-.hero p.sub{margin-top:22px;max-width:52ch;font-size:clamp(15.5px,1.6vw,18px);color:var(--fg-2)}
+.hero p.sub{margin-top:22px;max-width:57ch;font-size:clamp(15.5px,1.6vw,18px);color:#bdcbd4}
+.hero .eyebrow{color:#f0b785}
+.hero-visual{position:relative;z-index:1;min-height:clamp(340px,58vh,590px);border:1px solid rgba(238,242,244,.28);border-radius:18px;overflow:hidden;background:#17232c;box-shadow:0 30px 90px -34px rgba(0,0,0,.9);transform:rotate(1.2deg)}
+.hero-visual img{display:block;width:100%;height:100%;min-height:inherit;object-fit:cover;object-position:center;filter:saturate(.9) contrast(.96)}
+.hero-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,19,.02) 32%,rgba(8,14,19,.78) 100%);pointer-events:none}
+.hero-visual-note{position:absolute;left:18px;right:18px;bottom:17px;z-index:1;color:#edf2f4;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px}
+.hero-visual-note span:last-child{color:#b8c7ce}
 .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 .btn{
   display:inline-flex;align-items:center;gap:8px;text-decoration:none;
@@ -137,6 +147,7 @@ h1 em{font-style:normal;color:var(--accent)}
   font-family:var(--mono);font-size:12px;color:var(--fg-3);
 }
 .statline b{color:var(--fg-2);font-weight:500}
+@media(max-width:860px){.hero{min-height:auto}.hero-in{grid-template-columns:1fr;gap:32px}.hero-visual{min-height:340px;transform:none;order:2}.hero-copy{padding-top:12px}}
 
 /* --------------------------------------------------------------- code panel */
 .panel{
@@ -451,24 +462,33 @@ a.tile .go{
 <!-- ==================================================== HERO -->
 <div class="hero">
   <div class="wrap hero-in">
-    <h1>A compiler that knows <em>what a vector holds</em>.</h1>
-    <p class="sub">
-      Machine learning tools see a <button type="button" class="dfn" data-t="Vector" data-d="A fixed-length list of numbers.">vector</button>
-      as numbers and check its length. They do not see the measured capacity of the bag, so an overfilled
-      representation can quietly degrade. <b>Raly</b> puts that count in the type: overfill it and the
-      program stops at compile time. The compiler runs here; the research shows where typed, inspectable
-      structure helps, and where it does not.
-    </p>
-    <div class="cta">
-      <a class="btn primary" href="#demos">Try the compiler <span class="arr">↓</span></a>
-      <a class="btn" href="./interpretability.html">Look inside a trained model <span class="arr">→</span></a>
+    <div class="hero-copy">
+      <p class="eyebrow">Moonshot / autoresearcher</p>
+      <h1>The smallest fully interpretable model that can run <em>HumanEval+</em>.</h1>
+      <p class="sub">
+        We are trying to build a coding model small enough to inspect end to end and capable enough to solve
+        real programming tasks. The bet is to improve on Karpathy's autoresearcher by making the search loop
+        optimize for capability and a model whose internal state is legible by construction.
+      </p>
+      <p class="sub">
+        That is a target, not a result. The repository holds the baselines, evaluator contracts, and failures
+        that tell us what to try next.
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="#research">Follow the run <span class="arr">↓</span></a>
+        <a class="btn" href="./research.html">Read the research <span class="arr">→</span></a>
+      </div>
+      <div class="statline">
+        <span><b>&lt;40M</b> parameter target</span>
+        <span><b>HumanEval+</b> capability gate</span>
+        <span><b>Inspectable</b> by construction</span>
+        <span><b>Autoresearcher</b> loop</span>
+      </div>
     </div>
-    <div class="statline">
-      <span><b>198</b> compiler tests</span>
-      <span><b>0</b> warnings</span>
-      <span><b>3</b> seeds in the latest run</span>
-      <span><b>WASM</b> in your browser</span>
-    </div>
+    <figure class="hero-visual">
+      <img src="./assets/seagull.png" alt="A gull flying over blue water with mountains behind it.">
+      <figcaption class="hero-visual-note"><span>Field note / open horizon</span><span>Raphael's photography</span></figcaption>
+    </figure>
   </div>
 </div>
 
