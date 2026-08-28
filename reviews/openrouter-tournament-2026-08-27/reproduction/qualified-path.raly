@@ -1,0 +1,3 @@
+fn unresolved() -> Int {
+    missing::name
+}

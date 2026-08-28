@@ -10,6 +10,13 @@ data/cache/
 results/*.jsonl
 *.ipynb_checkpoints
 .DS_Store
+.worktrees/
+wandb/
+experiments/11_typed_state_mediation/smoke/
+experiments/11_typed_state_mediation/next_smoke/
+experiments/11_typed_state_mediation/corrected_smoke_*/
+reviews/**/*.json
+reviews/**/*packet.txt
 data/math-rollouts/
 data/hf_cache/
 experiments/05_real_embeddings/cache/

@@ -216,14 +216,17 @@ def hidden_tests(task: Task, result: Any | None) -> bool:
     return result == task.expected
 
 
-def serialize_state(state: State, *, include_types: bool = True) -> str:
+def serialize_state(state: State, *, include_types: bool = True,
+                    include_provenance: bool = False) -> str:
     slots = {}
     for name, slot in sorted(state.slots.items()):
-        slots[name] = {
+        serialized = {
             "type": slot.type_name if include_types else "Value",
             "value": slot.value,
-            "from": list(slot.provenance),
         }
+        if include_provenance:
+            serialized["from"] = list(slot.provenance)
+        slots[name] = serialized
     return json.dumps({"input": list(state.input_values), "slots": slots,
                        "errors": state.errors}, separators=(",", ":"))
 
@@ -231,8 +234,12 @@ def serialize_state(state: State, *, include_types: bool = True) -> str:
 def corrupt_state(state: State, mode: str, relevant: str = "s3") -> State:
     out = state.clone()
     if mode == "relevant":
-        if relevant in out.slots and isinstance(out.slots[relevant].value, list):
-            out.slots[relevant].value = list(reversed(out.slots[relevant].value))
+        if relevant in out.slots:
+            value = out.slots[relevant].value
+            if isinstance(value, list):
+                out.slots[relevant].value = list(reversed(value))
+            elif isinstance(value, int):
+                out.slots[relevant].value += 1
     elif mode == "irrelevant":
         out.slots["noise"] = Slot("List[Int]", [999], ("intervention_noise",))
     elif mode == "erase_types":

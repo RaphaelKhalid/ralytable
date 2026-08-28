@@ -1,0 +1,5 @@
+error[RALY4009]: type `Vec` expects 1 argument(s), found 2
+error[RALY4009]: type `Int` expects 0 argument(s), found 1
+error[RALY4009]: type `AliasBase` expects 0 argument(s), found 1
+error[RALY2008]: type `AliasBase` does not accept qualifiers
+EXIT_CODE=1
