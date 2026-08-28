@@ -29,3 +29,5 @@ experiments/08_tinystories/wandb/
 experiments/08_tinystories/full.log
 experiments/08_tinystories/stdout.log
 experiments/08_tinystories/stderr.log
+experiments/08_tinystories/generations/
+experiments/08_tinystories/results.jsonl
