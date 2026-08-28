@@ -1,0 +1,2 @@
+error[RALY3001]: qualified path `missing::name` is not supported yet
+EXIT_CODE=1

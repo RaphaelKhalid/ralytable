@@ -1,0 +1,2 @@
+warn: could not canonicalize path C:\Users\rapha
+EXIT_CODE=0

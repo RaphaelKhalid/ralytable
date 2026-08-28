@@ -1,18 +1,28 @@
 # Ralytable
 
-I think that within a few years you won't be allowed to deploy a model you can't explain, and almost nobody is building for that yet. So that's what this is.
+I think models will eventually need stronger evidence about what they are doing
+before deployment. Ralytable is an attempt to make that evidence part of the
+model and compiler, not an afterthought.
 
-Ralytable is two things that only make sense together: **Raly**, a language whose type system understands what a model represents, and **Ralytable**, a model built in that language whose reasoning you can read instead of reverse engineer.
+Ralytable is two things that we are trying to make work together: **Raly**, a
+language whose type system understands what a model represents, and
+**Ralytable**, a model whose important intermediate state can be inspected and
+causally tested.
 
 The name is the pitch; a model you can actually relate to, because you can read what it's doing.
 
 ## Why now
 
-Reverse engineering trained networks is stalling out; the people furthest along with it are the ones saying so. Models have a bit of legible structure and then a very long tail of junk heuristics, and every year that stays true, building models legible from the start gets more valuable.
+The project is motivated by a practical concern: post-hoc explanations can be
+wrong, so we want to test whether some useful structure can be specified and
+measured during construction. The size of that problem and the value of a
+construction-first approach remain empirical questions.
 
 Reasoning models also moved the interesting computation out into text, across thousands of forward passes with a visible scratchpad in between. That's an open invitation to make the scratchpad structured.
 
-And teachers got cheap. DeepSeek V4 Flash is $0.03 per million input tokens, so distilling a small student is no longer something only a lab can afford; $10 buys around 130 million output tokens.
+An inexpensive capable teacher may make small-student experiments practical.
+The exact teacher, price, and licence are run-time facts and must be checked
+before any distillation budget is approved.
 
 ## What I already measured
 
@@ -28,9 +38,13 @@ Averaging embedded chunks costs real retrieval accuracy, not just recoverability
 
 A discrete bottleneck costs about 3 points of top-1 accuracy at matched parameters and buys role legibility 3.3 points above what the raw character already predicts, and bigger codebooks got more capable and more legible together (`experiments/06_discrete_core`). One datapoint at toy scale, but it points the opposite way to the tradeoff I feared.
 
-## What nobody has done
+## Potentially open questions
 
-Checked properly in `docs/prior-art.md`, and the honest answer is narrower than I hoped. A typed language where the gradient carrying model is the symbolic program is open. A legibility versus capability curve that spans architecture families is open; one lab has published a curve inside a single family, nobody has done it across families. A small alphabet discrete reasoning core built from scratch is open.
+The prior-art review in `docs/prior-art.md` suggests several narrow questions
+that may be open, but each needs a fresh literature check before publication:
+whether a typed modelling language can make the gradient-carrying structure
+itself inspectable, whether legibility can be measured across architecture
+families, and whether a small discrete reasoning core can retain capability.
 
 Plenty is already taken. HPVM-HDC is a real VSA compiler. GHRR already swapped transformer attention for VSA binding. And all-logic-gate language models were tried at ETH Zurich and got 4.39 BLEU, which is near the floor; that kills the maximalist version and leaves the version I actually want to test, which is soft perception with a hard reasoning core.
 
@@ -67,7 +81,8 @@ Gate: one VSA experiment that is visibly easier in Raly than in fifty lines of `
 
 ### Phase 2, the curve
 
-This is the contribution nobody has claimed and it goes first.
+This is the first comparison to run because it tells us whether the proposed
+tradeoff is real before we invest in one architecture.
 
 Train the same task across dense, weight sparse, discrete bottleneck, VSA structured and gate based models, and measure both how good each one is and how much of it a person or an auditing model can actually recover.
 
@@ -88,17 +103,26 @@ Small, local, legible.
 
 Gate: the reasoning core is readable and the model isn't useless. Both, or the thesis is wrong and I'll say so.
 
-The bar got sharper after the first toy model. It emits perfect dependency citations (`[3] from [1],[2]`) while producing arithmetic nonsense, which is finding 01 reproduced inside our own architecture: structure that is present but decorative. So the real gate is that the structure must be LOAD-BEARING. Change step 1 and step 3 has to change. The resampling method from `experiments/01` is how you test that, pointed at our own model, and nobody has run it on an architecture built to pass it.
+The bar got sharper after the first toy model. It emits dependency citations
+while producing arithmetic nonsense, so the structure may be decorative. The
+real gate is that it must be load-bearing: change step 1 and step 3 has to
+change. The resampling method from `experiments/01` can test that on our own
+model.
 
 ### Phase 4, legible RLHF
 
-This is the part I'm most excited about.
+This is the most ambitious part of the plan, and it is still a hypothesis.
 
 RLHF rewards outcomes because outcomes are all a reward model can see. The reasoning that produced the answer is opaque so it goes ungraded, and that is exactly how you end up training a model to reach right answers through broken reasoning.
 
-If the reasoning core is legible then the reward model can see inside it. You grade the process instead of just the product; you penalise a right answer that came out of a derivation that doesn't hold, and you reward a sound step that happened to land wrong. A dense transformer can't do this because there's no readable process to grade. Ralytable can, because of the architecture.
+If the reasoning core is legible then the reward model could see inside it. We
+could grade process as well as product, but whether that improves training is
+an experiment. A dense transformer does not expose the same typed state by
+construction; that is a design difference, not proof of an advantage.
 
-That would make it the first case I know of where being interpretable makes a model better rather than just safer, which flips interpretability from a tax into an advantage.
+If it works, it would be evidence that inspectable process state can improve
+training rather than only provide an audit surface. That is a hypothesis, not a
+claim about the field.
 
 - [ ] Process level reward over the discrete reasoning trace
 - [ ] Preference data on reasoning structure, not just final answers
@@ -116,12 +140,16 @@ Gate: process supervised Ralytable beats outcome supervised Ralytable on held ou
 
 In order, cheapest and most decision-relevant first.
 
-1. **Is the structure load-bearing?** Resample a step in our own model's output and see whether the steps that cite it actually change. This is the sharpest open question in the project and it is about a day's work on data we already have.
-2. **Look inside the codebook.** I measured that codes carry role information and never once looked at what an individual code responds to. Cheap, and it is the difference between a number and an explanation.
-3. **Codebook provenance in the type system.** A learned codebook invalidates every capacity number the checker uses and it currently cannot tell. That is risk 2 below, and it is now a concrete missing feature rather than a worry.
-4. **Phase 2 properly.** Multiple seeds, real text rather than synthetic problems, a matched continuous bottleneck as a fairer control, and more than one architecture family. Last night was one family with one knob turned.
-5. **An IR and a backend**, so Raly programs run instead of only type-checking.
-6. **Then Phase 4**, which is the one worth being excited about.
+1. **Run the structured-memory shootout.** The design, controls, smoke test,
+   and kill criteria are in [`docs/codex-audit-2026-08.md`](docs/codex-audit-2026-08.md).
+   This tests whether an explicit state can preserve identity and support
+   causal intervention better than the current single-vector bottleneck.
+2. **Is the existing structure load-bearing?** Resample a step in our own model's output and see whether the steps that cite it actually change.
+3. **Look inside the codebook.** I measured that codes carry role information and never once looked at what an individual code responds to. Cheap, and it is the difference between a number and an explanation.
+4. **Codebook provenance in the type system.** A learned codebook invalidates every capacity number the checker uses and it currently cannot tell.
+5. **Phase 2 properly.** Multiple seeds, real text rather than synthetic problems, a matched continuous bottleneck as a fairer control, and more than one architecture family.
+6. **An IR and a backend**, so Raly programs run instead of only type-checking.
+7. **Then process-level training**, if the structured state passes the causal gate.
 
 ## How I work
 
@@ -131,10 +159,10 @@ Every claim is measured or cited; motivating sentences that sound good and aren'
 
 The legibility tax might just be fundamental, and 4.39 BLEU is not encouraging. Phase 2 exists to find that out before I bet on it.
 
-Learned codebooks might void VSA's capacity guarantees entirely; those guarantees depend on atoms staying near orthogonal and gradient descent has no reason to keep them that way. Nobody has published a training time guarantee, and this gates the whole learnable VSA premise.
+Learned codebooks might void VSA's capacity guarantees entirely; those guarantees depend on atoms staying near orthogonal and gradient descent has no reason to keep them that way. The prior-art review has not found a training-time guarantee, and this gates the whole learnable VSA premise.
 
 Discrete doesn't mean legible, small means legible. A ten million gate circuit is as opaque as ten million weights, so Phase 2's metric has to measure recovery rather than discreteness.
 
-And DSLs mostly die from missing on ramps rather than bad design, which is why Phase 1 has the gate it has.
+The compiler still needs an on-ramp beyond diagnostics, which is why Phase 1 has a usability gate rather than only a correctness gate.
 
 I'd rather find out which of these is true in a month than spend a year assuming none of them are.

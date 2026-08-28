@@ -1,0 +1,6 @@
+space S = MAP[1024]
+role A in S
+
+fn duplicate_role(x: Sym[S]) -> Vec[S; roles {A}] {
+    bind(A, bind(A, x))
+}
