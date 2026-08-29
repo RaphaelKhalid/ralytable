@@ -2,14 +2,14 @@
   "status": "research run",
   "kind": "completed · 3 seeds",
   "updated": "2026-08-27",
-  "title": "typed state mediation / corrected smoke",
-  "summary": "A plumbing check for structured state, constrained generation, interventions, and checkpoint recovery. The model is not claimed to reason; this run only tells us the pipeline is connected.",
+  "title": "typed state check",
+  "summary": "This run checks structured state, constrained generation, interventions, and checkpoint recovery. It does not show that the model can reason.",
   "step": 100,
   "total": 100,
   "typed": "6/48",
   "hard": "0/48",
-  "device": "RTX 4060 · 2.05GB peak · checkpoints round-tripped",
+  "device": "RTX 4060 · 2.05GB peak · checkpoint saved and loaded",
   "source": "next_smoke/metrics.jsonl · checked-in snapshot",
-  "verdict": "The executor and checkpoint path work. Capability evidence is still absent.",
+  "verdict": "The executor ran and the checkpoint was saved and loaded. There is no capability evidence yet.",
   "loss": [4.3403, 1.7792, 0.5563, 0.0657, 0.0422, 0.0052, 0.0011, 0.0008, 0.0004, 0.0003, 0.0003]
 }

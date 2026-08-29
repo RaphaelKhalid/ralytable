@@ -8,9 +8,6 @@
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Inside the codebook">
 <meta property="og:description" content="All 1024 symbols, extracted from the trained checkpoint and made clickable.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ------------------------------------------------------------------ tokens */
 :root{
@@ -23,9 +20,9 @@
   --fg:#e8ecf1;
   --fg-2:#a7b0bd;
   --fg-3:#6d7683;
-  --accent:#c7625c;
-  --accent-fill:#a70900;
-  --accent-dim:#750600;
+  --accent:#59527a;
+  --accent-fill:#59527a;
+  --accent-dim:#817b9a;
   --accent-ink:#ffffff;
   --err:#ff6b5b;
   --ok:#4ad493;
@@ -33,13 +30,13 @@
 
   /* the three reasoning-step roles, used by every chart on this page */
   --r0:#5aa9e6;          /* premise */
-  --r1:#c7625c;          /* derived */
+  --r1:#59527a;          /* derived */
   --r2:#4ad493;          /* answer  */
   --grid:rgba(232,236,241,.07);
 
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
-  --disp:"Space Grotesk",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
-  --body:"Inter",ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --disp:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  --body:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 
   --pad:clamp(20px,5vw,44px);
   --max:1180px;
@@ -48,9 +45,9 @@
   --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
   --line:#e2ded6; --line-2:#cfc9be;
   --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-  --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
-  --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
-  --r0:#1a5fa0; --r1:#a70900; --r2:#1c7a4f;
+  --accent:#59527a; --accent-fill:#59527a; --accent-dim:#c6c0d5; --accent-ink:#ffffff;
+  --err:#c2341f; --ok:#1c7a4f; --sel:rgba(89,82,122,.16);
+  --r0:#1a5fa0; --r1:#59527a; --r2:#1c7a4f;
   --grid:rgba(20,22,26,.07);
 }
 @media (prefers-color-scheme:light){
@@ -58,9 +55,9 @@
     --bg:#fbfaf8; --bg-2:#f4f2ee; --panel:#ffffff; --panel-2:#f7f5f1;
     --line:#e2ded6; --line-2:#cfc9be;
     --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-    --accent:#a70900; --accent-fill:#a70900; --accent-dim:#edcecc; --accent-ink:#ffffff;
-    --err:#c2341f; --ok:#1c7a4f; --sel:rgba(167,9,0,.16);
-    --r0:#1a5fa0; --r1:#a70900; --r2:#1c7a4f;
+    --accent:#59527a; --accent-fill:#59527a; --accent-dim:#c6c0d5; --accent-ink:#ffffff;
+    --err:#c2341f; --ok:#1c7a4f; --sel:rgba(89,82,122,.16);
+    --r0:#1a5fa0; --r1:#59527a; --r2:#1c7a4f;
     --grid:rgba(20,22,26,.07);
   }
 }
