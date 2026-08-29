@@ -7,16 +7,12 @@
 <meta name="description" content="Ralytable is trying to build the smallest fully interpretable coding model that can run HumanEval+, improving on Karpathy's autoresearcher.">
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Ralytable — an interpretable model for HumanEval+">
-<meta property="og:description" content="A moonshot: improve on Karpathy's autoresearcher while keeping the model small enough to inspect end to end.">
+<meta property="og:description" content="A small, inspectable coding model, tested with a transparent search loop.">
 <meta property="og:image" content="https://ralytable.vercel.app/assets/seagull.webp">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://ralytable.vercel.app/assets/seagull.webp">
 <style>
 /* ------------------------------------------------------------------ tokens */
-@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Regular.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
-@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Bold.woff2") format("woff2");font-style:normal;font-weight:700;font-display:swap}
-@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Italic.woff2") format("woff2");font-style:italic;font-weight:400;font-display:swap}
-@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-BoldItalic.woff2") format("woff2");font-style:italic;font-weight:700;font-display:swap}
 :root{
   --bg:#08090b;
   --bg-2:#0d0f12;
@@ -27,17 +23,17 @@
   --fg:#e8ecf1;
   --fg-2:#a7b0bd;
   --fg-3:#6d7683;
-  --accent:#e6ad79;
-  --accent-fill:#e6ad79;
-  --accent-dim:#765c45;
+  --accent:#59527a;
+  --accent-fill:#59527a;
+  --accent-dim:#817b9a;
   --accent-ink:#ffffff;
   --err:#ff6b5b;
   --ok:#4ad493;
-  --sel:rgba(230,173,121,.24);
+  --sel:rgba(89,82,122,.24);
 
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
-  --disp:"KaTeX Main","Latin Modern Roman","Computer Modern",Georgia,serif;
-  --body:"KaTeX Main","Latin Modern Roman","Computer Modern",Georgia,serif;
+  --disp:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  --body:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 
   --pad:clamp(20px,5vw,44px);
   --max:1180px;
@@ -47,16 +43,16 @@
   --bg:#f6f3ee; --bg-2:#ebe8e1; --panel:#ffffff; --panel-2:#f5f2ec;
   --line:#e2ded6; --line-2:#cfc9be;
   --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-  --accent:#275f78; --accent-fill:#275f78; --accent-dim:#bed0d7; --accent-ink:#ffffff;
-  --err:#b94332; --ok:#1c7a4f; --sel:rgba(39,95,120,.16);
+  --accent:#59527a; --accent-fill:#59527a; --accent-dim:#c6c0d5; --accent-ink:#ffffff;
+  --err:#b94332; --ok:#1c7a4f; --sel:rgba(89,82,122,.16);
 }
 @media (prefers-color-scheme:light){
   :root:not([data-theme="dark"]){
     --bg:#f6f3ee; --bg-2:#ebe8e1; --panel:#ffffff; --panel-2:#f5f2ec;
     --line:#e2ded6; --line-2:#cfc9be;
     --fg:#14161a; --fg-2:#4a515c; --fg-3:#828a95;
-    --accent:#275f78; --accent-fill:#275f78; --accent-dim:#bed0d7; --accent-ink:#ffffff;
-    --err:#b94332; --ok:#1c7a4f; --sel:rgba(39,95,120,.16);
+    --accent:#59527a; --accent-fill:#59527a; --accent-dim:#c6c0d5; --accent-ink:#ffffff;
+    --err:#b94332; --ok:#1c7a4f; --sel:rgba(89,82,122,.16);
   }
 }
 
@@ -73,7 +69,7 @@ body{
 ::selection{background:var(--sel)}
 img,svg{max-width:100%}
 a{color:inherit}
-h1,h2,h3,h4{font-family:var(--disp);font-weight:700;letter-spacing:-.022em;line-height:1.1;margin:0}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:700;letter-spacing:-.028em;line-height:1.1;margin:0}
 p{margin:0}
 code,pre,kbd{font-family:var(--mono)}
 
@@ -127,7 +123,7 @@ header.nav{
 h1{font-size:clamp(39px,6.2vw,76px);letter-spacing:-.052em;max-width:13ch;font-weight:700}
 h1 em{font-style:normal;color:var(--accent)}
 .hero p.sub{margin-top:22px;max-width:57ch;font-size:clamp(15.5px,1.6vw,18px);color:#bdcbd4}
-.hero .eyebrow{color:#f0b785}
+.hero .eyebrow{color:#d4cdeb}
 .hero-credit{position:absolute;right:clamp(20px,5vw,44px);bottom:18px;z-index:2;color:rgba(237,242,244,.84);font-family:var(--mono);font-size:11px;letter-spacing:.04em}
 .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 .btn{
@@ -422,6 +418,18 @@ a.tile .go{
 .evidence span{display:block;margin-top:7px;color:var(--fg-2);font-size:13.5px;line-height:1.45}
 .research-note{margin-top:16px;color:var(--fg-3);font-family:var(--mono);font-size:11px;line-height:1.6}
 .research-note strong{color:var(--fg-2);font-weight:500}
+.score-explainer{margin-top:clamp(54px,8vw,92px);padding-top:clamp(40px,6vw,64px);border-top:1px solid var(--line)}
+.score-formula{margin-top:24px;padding:18px 20px;border:1px solid var(--line-2);border-radius:10px;background:var(--panel);overflow:auto;color:var(--fg);font-family:var(--mono);font-size:clamp(14px,1.6vw,18px);white-space:nowrap}
+.score-formula .dfn{font-family:inherit;color:var(--accent);font-weight:700}
+.score-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:26px;align-items:stretch}
+.flow-node{position:relative;padding:17px 15px;border:1px solid var(--line-2);border-radius:10px;background:var(--panel);min-height:154px}
+.flow-node::after{content:"→";position:absolute;right:-17px;top:50%;transform:translateY(-50%);color:var(--accent);font-family:var(--mono);font-size:17px;z-index:2}
+.flow-node:last-child::after{display:none}
+.flow-node h3{font-size:18px;margin-top:10px}
+.flow-node p{margin-top:8px;color:var(--fg-2);font-size:13px;line-height:1.48}
+.flow-label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.score-note{margin-top:18px;color:var(--fg-2);font-size:14px;max-width:78ch}
+@media(max-width:900px){.score-flow{grid-template-columns:1fr}.flow-node::after{content:"↓";right:auto;top:auto;bottom:-19px;left:50%;transform:translateX(-50%)}.flow-node:last-child::after{display:none}}
 
 /* --------------------------------------------------------- compiler dock */
 .compiler-dock{position:fixed;right:18px;bottom:18px;z-index:80;width:min(440px,calc(100vw - 36px));border:1px solid var(--line-2);border-radius:12px;background:var(--panel);box-shadow:0 24px 70px -25px rgba(0,0,0,.8);overflow:hidden;transform:translateY(calc(100% - 48px));transition:transform .22s ease}
@@ -442,6 +450,7 @@ a.tile .go{
     <a class="brand" href="#top"><span class="dot"></span>Ralytable<small>/ raly</small></a>
     <nav class="nav-links">
       <a href="#research">Research loop</a>
+      <a href="#score">Score formula</a>
       <a href="#demos">Demos</a>
       <a href="./blind-test.html">Blind test</a>
       <a class="hide-s" href="#error">The error</a>
@@ -464,8 +473,8 @@ a.tile .go{
       <h1>The smallest fully interpretable model that can run <em>HumanEval+</em>.</h1>
       <p class="sub">
         We are trying to build a coding model small enough to inspect end to end and capable enough to solve
-        real programming tasks. The bet is to improve on Karpathy's autoresearcher by making the search loop
-        optimize for capability and a model whose internal state is legible by construction.
+        real programming tasks. We will test whether improving Karpathy's autoresearcher can raise coding
+        performance while keeping the model's internal state inspectable.
       </p>
       <p class="sub">
         That is a target, not a result. The repository holds the baselines, evaluator contracts, and failures
@@ -493,10 +502,9 @@ a.tile .go{
       <p class="eyebrow">Autoresearcher / the loop</p>
       <span class="live-badge"><i class="pulse"></i><span id="run-status">research run</span></span>
     </div>
-    <h2 class="big" style="margin-top:18px">The site is a window onto the work, not a museum of conclusions.</h2>
+    <h2 class="big" style="margin-top:18px">This section shows the latest run and what it proves.</h2>
     <p class="lede">
-      This lane is wired for the metrics emitted by the training loop. It shows the latest real run,
-      its controls, and the result that would make us change direction.
+      The panel shows the latest training run, its controls, and the result that would change the next run.
     </p>
 
     <div class="research-layout">
@@ -506,7 +514,7 @@ a.tile .go{
           <time id="run-updated">2026-08-27</time>
         </div>
         <h3 id="run-title">typed state mediation / corrected smoke</h3>
-        <p id="run-summary">A plumbing check for structured state, constrained generation, interventions, and checkpoint recovery. The model is not claimed to reason; this run only tells us the pipeline is connected.</p>
+        <p id="run-summary">This run checks structured state, constrained generation, interventions, and checkpoint recovery. It does not show that the model can reason.</p>
         <div class="run-metrics">
           <div class="run-metric"><b id="run-step">100/100</b><span>updates</span></div>
           <div class="run-metric"><b id="run-pass">6/48</b><span>typed constrained</span></div>
@@ -522,8 +530,8 @@ a.tile .go{
           <div class="lab-title">training loss / last run</div>
           <div class="spark" id="loss-chart" role="img" aria-label="Training loss chart"></div>
           <div class="lab-legend"><span id="loss-start">loss 2.31</span><span id="loss-end">loss 1.74</span></div>
-          <div class="lab-title" style="margin-top:22px">what the run establishes</div>
-          <p id="run-verdict" style="margin-top:8px;color:var(--fg-2);font-size:14px;line-height:1.5">The executor and checkpoint path work. Capability evidence is still absent.</p>
+          <div class="lab-title" style="margin-top:22px">what the run proves</div>
+          <p id="run-verdict" style="margin-top:8px;color:var(--fg-2);font-size:14px;line-height:1.5">The executor and checkpoint path work. There is no capability evidence yet.</p>
         </div>
       </aside>
     </div>
@@ -533,7 +541,46 @@ a.tile .go{
       <div class="evidence rv"><b>CONTROL</b><span>Three 16-task oracle checks passed 16/16.</span></div>
       <div class="evidence rv"><b>NEXT</b><span>Keep IR/backend work paused until the preregistration gate.</span></div>
     </div>
-    <p class="research-note"><strong>Data contract:</strong> drop a fresh Autoresearcher export at <code>data/autoresearcher.json</code> and this panel will switch from the checked-in snapshot to the latest run. No credentials or model weights belong in the site.</p>
+    <p class="research-note"><strong>Data contract:</strong> add a fresh Autoresearcher export at <code>data/autoresearcher.json</code> and this panel will show the latest run. Credentials and model weights do not belong in the site.</p>
+
+    <div class="score-explainer" id="score">
+      <p class="eyebrow">Researcher Score / exact formula</p>
+      <h2 class="big">How the run becomes one number.</h2>
+      <p class="lede">
+        The score rewards progress, the final result, useful variety, and a clean record. The formula is fixed before a run starts.
+      </p>
+      <div class="score-formula" aria-label="Researcher Score formula">
+        <button type="button" class="dfn" data-t="R — Researcher Score" data-d="The final score for one autoresearcher run, from 0 to 100. It is zero if the hard gate G fails.">R</button> = 100 × <button type="button" class="dfn" data-t="G — hard gate" data-d="A pass/fail check for trust violations, repeatability, checkpoint replay, and the compute budget.">G</button> × (0.60 × <button type="button" class="dfn" data-t="D — progress" data-d="The area under the best-so-far score curve. It rewards finding good results early, while also requiring performance across families.">D</button> + 0.20 × <button type="button" class="dfn" data-t="T — terminal score" data-d="The final normalized score. It is calculated from the best result at the end of each instance, then averaged across families with a worst-family term.">T</button> + 0.15 × <button type="button" class="dfn" data-t="Q — archive quality" data-d="The fraction of the exhaustively checked archive quality that the run found, averaged across instances with a worst-family term.">Q</button> + 0.05 × <button type="button" class="dfn" data-t="V — valid and unique proposals" data-d="The average of the valid-proposal rate and one minus the duplicate rate.">V</button>)
+      </div>
+      <div class="score-flow" aria-label="Flowchart showing how the Researcher Score is calculated">
+        <div class="flow-node">
+          <span class="flow-label">1 · baseline</span>
+          <h3><button type="button" class="dfn" data-t="Experiment 16" data-d="The HumanEval+ deterministic null baseline. It emits pass for each task and scored 0/164; it does not feed the Researcher Score.">Experiment 16</button></h3>
+          <p>HumanEval+ is the capability check. The deterministic null scored 0/164. That establishes a floor, not T or Q.</p>
+        </div>
+        <div class="flow-node">
+          <span class="flow-label">2 · landscape runs</span>
+          <h3><button type="button" class="dfn" data-t="AR1 and AR2" data-d="The first and second autoresearcher evaluations. They compare search policies on fixed, deterministic test landscapes.">AR1 and AR2</button></h3>
+          <p>Each test instance has 16 or 20 dimensions. Every proposal records a score, an evaluation cost, and an archive niche. The controller also checks the latest 16 proposals.</p>
+        </div>
+        <div class="flow-node">
+          <span class="flow-label">3 · normalize</span>
+          <h3>Best result over time</h3>
+          <p>For each instance, compare the best result with the measured starting point and the exhaustively verified optimum. Clip that value to 0–1 as <code>q(t)</code>.</p>
+        </div>
+        <div class="flow-node">
+          <span class="flow-label">4 · make components</span>
+          <h3>T, Q, D, and V</h3>
+          <p><b>T</b> uses the final <code>q(1)</code>. <b>Q</b> compares archive quality with the ideal archive. <b>D</b> uses the whole progress curve. <b>V</b> checks valid and non-duplicate proposals.</p>
+        </div>
+        <div class="flow-node">
+          <span class="flow-label">5 · apply the gate</span>
+          <h3>Calculate R</h3>
+          <p>If <b>G</b> passes, apply the fixed weights above. If it fails, <b>R</b> is zero and the run is not promoted.</p>
+        </div>
+      </div>
+      <p class="score-note"><b>Where T and Q come from:</b> Experiment 16 is not a “16-bit” input to this formula. It is a separate HumanEval+ null. T and Q come from the scored AR1/AR2 landscapes: T is the final normalized result, and Q is the quality of the archive of different solutions.</p>
+    </div>
   </div>
 </section>
 
@@ -541,9 +588,9 @@ a.tile .go{
 <section id="demos">
   <div class="wrap sec" style="padding-bottom:clamp(30px,4vw,44px)">
     <p class="eyebrow">Demo one, live on this page</p>
-    <h2 class="big">Type into the box. The compiler answers.</h2>
+    <h2 class="big">Type code. See the compiler's errors.</h2>
     <p class="lede">
-      This is the compiler's front door, built to
+      This is the compiler in the browser, built with
       <button type="button" class="dfn" data-t="WebAssembly" data-d="A binary program format that web browsers run at close to native speed.">WebAssembly</button>
       and running inside this page. Nothing is sent anywhere. Edit the code and errors redraw on every
       keystroke, with squiggles under the exact characters at fault.
@@ -568,7 +615,7 @@ a.tile .go{
 <section>
   <div class="wrap sec" style="padding-top:clamp(34px,5vw,60px)">
     <p class="eyebrow">Demo two</p>
-    <h2 class="big">Every symbol a trained model learned, in a list you can click.</h2>
+    <h2 class="big">Inspect the model's 1,024 learned symbols.</h2>
     <p class="lede">
       A small model must choose one of 1024 fixed symbols at every character. That makes its middle
       layer countable. We pulled the whole codebook from the checkpoint and made it clickable.
@@ -589,7 +636,7 @@ a.tile .go{
 
       <a class="tile rv" href="./playground/">
         <span class="tno">The compiler, full size</span>
-        <h3>Nine sample files, most of them broken.</h3>
+        <h3>Nine sample files, including broken examples.</h3>
         <p>Load a broken example, read the error, edit the line, and watch the message move.</p>
         <div class="tile-art" aria-hidden="true">
 <pre><span class="d-src">    bundle(a, b, c, d)</span>
@@ -620,7 +667,7 @@ a.tile .go{
     <div class="grid split">
       <div>
         <p class="eyebrow">What it catches</p>
-        <h2 class="big">Forty things into a bag that holds thirty-one.</h2>
+        <h2 class="big">The compiler catches a vector that is too full.</h2>
         <p class="lede">
           Adding vectors together is how these systems store several things in one place. There is a
           hard limit on how many, and past it you can still read something out; it is just the wrong
@@ -678,7 +725,7 @@ a.tile .go{
 <section id="type">
   <div class="wrap sec">
     <p class="eyebrow">The annotation</p>
-    <h2 class="big">One line that says what a vector is carrying.</h2>
+    <h2 class="big">A type can state what a vector carries.</h2>
 
     <div class="tsig rv" style="margin-top:34px"><span class="ty">Vec</span>[<u>Concepts</u>; <span class="k">load</span> <u>3</u>; <span class="k">roles</span> <u>{Subject, Verb, Object}</u>]</div>
     <ul class="tkey rv">
@@ -715,7 +762,7 @@ a.tile .go{
 <section id="how">
   <div class="wrap sec">
     <p class="eyebrow">How it works</p>
-    <h2 class="big">Four passes, one run, every error at once.</h2>
+    <h2 class="big">The compiler runs four checks and reports every error.</h2>
     <p class="lede">
       <code>raly check</code> runs every pass every time. No pass is allowed to stop the next one, so
       a typo does not hide an unknown name and an unknown name does not hide a capacity error. You
@@ -787,7 +834,7 @@ scene = torch.<span class="fn">zeros</span>(D)
 <section id="measured">
   <div class="wrap sec">
     <p class="eyebrow">Measured, not cited</p>
-    <h2 class="big">The numbers the compiler prints came out of experiments in this repository.</h2>
+    <h2 class="big">These numbers come from experiments in this repository.</h2>
     <p class="lede">
       We wrote down what would count as failure before each run, reported every result next to what
       you would get with no model at all, and re-derived each headline number a second way. Some of
@@ -815,7 +862,7 @@ scene = torch.<span class="fn">zeros</span>(D)
       </div>
     </div>
 
-    <h3 style="margin-top:52px;font-size:clamp(19px,2.2vw,24px)">What the 1024 symbols bought, against every control we could think of</h3>
+    <h3 style="margin-top:52px;font-size:clamp(19px,2.2vw,24px)">What the 1,024 symbols add over the controls</h3>
     <p class="lede" style="margin-top:12px">
       We measured how well a symbol predicts whether the character it fired on belongs to a premise,
       a working step, or the answer. Three ways of guessing, on the same text:
@@ -847,13 +894,14 @@ scene = torch.<span class="fn">zeros</span>(D)
 <section id="research">
   <div class="wrap sec">
     <p class="eyebrow">Overnight research</p>
-    <h2 class="big">A useful boundary, not a victory lap.</h2>
+    <h2 class="big">What the coding experiment shows.</h2>
     <p class="lede">
-      On generated repair tasks, typed legality and public search lifted a learned sketch from 52.1%
-      raw pass to 89.6% full-system pass; the deterministic null reached the same 89.6%. A state-only
-      controller was causally load-bearing in a synthetic control, changing 50.0% of raw decisions
-      under state erasure. The two-parameter gates are supplied-bit routing, not semantic inference.
-      All of this is Raly-style Python research, not the Raly compiler/runtime. The public destination is EvalPlus HumanEval+ for disclosed diagnostic optimization, then MBPP+ for cleaner generalization, with BigCodeBench-Hard Complete and a later LiveCodeBench freshness audit. <a href="./research.html" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)">Read the compact audit →</a>
+      On generated repair tasks, typed legality and public search raised the learned sketch from 52.1%
+      raw pass to 89.6% full-system pass. The deterministic null also reached 89.6%. A state-only
+      controller changed 50.0% of raw decisions when state was removed. These are synthetic Python
+      results, not evidence from the Raly compiler or a public coding benchmark. The next checks are
+      EvalPlus HumanEval+, MBPP+, BigCodeBench-Hard Complete, and a later LiveCodeBench sample.
+      <a href="./research.html" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-dim)">Read the audit →</a>
     </p>
   </div>
 </section>
@@ -901,7 +949,7 @@ scene = torch.<span class="fn">zeros</span>(D)
 <!-- ==================================================== CTA -->
 <section>
   <div class="wrap sec" style="padding-bottom:clamp(44px,7vw,80px)">
-    <h2 class="big" style="max-width:20ch">All of it is in the open, including the parts that did not work.</h2>
+    <h2 class="big" style="max-width:20ch">Read the code, results, and limits.</h2>
     <div class="cta" style="margin-top:28px">
       <a class="btn primary" href="https://github.com/RaphaelKhalid/ralytable">github.com/RaphaelKhalid/ralytable <span class="arr">→</span></a>
       <a class="btn" href="https://github.com/RaphaelKhalid/ralytable/blob/main/ROADMAP.md">Roadmap and risks</a>
@@ -977,9 +1025,84 @@ scene = torch.<span class="fn">zeros</span>(D)
   var pop = document.getElementById("dfn-pop");
   var open = null;
   var dpinned = false;   /* a tap pins the definition open; hover alone does not */
-  var terms = [].slice.call(document.querySelectorAll(".dfn"));
-
-  terms.forEach(function(t, i){
+  var glossary = [
+    ["BigCodeBench-Hard Complete","BigCodeBench-Hard Complete","A coding benchmark made of harder, multi-step programming tasks."],
+    ["LiveCodeBench","LiveCodeBench","A coding benchmark built from recent contest problems, used to test whether results hold on newer tasks."],
+    ["HumanEval+","HumanEval+","A set of Python programming tasks with extra hidden tests. It is the public capability target for this project."],
+    ["autoresearcher","Autoresearcher","A program that changes a research setting, runs an experiment, measures it, and keeps a change only when the result meets the rule."],
+    ["training loop","Training loop","The repeated process of choosing data or settings, training, measuring, and starting the next run."],
+    ["state erasure","State erasure","A control that removes the model state being tested, so the result can be compared with and without that information."],
+    ["evaluation cost","Evaluation cost","The fixed amount of work assigned to a proposal. It lets the score compare progress fairly when proposals take different amounts of work."],
+    ["runtime backend","Runtime backend","The part of a compiler that executes a compiled program. Raly does not have one yet."],
+    ["row polymorphism","Row polymorphism","A type-system feature that lets a record name some fields while leaving room for other fields."],
+    ["type checking","Type checking","Checking that each operation receives values of the kinds it expects."],
+    ["type checker","Type checker","The compiler phase that checks whether the kinds of values fit together."],
+    ["name resolution","Name resolution","Matching each name in a program to the definition it refers to."],
+    ["WebAssembly","WebAssembly","A compact program format that browsers can run locally."],
+    ["diagnostic","Diagnostic","A compiler message that points to a problem and explains where it came from."],
+    ["checkpoint","Checkpoint","A saved copy of a training run that can be loaded later."],
+    ["intervention","Intervention","A deliberate change to a model's internal state used to test whether that state affects its output."],
+    ["executor","Executor","The part of a test system that runs a proposed program or action."],
+    ["codebook","Codebook","The fixed list of learned symbols from which the model chooses its middle representation."],
+    ["vector","Vector","A list of numbers used here to represent a symbol or a group of symbols."],
+    ["VSA","VSA","Vector symbolic architecture: a method that represents symbols as vectors and combines them with simple operations."],
+    ["type system","Type system","The rules that describe what each value means and which operations are allowed."],
+    ["retrieval","Retrieval","Reading a stored item back from a representation and checking whether it is correct."],
+    ["dimension","Dimension","The number of coordinates in a vector."],
+    ["parameter","Parameter","A number learned during training. The parameter count is a rough measure of model size."],
+    ["baseline","Baseline","A fixed comparison method that shows what happens without the proposed change."],
+    ["null","Null baseline","A deliberately simple comparison, such as returning the same answer every time."],
+    ["proposal","Proposal","One candidate change or solution tested by the search loop."],
+    ["archive","Archive","The record of the best solutions found in each declared category."],
+    ["QD","QD — quality diversity","A measure that rewards both good scores and good coverage of different categories of solutions."],
+    ["normalized","Normalized","Rescaled to a common range, here from 0 to 1, so different instances can be combined."],
+    ["exhaustive","Exhaustive","Checking every allowed possibility instead of sampling only some of them."],
+    ["AUC","AUC — area under the curve","The area under a progress curve. Here it measures how quickly the search improves."],
+    ["pass@1","pass@1","The fraction of tasks solved by the first answer produced for each task."],
+    ["EvalPlus","EvalPlus","The evaluation tool used for HumanEval+ and MBPP+."],
+    ["MBPP+","MBPP+","A Python programming benchmark used as a cross-check after HumanEval+."],
+    ["IR","IR — intermediate representation","A structured form of a program between parsing and execution."],
+    ["loss","Loss","A training error number. Lower usually means the model fits the training examples more closely."],
+    ["causal","Causal","Showing that changing one thing changes the result, rather than merely finding that the two are related."],
+    ["seed","Seed","The starting number used to make a random run repeatable."],
+    ["family","Family","A group of related test instances that share one design."],
+    ["compiler","Compiler","A program that reads source code, checks it, and can translate it into something executable."],
+    ["lexer","Lexer","The compiler phase that turns characters into named pieces such as words, numbers, and symbols."],
+    ["parser","Parser","The compiler phase that turns those pieces into the nested structure of a program."]
+  ].sort(function(a,b){ return b[0].length - a[0].length; });
+  var glossaryPattern = new RegExp("(?<![A-Za-z0-9_])(" + glossary.map(function(item){ return item[0].replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }).join("|") + ")(?![A-Za-z0-9_])","gi");
+  function decorateTerms(root){
+    var walker = document.createTreeWalker(root, 4);
+    var nodes = [], node;
+    while(node = walker.nextNode()) nodes.push(node);
+    nodes.forEach(function(textNode){
+      if(!textNode.parentElement || textNode.parentElement.closest("code,pre,script,style,a,button,.dfn,.score-formula")) return;
+      var text = textNode.nodeValue, cursor = 0, match, frag = document.createDocumentFragment(), changed = false;
+      glossaryPattern.lastIndex = 0;
+      while((match = glossaryPattern.exec(text))){
+        changed = true;
+        frag.appendChild(document.createTextNode(text.slice(cursor, match.index)));
+        var entry = glossary.find(function(item){ return item[0].toLowerCase() === match[1].toLowerCase(); });
+        var trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "dfn";
+        trigger.setAttribute("data-t", entry[1]);
+        trigger.setAttribute("data-d", entry[2]);
+        trigger.textContent = match[1];
+        frag.appendChild(trigger);
+        cursor = glossaryPattern.lastIndex;
+      }
+      if(changed){
+        frag.appendChild(document.createTextNode(text.slice(cursor)));
+        textNode.parentNode.replaceChild(frag, textNode);
+      }
+    });
+  }
+  decorateTerms(document.querySelector("main"));
+  function bindDefinitions(){
+    var terms = [].slice.call(document.querySelectorAll(".dfn:not([data-bound])"));
+    terms.forEach(function(t){
+      t.setAttribute("data-bound","true");
     t.setAttribute("aria-expanded","false");
     t.setAttribute("aria-describedby","dfn-pop");
     t.addEventListener("mouseenter", function(){ show(t); });
@@ -991,7 +1114,9 @@ scene = torch.<span class="fn">zeros</span>(D)
       if(open === t && dpinned){ hide(); }
       else { show(t); dpinned = true; }
     });
-  });
+    });
+  }
+  bindDefinitions();
 
   function show(t){
     if(open) open.setAttribute("aria-expanded","false");
@@ -1033,10 +1158,10 @@ scene = torch.<span class="fn">zeros</span>(D)
   /* ---- autoresearcher run lane ---- */
   var fallbackRun = {
     status: "research run", kind: "completed · 3 seeds", updated: "2026-08-27",
-    title: "typed state mediation / corrected smoke",
-    summary: "A plumbing check for structured state, constrained generation, interventions, and checkpoint recovery. The model is not claimed to reason; this run only tells us the pipeline is connected.",
-    step: 100, total: 100, typed: "6/48", hard: "0/48", device: "RTX 4060 · 2.05GB peak · checkpoints round-tripped",
-    source: "next_smoke/metrics.jsonl · checked-in snapshot", verdict: "The executor and checkpoint path work. Capability evidence is still absent.",
+    title: "typed state check",
+    summary: "This run checks structured state, constrained generation, interventions, and checkpoint recovery. It does not show that the model can reason.",
+    step: 100, total: 100, typed: "6/48", hard: "0/48", device: "RTX 4060 · 2.05GB peak · checkpoint saved and loaded",
+    source: "next_smoke/metrics.jsonl · checked-in snapshot", verdict: "The executor ran and the checkpoint was saved and loaded. There is no capability evidence yet.",
     loss: [4.3403,1.7792,0.5563,0.0657,0.0422,0.0052,0.0011,0.0008,0.0004,0.0003,0.0003]
   };
   function drawRun(run){
@@ -1044,13 +1169,15 @@ scene = torch.<span class="fn">zeros</span>(D)
     document.getElementById("run-kind").textContent = run.kind || "completed";
     document.getElementById("run-updated").textContent = run.updated || "latest";
     document.getElementById("run-title").textContent = run.title || "latest autoresearcher run";
-    document.getElementById("run-summary").textContent = run.summary || "Metrics are connected; read the finding before drawing a conclusion.";
+    document.getElementById("run-summary").textContent = run.summary || "The run has data. Read the finding before drawing a conclusion.";
     document.getElementById("run-step").textContent = (run.step || 0) + "/" + (run.total || run.step || 0);
     document.getElementById("run-pass").textContent = run.typed || "—";
     document.getElementById("run-hard").textContent = run.hard || "—";
     document.getElementById("run-device").textContent = run.device || "local training run";
     document.getElementById("run-source").textContent = run.source || "latest export";
-    document.getElementById("run-verdict").textContent = run.verdict || "Read the limitations before treating this as evidence.";
+    document.getElementById("run-verdict").textContent = run.verdict || "Read the limits before treating this as evidence.";
+    decorateTerms(document.getElementById("run-summary").parentElement);
+    bindDefinitions();
     var pct = Math.min(100, Math.max(0, 100 * (run.step || 0) / Math.max(1, run.total || run.step || 1)));
     document.getElementById("run-progress").style.width = pct + "%";
     var loss = Array.isArray(run.loss) && run.loss.length ? run.loss : fallbackRun.loss;
