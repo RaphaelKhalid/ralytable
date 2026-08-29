@@ -20,8 +20,9 @@
   --fg-muted:  #6b6459;
   --fg-faint:  #938b7d;
 
-  --accent:      #59527a;
-  --accent-soft: #ebe9f3;
+  --accent:      #756a9f;
+  --accent-soft: #ebe8f3;
+  --aurora:      linear-gradient(105deg, #208b88 0%, #756a9f 48%, #b76b98 100%);
 
   --tok-keyword: #8a3a86;
   --tok-ident:   #26231e;
@@ -58,8 +59,9 @@
     --fg-muted:  #a29daf;
     --fg-faint:  #78737f;
 
-    --accent:      #59527a;
-    --accent-soft: #2d2940;
+    --accent:      #a795e6;
+    --accent-soft: #302b45;
+    --aurora:      linear-gradient(105deg, #79ded7 0%, #a795e6 48%, #e6a8d8 100%);
 
     --tok-keyword: #d79ad8;
     --tok-ident:   #e8e5ef;
@@ -111,7 +113,7 @@ h1 {
   font-weight: 620;
 }
 
-h1 .dot { color: var(--accent); }
+h1 .dot { background: var(--aurora); background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:aurora-shift 9s ease-in-out infinite; }
 
 .subtitle {
   margin: 10px 0 0;
@@ -181,6 +183,7 @@ button.chip[aria-pressed="true"] {
   color: var(--fg);
 }
 button.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@keyframes aurora-shift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
 
 /* ---------- layout ---------- */
 
