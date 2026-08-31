@@ -3,15 +3,14 @@
 Infrastructure for the **Raly** language front end. Source files use the
 `.raly` extension.
 
-It **lexes, parses, resolves names, type-checks, reports errors beautifully,
-and explains a program back to you in plain English**. It does not generate
-code — see [Deliberately not here yet](#deliberately-not-here-yet).
+It lexes, parses, resolves names, type-checks, renders diagnostics, and can
+describe a program's declared structure in plain English. It does not generate
+or execute code; see [Not implemented](#not-implemented).
 
-The type system is the point. It tracks four properties a tensor library
-cannot see at all — **dimension**, **VSA family**, **superposition load against
-measured capacity**, and **role schema** — and each has its own small decidable
-solver rather than one mechanism for all four. See
-[`raly-types`](#raly-types--the-product).
+The type system tracks four properties that tensor shapes do not express:
+**dimension**, **VSA family**, **superposition load against measured capacity**,
+and **role schema**. Each property has a small, decidable solver. See
+[`raly-types`](#raly-types).
 
 The concrete grammar is written down in **[GRAMMAR.md](GRAMMAR.md)**, which is
 normative: EBNF, the rationale for each decision, and worked examples. Read it
@@ -67,12 +66,12 @@ cargo run -p raly -- lex   examples/tour.raly
 | `examples/capacity.raly` | Well-shaped, silently wrong: a bundle 9 items past what its space can retrieve, plus a space declaring its *measured effective* dimension. |
 | `examples/wrong-role.raly` | Unbinding a role that was never bound, and nesting two unbinds with no `cleanup` between. |
 | `examples/broadcast.raly` | The PyTorch bug, made impossible: two elementwise operands a tensor library would silently broadcast, plus the explicit `broadcast(v, S)` that says you meant it. |
-| `examples/explain-me.raly` | A program worth explaining. Three facts nobody wrote down in it — at capacity, approximate, two levels deep — come out of `raly explain`. |
+| `examples/explain-me.raly` | Demonstrates three inferred facts in `raly explain`: the value is at capacity, retrieval is approximate, and the structure is two levels deep. |
 | `examples/broken-syntax.raly` | One of each recoverable *syntax* error. All 13 are reported in a single run. |
 | `examples/broken.raly` | One of each recoverable *lexical* error. |
 | `examples/tour.raly` | Exercises every token class. A lexer fixture, **not** a valid program — `check` reports on it by design. |
 
-The capacity error is the one worth reading:
+Here is the capacity diagnostic:
 
 ```
 error[RALY5001]: this bundles 40 items into a space that holds 31
@@ -94,7 +93,7 @@ error[RALY5001]: this bundles 40 items into a space that holds 31
            for a power of two
 ```
 
-`broken.raly` is the fastest way to see what the diagnostics look like:
+`broken.raly` contains examples of the lexical diagnostics:
 
 ```
 error[RALY1002]: unterminated string literal
@@ -120,18 +119,16 @@ error[RALY1002]: unterminated string literal
 | `raly check <file>` | Lex, parse, resolve, type-check, render all diagnostics to stderr, exit non-zero on error |
 | `raly explain <file>` | Say, in plain English, what the program represents — derived entirely from its types. `--json` for machine-readable output |
 
-`check` runs every phase every time. No phase returns a `Result`; each returns
-a value plus diagnostics, so a syntax error does not silence name resolution
-and an unresolved name does not silence the type checker. One run tells you
-everything that is wrong, sorted into reading order.
+`check` runs every phase on each invocation. Each phase returns a value plus
+diagnostics rather than stopping at its first error, so later phases can still
+run. Diagnostics are then sorted in source order.
 
 Flags: `--color` / `--no-color` (default off), `--explain` (append each code's
 registry description), `--json` (machine-readable `explain` output), `-h`, `-V`.
 
-`explain` is not `check`: a file with errors is still described as far as its
-types are known, because "what is this meant to be?" is a question people ask
-precisely when a program does not work yet. Prose goes to stdout, diagnostics
-to stderr, and the exit code is still the checker's.
+`explain` also describes the portions of a file whose types are known when
+other parts contain errors. Prose goes to stdout, diagnostics to stderr, and
+the exit code matches `check`.
 
 Exit codes: `0` success · `1` the input contained errors · `2` bad command line
 or unreadable file.
@@ -154,11 +151,10 @@ compiler/
     └── raly/                  the `raly` binary
 ```
 
-### `raly-diag` — the important one
+### `raly-diag`
 
-Built first and treated as the product, not as plumbing. Raly's entire pitch is
-catching mistakes other languages let through silently, so what a user reads
-when something is wrong *is* the deliverable.
+This crate defines source spans, stable diagnostic codes, labels, notes, help
+text, and plain or colored rendering.
 
 - **Byte-offset spans.** `Span` is `(FileId, start, end)`. Line and column are
   derived only at render time by `SourceMap`, so no phase carries or maintains
@@ -169,26 +165,24 @@ when something is wrong *is* the deliverable.
   phase (`0xxx` driver, `1xxx` lexical, `2xxx` syntax, `3xxx` resolution,
   `4xxx` types, `5xxx` capacity) so later phases need no renumbering. A unit
   test enforces uniqueness and format.
-- **Two advice channels, kept apart.** `note:` states a fact
+- **Two advice channels.** `note:` states a fact
   (`this vector already holds 7 of 31 items`); `help:` states an action
-  (`split the bundle, or declare a wider space`). Blurring the two is how error
-  messages turn into paragraphs nobody reads. The capacity errors the type
-  system will eventually need are exactly this shape, and the channel is here
-  waiting for them.
+  (`split the bundle, or declare a wider space`). Keeping them separate makes
+  factual context distinct from suggested actions.
 - **Primary and secondary labels.** Primary underlines with `^` at the fault
   site; secondary underlines with `-` for supporting context, with its own
   `:::` locator line.
 - **Deterministic ASCII by default.** Colour is opt-in and provably changes
   only the bytes, never the layout — there is a test for that. This is why the
   renderer is hand-written rather than using `ariadne` or `codespan-reporting`:
-  the output is snapshot-asserted character-for-character in tests, and having
-  no dependency in the crate everything else builds on is worth the ~250 lines.
+  the output is snapshot-tested character for character, while the crate remains
+  dependency-free. The renderer is about 250 lines.
   A different backend can be swapped in behind `Renderer` if that trade stops
   paying.
 
 ### `raly-lexer`
 
-`logos`-generated, wrapped in a hand-written driver. The key property is that
+Generated with `logos` and wrapped in a hand-written driver. A key property is that
 **`lex` is total**: every input, including arbitrary bytes, produces a token
 stream and never panics. Unclassifiable text becomes an error token *and* a
 diagnostic, so the parser can keep going and report more than one problem per
@@ -202,7 +196,7 @@ Recoverable, each with its own code:
 - malformed numbers (`RALY1004`) — `123abc`, `0x`, `1e`
 - unknown characters (`RALY1001`) — adjacent runs grouped into one diagnostic,
   with targeted hints for homoglyphs (smart quotes, en dashes, `×`, `→`, `≤`,
-  non-breaking spaces), which is where these almost always come from
+  non-breaking spaces)
 
 Comments are lexed as trivia rather than discarded, so a formatter or
 doc-comment pass has them later.
@@ -210,10 +204,9 @@ doc-comment pass has them later.
 ### `raly-ast`
 
 Arena-based: nodes live in flat `Vec`s and reference each other by 32-bit `Id`
-rather than `Box`. That is not a micro-optimisation — it makes side tables
-(types, resolutions) trivial to hang off the same indices, keeps the tree
-serialisable, and sidesteps the lifetime problems that make `&'ast Node` trees
-painful to build during error recovery. Names are interned to `Symbol`. Every
+rather than `Box`. This makes side tables for types and resolutions easy to
+index, keeps the tree serializable, and avoids borrowing complications during
+error recovery. Names are interned to `Symbol`. Every
 node carries a `Span`. A generic `Visitor` derives its traversal from the node
 definitions, so adding variants later means editing `walk_*` and nothing else.
 
@@ -226,26 +219,23 @@ Two invariants matter more than the node list:
   deliberately broken program.
 - **Every node knows why it exists.** `Origin` distinguishes a node the user
   wrote from one recovery synthesised, and names the `Reason` in the latter
-  case. A checker can then decline to blame an expression that is not really
-  there. This is the cheap-now, expensive-later kind of decision: the gap
-  between good and bad error messages is mostly provenance.
+  case. A checker can then avoid blaming an expression that was synthesized
+  during recovery.
 
 `VsaCall` stores its operands twice: in source order for diagnostics, and in a
 **canonical order** derived from `Ast::structural_key`. Binding and n-ary
-bundling are commutative, so this makes commutativity structurally true rather
-than a law each later pass has to remember. `bundle.left` deliberately gets no
-canonical order — the fold is order-dependent, and that asymmetry in the AST is
-the point.
+bundling are commutative, so this makes commutativity structural rather than a
+rule each later pass has to remember. `bundle.left` has no canonical order
+because the fold is order-dependent.
 
 ### `raly-parse`
 
 Hand-written recursive descent, with Pratt precedence climbing for expressions.
 No parser generator, and no `Result` anywhere in the crate.
 
-`parse(file, src, tokens) -> Parsed` is a pure function: no ambient state, no
-global interner, no `&mut` compiler context threaded through. That is the shape
-an incremental query engine would demand later, and keeping it costs nothing
-now.
+`parse(file, src, tokens) -> Parsed` is a pure function with no ambient state,
+global interner, or mutable compiler context. This structure is also compatible
+with a future incremental query engine.
 
 **Recovery** is panic mode with bracket-aware synchronisation sets:
 
@@ -256,8 +246,8 @@ now.
   are tests pinning that for six different mistakes.
 - Lexical errors are not re-reported. `123abc` is one diagnostic, not two.
 
-The interesting diagnostics are the ones that encode the algebra rather than the
-grammar. `bundle()` is `RALY2003` with a note explaining that superposition has
+Some diagnostics encode algebraic constraints rather than grammar. `bundle()`
+is `RALY2003` with a note explaining that superposition has
 no identity element in any VSA family, so an empty bundle denotes no vector.
 `bundle.foo` is `RALY2005`, and its help says that `bundle.left` is a different
 function from `bundle`, not a spelling of it. `space S = 1024` is `RALY2010`,
@@ -276,8 +266,8 @@ to branch on "was this resolved?", and nothing cascades.
   recursive and a `space` may be used above its declaration; a local is visible
   only after its own `let`, so `let x = x` refers to the outer `x`.
 - **Use-before-definition is its own diagnostic** (`RALY3004`), not "unknown
-  name". The resolver can see the `let` sitting two lines below, and saying so
-  is the whole difference between a useful message and a useless one.
+  name". The resolver can see the `let` below and report the more specific
+  problem.
 - **A space lives in both namespaces.** It is a type in `Vec[Concepts]` and a
   value in `cleanup(v, Concepts)`, which names a codebook to project onto.
 - **Shadowing a local is fine and silent; shadowing a `role` is a warning**
@@ -292,12 +282,11 @@ to branch on "was this resolved?", and nothing cascades.
   `where` an extension point whose attributes have no fixed meaning yet, so
   `codebook = fixed` names a mode, not a binding.
 
-### `raly-types` — the product
+### `raly-types`
 
-Decision 4 of `docs/compiler-architecture.md` is binding: **algebraic types plus
-small decidable solvers, one per property. No SMT, no dependent types.** SMT
-fails nonconstructively — an unsat core is not an explanation — and a language
-pitched on explaining silent bugs cannot answer "why?" with a timeout.
+Decision 4 of `docs/compiler-architecture.md` specifies algebraic types with
+one small, decidable solver per property. The current design does not use SMT
+or dependent types, which keeps diagnostics tied to domain-specific constraints.
 
 **Dimension — abelian-group unification.** Kennedy's units of measure, as
 shipped in F# 2.0. A dimension is a formal product of atoms (integer constants,
@@ -311,7 +300,7 @@ equal exactly when their quotient is the identity, and when they are not, the
         the residual is 1024 / 8192
 ```
 
-Not "unification failed". `MAP[2 * BASE_D]` still compares equal to another
+This is more specific than "unification failed." `MAP[2 * BASE_D]` still compares equal to another
 `MAP[2 * BASE_D]` even though neither folds to a number.
 
 **Family — a plain enum.** `MAP`, `BSC`, `HRR`, `FHRR`. Mixing them is
@@ -373,8 +362,7 @@ Nested `unbind` with no `cleanup` between is a warning at depth 2 and an error
 at depth 3 (`RALY5002`) — semantics §3 puts usable depth at about 2 at D=1000,
 so depth 3 retrieves at close to chance.
 
-**Blame provenance, from the first commit.** Decision 5 calls this the most
-expensive decision to get wrong and the cheapest to get right now. Every
+**Constraint provenance.** Every
 constraint carries a `Span + Reason` (`constraint.rs`) generated at the point
 the constraint is *created*, so a failure is reported against the expression
 that caused it and the message can say "this is operand 2 of bundle" or "this
@@ -383,7 +371,7 @@ unify". Raly has no unification variables to search over — annotations are
 mandatory at function boundaries, per GRAMMAR.md §5.6 — so the *ordering* half
 of the Helium design is not needed yet. The provenance half is here.
 
-**No implicit conversions.** The Swift lesson from decision 5, taken seriously:
+**No implicit conversions.** Following decision 5:
 no overload resolution, no literal defaulting across types, annotations at
 function boundaries. There is therefore no search, and no expression can be
 "too complex". The one inclusion that exists is not a conversion: a `Sym[S]` is
@@ -393,13 +381,9 @@ reverse is not, and the message names `cleanup` as the operation that fixes it.
 ### No silent broadcasting
 
 In PyTorch, adding a tensor of shape `(32, 1)` to one of shape `(1, 32)` does
-not fail. It broadcasts, silently, and returns a `(32, 32)` matrix. NumPy does
-the same. It is almost never what the author meant, it raises no warning, and
-the first thing that looks wrong is a loss curve that never comes down, days
-later, in a different file. It is one of the most expensive silent bugs in
-machine learning, and it is expensive precisely *because the shapes are not in
-the type*: at the line that made the mistake there is nothing for a compiler to
-object to.
+not fail. It broadcasts and returns a `(32, 32)` matrix; NumPy behaves the same
+way. When that was not intended, the operation can remain unnoticed because
+the shapes are not represented in a static type at the call site.
 
 Raly's types carry width and family, so there is. **`bind` and `bundle` -- the
 operations that combine their operands position against position -- require
@@ -454,11 +438,12 @@ the rule exists to remove. GRAMMAR.md 7.3 has the full rationale, including why
 `broadcast(a, b)` over two vectors was rejected: it would denote an outer
 product, which is a matrix, and Raly has no matrix type.
 
-### `raly-explain` -- the thesis, out loud
+### `raly-explain`
 
-`raly explain <file>` prints, in plain English, what a program represents. No
-other language can do this, because no other language's types carry meaning. A
-Rust signature says `Vec<f32> -> Vec<f32>`. This is what Raly's says:
+`raly explain <file>` describes the structure represented by the program's
+types. For comparison, a conventional `Vec<f32> -> Vec<f32>` signature does
+not record the VSA family, load, or roles. Raly can render those declarations
+as prose:
 
 ```
 space Sentences = MAP[384]
@@ -483,12 +468,11 @@ fn encode(s: Sym[Sentences], v: Sym[Sentences], o: Sym[Sentences]) -> Vec[Senten
     nothing failing to say so.
 ```
 
-Three rules govern the output, and they are the deliverable:
+Three rules govern the output:
 
 1. **Plain words.** No term is used that is not defined where it is used.
-   "Bundle", "superposition", "codebook" and "role" do not appear; what they
-   *are* does. Someone who does not know what a vector space is should still
-   learn something true.
+   Terms such as "bundle," "superposition," "codebook," and "role" are
+   replaced with descriptions of the underlying operations.
 2. **Only what the types prove.** Where a property is open or unknown, the
    output says so -- a dimension the checker could not fold prints as unknown
    rather than as the placeholder the checker fell back to, and the JSON
@@ -563,9 +547,9 @@ a broken program with no gaps, and that fourteen kinds of pathological input
 (unbalanced brackets, runs of keywords, empty files) terminate and still yield a
 tree.
 
-## Deliberately not here yet
+## Not implemented
 
-Nothing below exists, and no part of it is stubbed, faked, or half-written.
+The following features are not implemented.
 
 ### Not in the type system
 
