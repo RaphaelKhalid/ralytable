@@ -1,11 +1,15 @@
 # site/
 
-The public landing page for Ralytable. Static files, no build step, no dependencies.
+The public Ralytable website. It uses static files and has no build step or runtime dependencies.
 
 ```
 site/
-├── index.html    landing page and demos
-└── research.html compact overnight research audit and public benchmark destination
+├── index.html             project overview and demos
+├── research.html          summary of the latest coding experiment
+├── interpretability.html  interactive codebook explorer
+├── blind-test.html        story-model comparison
+├── codebook.json          generated data for the codebook explorer
+└── data/                   checked-in data for the latest-run panel
 ```
 
 ## Serve it
@@ -23,7 +27,7 @@ Any static server works — `npx serve site`, `caddy file-server --root site`, e
 
 ## Deploy it
 
-Because it is a single static file with no build step, any static host will do.
+Because the site is static and has no build step, any static host will work.
 
 **GitHub Pages.** Settings → Pages → Deploy from a branch, and either publish the
 `docs/` folder (rename `site/` to `docs/`) or push `site/`'s contents to a
@@ -40,9 +44,8 @@ repository layout.
 ## Conventions this page keeps
 
 - **No external requests except Google Fonts.** `fonts.googleapis.com` and
-  `fonts.gstatic.com` are the only hosts contacted. No CDN scripts, no analytics,
-  no remote images. Every face has a real fallback stack, so the page is correct
-  before the fonts land.
+  `fonts.gstatic.com` are the only hosts contacted. There are no CDN scripts,
+  analytics requests, or remote images. Each font has a local fallback stack.
 - **Dark by default, theme-aware.** `data-theme="dark"` is on `<html>`; a full
   light palette is defined for `prefers-color-scheme: light`, so the page is never
   a dark card on a white host.
@@ -53,12 +56,12 @@ repository layout.
   comparisons — scrolls inside its own `overflow-x: auto` panel. Caret alignment in
   the rendered diagnostics depends on `white-space: pre` and a real monospace
   face; do not let those panels wrap.
-- **The claims are the constraint.** Every number on the page is reproducible from
+- **Keep claims tied to evidence.** Every number on the page is reproducible from
   this repository. The `RALY1002` diagnostic in the hero is character-for-character
   what `cargo run -p raly -- check examples/broken.raly` prints today. The
   `RALY5001` capacity diagnostic is a *design* and is labelled as one in three
-  places. If you edit this page, keep that discipline: anything not yet built must
-  say so on the page itself, not only in the commit message.
+  places. Anything not yet built must be described as planned or missing on the
+  page itself, not only in the commit message.
 
 ## Playground
 

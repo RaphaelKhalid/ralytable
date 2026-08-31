@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ralytable research audit</title>
-<meta name="description" content="A compact, skeptical summary of the overnight Raly-style research run.">
+<meta name="description" content="A concise summary of the latest Raly-style coding experiment, including controls, corrections, and next steps.">
 <style>
 :root{--bg:#08090b;--panel:#0f1216;--line:#242b35;--fg:#e8ecf1;--muted:#a7b0bd;--dim:#6d7683;--accent:#a795e6;--aurora:linear-gradient(105deg,#79ded7 0%,#a795e6 48%,#e6a8d8 100%);--ok:#4ad493;--warn:#f4c66d;--mono:"JetBrains Mono",monospace;--disp:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;--body:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--body)}main,header,footer{max-width:920px;margin:auto;padding:28px 24px}header{padding-top:72px}h1,h2{font-family:var(--disp);line-height:1.08;letter-spacing:-.03em}h1{font-size:clamp(38px,7vw,72px);max-width:12ch;margin:10px 0 20px}h2{font-size:28px;margin:0 0 12px}p{max-width:70ch;color:var(--muted)}a{color:var(--fg);text-decoration-color:var(--accent);text-underline-offset:3px}.eyebrow{color:var(--accent);font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase}.stamp{font:12px var(--mono);color:var(--dim)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0 54px}.card,.bottom{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}.card strong{display:block;font:700 25px var(--mono);color:var(--fg)}.card span{color:var(--dim);font-size:13px}.section{border-top:1px solid var(--line);padding:46px 0}.callout{border-left:2px solid transparent;border-image:var(--aurora) 1;padding:4px 0 4px 18px}.good{color:var(--ok)}.warn{color:var(--warn)}ul{padding-left:20px;color:var(--muted)}li{margin:8px 0}footer{border-top:1px solid var(--line);color:var(--dim);font-size:13px;padding-bottom:64px}@media(max-width:650px){header,main,footer{padding-left:18px;padding-right:18px}.grid{grid-template-columns:1fr}header{padding-top:46px}}
@@ -12,9 +12,9 @@
 </head>
 <body>
 <header>
-  <div class="eyebrow">Overnight research · 2026-08-27</div>
-  <h1>What the coding experiment shows.</h1>
-  <p class="callout">Experiment 13 found a narrow result on synthetic, generated repair tasks. Typed legality and public-example search improved the selected program, while a deterministic null often matched the final score. A state-only controller was causally load-bearing in one synthetic control. General coding was not established.</p>
+  <div class="eyebrow">Experiment 13 · 2026-08-27</div>
+  <h1>Results from the synthetic coding experiment.</h1>
+  <p class="callout">On generated repair tasks, typed legality checks and search over public examples improved the selected program. A deterministic baseline often reached the same final score. In one synthetic control, changing the state altered half of the controller's raw decisions. These results do not establish general coding ability.</p>
   <p class="stamp">386 valid rows · 12 oracle-contaminated rows preserved separately · largest learned model 54,516 parameters</p>
 </header>
 <main>
@@ -25,26 +25,26 @@
   </div>
 
   <section class="section">
-    <h2>What survives</h2>
-    <p>The strongest result is a small state-only controller whose executable abstract state changes half of its raw decisions while an irrelevant placebo stays fixed. That is evidence that a declared state can be causally load-bearing in a synthetic control. It does not establish open-ended coding ability, and public verification can mask raw weakness.</p>
+    <h2>Main result</h2>
+    <p>For the small state-only controller, erasing executable abstract state changed half of the raw decisions, while changing an irrelevant placebo did not. This supports the narrow claim that the declared state affected behavior in this synthetic control. It does not show open-ended coding ability, and public verification can hide weak raw proposals.</p>
     <ul><li><span class="good">Keep:</span> typed state slots, explicit legality, and separate raw/full evaluation.</li><li><span class="warn">Test next:</span> tasks where state is necessary but not sufficient, with independently specified labels.</li><li><span class="warn">Do not promote:</span> general Python or repository coding from generated microtasks.</li></ul>
   </section>
 
   <section class="section">
-    <h2>Corrections that matter</h2>
-    <p>The two-parameter predicate gate is supplied-bit identity/routing, not semantic inference. The `semantic_rule_gate` and `repository_bundle_gate` placebo controls are tautological because nuisance is absent from the gate; their historical causal rates are invalid for promotion. Historical latency starts after inference and is not end-to-end. New runs separate inference, selection, scoring, and end-to-end-through-selection.</p>
+    <h2>Corrections</h2>
+    <p>The two-parameter predicate gate performs routing from a supplied bit; it does not infer semantics. The <code>semantic_rule_gate</code> and <code>repository_bundle_gate</code> placebo controls are tautological because the nuisance variable is absent from the gate, so their historical causal rates cannot support the architecture. Earlier latency measurements started after inference and were not end to end. New runs report inference, selection, scoring, and inference-through-selection separately.</p>
     <p>Experiment 14 is a CPU-only smoke checkpoint and is paused before its planned multi-seed run. The actual Raly compiler/runtime is not in the overnight execution path: this is Raly-style or Raly-inspired research.</p>
   </section>
 
   <section class="section">
-    <h2>Public destination</h2>
-    <p>EvalPlus HumanEval+ is the benchmark-guided discovery scoreboard: task-level failures may be inspected and optimized against, with contamination disclosed, so its tuned score is not held-out evidence. EvalPlus MBPP+ is the cleaner cross-benchmark generalization check; BigCodeBench-Hard Complete is the practical stretch target; a later, time-separated LiveCodeBench slice is the freshness audit.</p>
+    <h2>Planned benchmark sequence</h2>
+    <p>HumanEval+ will be used as a development benchmark, so task-level failures may be inspected and optimized against. Any tuned score will be reported as development performance, not held-out evidence. MBPP+ is the planned cross-benchmark check, followed by BigCodeBench-Hard Complete and a later time-separated LiveCodeBench sample.</p>
     <p>Autoresearch uses separate frozen local proxy tasks. Public prompts and solutions stay out of training; HumanEval+ is the deliberate, disclosed exception for iterative diagnosis. Future runs preregister <=9M parameters, raw/full/null scores, search/test-time budget, and separate latency fields. No public benchmark was run here.</p>
   </section>
 
   <section class="section bottom">
-    <h2>Read the record</h2>
-    <p>The full dashboard, append-only JSONL, invalidated oracle log, preregistrations, generator audits, and reproduction commands remain in the repository.</p>
+    <h2>Methods and data</h2>
+    <p>The repository contains the full dashboard, append-only JSONL records, invalidated oracle log, preregistrations, generator audits, and reproduction commands.</p>
     <p><a href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/13_autoresearch_raly_coder/FINDINGS.md">Experiment 13 findings →</a><br><a href="https://github.com/RaphaelKhalid/ralytable/tree/main/experiments/15_research_summary_dashboard">Full dashboard source →</a><br><a href="./index.html">Back to the project →</a></p>
   </section>
 </main>

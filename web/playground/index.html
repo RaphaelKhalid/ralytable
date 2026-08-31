@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Raly playground</title>
-<meta name="description" content="Run the whole Raly front end in your browser: lexer, parser, name resolution and the capacity type system, compiled to WebAssembly.">
+<meta name="description" content="Run the Raly lexer, parser, name resolver, and type checker in your browser through WebAssembly.">
 <style>
 :root {
   color-scheme: light dark;
@@ -518,19 +518,15 @@ footer code { font-family: var(--mono); font-size: 12px; }
     <span class="badge" id="ver">wasm</span>
   </div>
   <p class="subtitle">
-    Raly is a language being designed around vector-symbolic computation, where
-    <code>bind</code>, <code>bundle</code> and <code>permute</code> are reserved as primitives rather than
-    library calls. Its front end is built error-message-first: the diagnostic renderer was written
-    before anything that could produce a diagnostic.
+    Raly is an experimental language for vector-symbolic computation. Operations such as
+    <code>bind</code>, <code>bundle</code>, and <code>permute</code> are language primitives, which lets
+    the type checker track properties that ordinary tensor shapes do not express.
   </p>
   <div class="honest">
-    <strong>What works today.</strong> Everything on this page is the real compiler, compiled to
-    WebAssembly and running in your browser. It runs the whole front end on every keystroke:
-    the <code>logos</code>-based lexer, the recursive-descent parser, name resolution and the
-    type system, then renders the diagnostics with the compiler's own renderer. This is the same
-    <code>raly::compile</code> the command line calls, so the caret blocks below are
-    character-for-character what <code>raly check</code> prints. There is no code generation
-    yet: nothing here runs a Raly program.
+    <strong>Current scope.</strong> This page runs the same compiler front end as the command-line
+    tool, compiled to WebAssembly. On every edit it runs the lexer, parser, name resolver, and type
+    checker, then displays diagnostics from the compiler's renderer. There is no code generator or
+    runtime yet, so the playground checks programs but does not execute them.
   </div>
 </header>
 
@@ -586,8 +582,8 @@ footer code { font-family: var(--mono); font-size: 12px; }
 
 <footer>
   <p>
-    Built from <code>compiler/crates/raly-wasm</code> with <code>wasm-bindgen</code>. No network requests, no CDN:
-    the WebAssembly module is embedded in this page's scripts, so it runs from a static host or straight off disk.
+    Built from <code>compiler/crates/raly-wasm</code> with <code>wasm-bindgen</code>. The WebAssembly
+    module is embedded in the page, so it works from a static host or directly from disk without network requests.
     Click any diagnostic to jump to its span; hover an underline in the editor to read its message.
   </p>
 </footer>
