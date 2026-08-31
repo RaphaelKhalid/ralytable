@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ralytable — the smallest fully interpretable model that can run HumanEval+</title>
-<meta name="description" content="Ralytable is trying to build the smallest fully interpretable coding model that can run HumanEval+, improving on Karpathy's autoresearcher.">
+<title>Ralytable — research on small, inspectable coding models</title>
+<meta name="description" content="Ralytable is an experimental language, compiler, and research project for testing small coding models with inspectable internal state.">
 <meta name="color-scheme" content="dark light">
-<meta property="og:title" content="Ralytable — an interpretable model for HumanEval+">
-<meta property="og:description" content="A small, inspectable coding model, tested with a transparent search loop.">
+<meta property="og:title" content="Ralytable — small, inspectable coding models">
+<meta property="og:description" content="An experimental compiler and research project for testing typed, inspectable model state.">
 <meta property="og:image" content="https://ralytable.vercel.app/assets/seagull.webp">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://ralytable.vercel.app/assets/seagull.webp">
@@ -480,16 +480,16 @@ a.tile .go{
 <div class="hero">
   <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="eyebrow">Moonshot / autoresearcher</p>
-      <h1>The smallest fully interpretable model that can run <em>HumanEval+</em>.</h1>
+      <p class="eyebrow">Research project</p>
+      <h1>Building a small coding model with inspectable internal state.</h1>
       <p class="sub">
-        We are trying to build a coding model small enough to inspect end to end and capable enough to solve
-        real programming tasks. We will test whether improving Karpathy's autoresearcher can raise coding
-        performance while keeping the model's internal state inspectable.
+        Ralytable tests whether a coding model can expose useful internal structure without losing too much
+        capability. The current target is a model under 40 million parameters evaluated on HumanEval+ and
+        related benchmarks.
       </p>
       <p class="sub">
-        That is a target, not a result. The repository holds the baselines, evaluator contracts, and failures
-        that tell us what to try next.
+        This is a research goal, not a result. The repository includes the baselines, evaluation rules,
+        controls, and failed experiments used to decide what to test next.
       </p>
       <div class="cta">
         <a class="btn primary" href="#research">Follow the run <span class="arr">↓</span></a>
@@ -510,12 +510,12 @@ a.tile .go{
 <section id="research" class="research">
   <div class="wrap sec">
     <div class="section-head">
-      <p class="eyebrow">Autoresearcher / the loop</p>
+      <p class="eyebrow">Latest research run</p>
       <span class="live-badge"><i class="pulse"></i><span id="run-status">research run</span></span>
     </div>
-    <h2 class="big" style="margin-top:18px">This section shows the latest run and what it proves.</h2>
+    <h2 class="big" style="margin-top:18px">Latest run, controls, and conclusion.</h2>
     <p class="lede">
-      The panel shows the latest training run, its controls, and the result that would change the next run.
+      This panel summarizes the latest checked-in run and the evidence used to choose the next experiment.
     </p>
 
     <div class="research-layout">
@@ -555,8 +555,8 @@ a.tile .go{
     <p class="research-note"><strong>Data contract:</strong> add a fresh Autoresearcher export at <code>data/autoresearcher.json</code> and this panel will show the latest run. Credentials and model weights do not belong in the site.</p>
 
     <div class="score-explainer" id="score">
-      <p class="eyebrow">Researcher Score / exact formula</p>
-      <h2 class="big">How the run becomes one number.</h2>
+      <p class="eyebrow">Researcher Score</p>
+      <h2 class="big">How the score is calculated.</h2>
       <p class="lede">
         The score rewards progress, the final result, useful variety, and a clean record. The formula is fixed before a run starts.
       </p>
@@ -598,18 +598,17 @@ a.tile .go{
 <!-- ==================================================== DEMO 1: PLAYGROUND -->
 <section id="demos">
   <div class="wrap sec" style="padding-bottom:clamp(30px,4vw,44px)">
-    <p class="eyebrow">Demo one, live on this page</p>
-    <h2 class="big">Type code. See the compiler's errors.</h2>
+    <p class="eyebrow">Compiler playground</p>
+    <h2 class="big">Edit Raly code and see compiler errors immediately.</h2>
     <p class="lede">
       This is the compiler in the browser, built with
       <button type="button" class="dfn" data-t="WebAssembly" data-d="A binary program format that web browsers run at close to native speed.">WebAssembly</button>
-      and running inside this page. Nothing is sent anywhere. Edit the code and errors redraw on every
-      keystroke, with squiggles under the exact characters at fault.
+      and running inside this page. The code stays in your browser. Errors update as you type and underline
+      the relevant characters.
     </p>
     <p class="lede">
-      This is the full front end: lexer, parser, name resolution, type checker, and diagnostics. It is
-      the same Rust compiler as the command line build, compiled to WebAssembly. Start with the capacity
-      error, remove one item, and watch the diagnostic disappear.
+      The playground includes the lexer, parser, name resolver, type checker, and diagnostic renderer from
+      the command-line compiler. Try removing one item from the opening capacity example.
     </p>
 
     <div class="frame rv" style="margin-top:30px">
@@ -625,17 +624,17 @@ a.tile .go{
 <!-- ==================================================== DEMO 2 -->
 <section>
   <div class="wrap sec" style="padding-top:clamp(34px,5vw,60px)">
-    <p class="eyebrow">Demo two</p>
-    <h2 class="big">Inspect the model's 1,024 learned symbols.</h2>
+    <p class="eyebrow">Model inspection</p>
+    <h2 class="big">Explore the model's 1,024 learned symbols.</h2>
     <p class="lede">
-      A small model must choose one of 1024 fixed symbols at every character. That makes its middle
-      layer countable. We pulled the whole codebook from the checkpoint and made it clickable.
+      At each character, a small experimental model selects one of 1,024 fixed vectors. The linked view
+      shows the full codebook extracted from the checkpoint and the text positions where each entry appears.
     </p>
 
     <div class="tiles">
       <a class="tile rv" href="./interpretability.html" id="interp">
         <span class="tno">Inside the model</span>
-        <h3>All 1024 symbols, clickable.</h3>
+        <h3>Browse all 1,024 symbols.</h3>
         <p>See what each symbol fires on, how often, and where it lands in a generated trace.</p>
         <div class="tile-art" aria-hidden="true">
           <div class="dots">
@@ -647,7 +646,7 @@ a.tile .go{
 
       <a class="tile rv" href="./playground/">
         <span class="tno">The compiler, full size</span>
-        <h3>Nine sample files, including broken examples.</h3>
+        <h3>Try nine sample files, including broken programs.</h3>
         <p>Load a broken example, read the error, edit the line, and watch the message move.</p>
         <div class="tile-art" aria-hidden="true">
 <pre><span class="d-src">    bundle(a, b, c, d)</span>
@@ -659,8 +658,8 @@ a.tile .go{
 
       <a class="tile rv" href="./blind-test.html">
         <span class="tno">The blind test</span>
-        <h3>Can you tell the readable model from the ordinary one?</h3>
-        <p>Pick the 512-symbol completion. The blind judge chose the dense control in 85.4% of pairs.</p>
+        <h3>Can you identify the model with the discrete bottleneck?</h3>
+        <p>Identify the 512-symbol model's output. The blind judge preferred the dense control in 85.4% of pairs.</p>
         <div class="tile-art" aria-hidden="true">
 <pre>    A  the kite flies, then flies again
     B  a kite, a balloon, a drum, a trumpet
@@ -678,16 +677,15 @@ a.tile .go{
     <div class="grid split">
       <div>
         <p class="eyebrow">What it catches</p>
-        <h2 class="big">The compiler catches a vector that is too full.</h2>
+        <h2 class="big">The compiler detects when a vector exceeds its measured capacity.</h2>
         <p class="lede">
-          Adding vectors together is how these systems store several things in one place. There is a
-          hard limit on how many, and past it you can still read something out; it is just the wrong
-          thing. No exception, no crash, correct shapes throughout. The accuracy falls and the code
-          looks fine.
+          These systems can store several items by adding their vectors. Beyond a measured limit,
+          retrieval becomes unreliable even though the operations remain valid and the tensor shapes
+          still match. A conventional runtime does not report an error.
         </p>
         <p class="lede">
-          Raly counts. The compiler knows the bag holds thirty-one because we measured thirty-one,
-          and it prints the number, where it came from, and the width you would need instead.
+          Raly tracks the number of superposed items. In this example, the compiler uses a measured
+          capacity of 31 and reports both the source of that bound and the width needed for 40 items.
         </p>
         <p class="lede" style="font-size:15px;color:var(--fg-3)">
           The block on the right is copied from
@@ -722,7 +720,7 @@ a.tile .go{
 <span class="d-err">error</span>: 1 error
 </pre>
           <div class="panel-note">
-            <strong>The 31 is measured.</strong> It comes from
+            <strong>The capacity of 31 is measured.</strong> It comes from
             <code>experiments/04_capacity</code>, where retrieval stays above 95% at thirty-one
             items and falls below it at thirty-two. A literature summary put the figure near ten.
           </div>
@@ -736,7 +734,7 @@ a.tile .go{
 <section id="type">
   <div class="wrap sec">
     <p class="eyebrow">The annotation</p>
-    <h2 class="big">A type can state what a vector carries.</h2>
+    <h2 class="big">A type can describe what a vector contains.</h2>
 
     <div class="tsig rv" style="margin-top:34px"><span class="ty">Vec</span>[<u>Concepts</u>; <span class="k">load</span> <u>3</u>; <span class="k">roles</span> <u>{Subject, Verb, Object}</u>]</div>
     <ul class="tkey rv">
@@ -750,16 +748,14 @@ a.tile .go{
     </ul>
 
     <p class="lede" style="margin-top:34px">
-      The second half is the reason this is a language and not a library. If the type lists the slots,
-      then the signature of a function tells you what it represents, and you can read that without
-      running the model, training a probe, or digging through weights.
+      When the type lists the roles, a function signature describes part of what the vector represents.
+      That information is available without running the model or training a separate probe.
     </p>
     <p class="lede">
-      Two things this is not. Checking dimensions at compile time is not new; Dex, Futhark and F#
-      have done it for years, and our claim is narrower, that no machine learning tool people
-      actually use has checks like these. Building models that explain themselves is not a new field
-      either; concept bottleneck models, weight-sparse transformers and KANs all exist. What is
-      unusual here is putting the explanation in the
+      Compile-time dimension checking is not new; Dex, Futhark, and F# already provide related
+      mechanisms. Interpretable-by-construction modeling is also an established area that includes
+      concept bottleneck models, sparse transformers, and KANs. Raly's narrower experiment is to put
+      VSA-specific structure in the
       <button type="button" class="dfn" data-t="Type system" data-d="The part of a compiler that works out what kind of value each expression produces, and rejects programs where the kinds do not fit together.">type system</button>.
     </p>
     <div class="cta">
@@ -773,11 +769,11 @@ a.tile .go{
 <section id="how">
   <div class="wrap sec">
     <p class="eyebrow">How it works</p>
-    <h2 class="big">The compiler runs four checks and reports every error.</h2>
+    <h2 class="big">The compiler runs every front-end pass and reports the errors together.</h2>
     <p class="lede">
       <code>raly check</code> runs every pass every time. No pass is allowed to stop the next one, so
       a typo does not hide an unknown name and an unknown name does not hide a capacity error. You
-      get the whole list on the first try.
+      receive a combined list in source order.
     </p>
 
     <div class="pipe rv">
@@ -844,12 +840,12 @@ scene = torch.<span class="fn">zeros</span>(D)
 <!-- ==================================================== MEASURED -->
 <section id="measured">
   <div class="wrap sec">
-    <p class="eyebrow">Measured, not cited</p>
+    <p class="eyebrow">Experimental results</p>
     <h2 class="big">These numbers come from experiments in this repository.</h2>
     <p class="lede">
-      We wrote down what would count as failure before each run, reported every result next to what
-      you would get with no model at all, and re-derived each headline number a second way. Some of
-      the results are negative and they ship the same as the rest.
+      Each result is linked to its methods and limitations. Where applicable, the experiments define
+      failure criteria in advance, report a null or baseline, and verify headline numbers with a
+      second calculation. Negative results are included.
     </p>
 
     <div class="grid g3" style="margin-top:38px">
@@ -861,14 +857,14 @@ scene = torch.<span class="fn">zeros</span>(D)
       </div>
       <div class="card rv">
         <span class="tag">07 · retrieval cost</span>
-        <h3>Averaging passages into one vector costs a quarter of search accuracy.</h3>
+        <h3>Averaging passages into one vector reduced retrieval accuracy.</h3>
         <p>On BEIR scifact, mean-pooling eight passages drops recall from 0.877 to 0.619. A max-scoring control attributes about 76% of the loss to averaging itself; doubling nominal width does not remove the cost.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/07_retrieval_cost/FINDINGS.md">experiments/07 →</a>
       </div>
       <div class="card rv">
         <span class="tag">06 · discrete core</span>
-        <h3>Legibility costs about three points of accuracy.</h3>
-        <p>At matched parameters, forcing the middle through 1024 symbols moved top-1 accuracy from 0.8383 to 0.8065. Bigger alphabets became more capable and more legible together; the bottleneck is a measured tax, not a free win.</p>
+        <h3>The discrete bottleneck reduced top-1 accuracy by about three points.</h3>
+        <p>At matched parameters, forcing the middle through 1,024 symbols moved top-1 accuracy from 0.8383 to 0.8065. Larger codebooks improved both accuracy and role prediction in this synthetic experiment.</p>
         <a class="more" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/06_discrete_core/FINDINGS.md">experiments/06 →</a>
       </div>
     </div>
@@ -889,9 +885,9 @@ scene = torch.<span class="fn">zeros</span>(D)
       </table>
     </div>
     <p class="lede" style="margin-top:16px">
-      So the symbols beat the raw character by <b>+0.033</b>. That is the number, and it is real,
-      because a symbol sees context and can tell the same character apart in a premise and in a
-      working step. Reproduce it with <code>experiments/06_discrete_core/leakage.py</code>.
+      The symbols beat the raw-character control by <b>+0.033</b>. This is the additional predictive
+      signal associated with context-dependent code selection. Reproduce the comparison with
+      <code>experiments/06_discrete_core/leakage.py</code>.
     </p>
 
     <p class="lede" style="margin-top:28px">
@@ -923,9 +919,9 @@ scene = torch.<span class="fn">zeros</span>(D)
     <div class="grid split">
       <div>
         <p class="eyebrow">What exists</p>
-        <h2 class="big">The front end is finished. The back end is not started.</h2>
+    <h2 class="big">The front end works; there is no execution backend yet.</h2>
         <p class="lede">
-          Nothing on the second list is stubbed or half-written. It is absent.
+          The items marked as missing have not been implemented.
         </p>
       </div>
 
@@ -944,7 +940,7 @@ scene = torch.<span class="fn">zeros</span>(D)
     </div>
 
     <div class="limits rv">
-      <p class="eyebrow" style="margin-bottom:0">Limits, stated once</p>
+      <p class="eyebrow" style="margin-bottom:0">Limitations</p>
       <ul>
         <li><b>The demo model cannot reason.</b> It is a 6.4M-parameter toy trained on 4,042 synthetic word problems; it formats arithmetic nonsense. The demo shows structure, not capability.</li>
         <li><b>The overnight coding result is synthetic.</b> Generated integer-list, Python, and repository-shaped tasks are not general coding or a public benchmark.</li>

@@ -1,6 +1,6 @@
 # Raly playground
 
-A single page that runs the whole Raly front end in the browser. The
+A single page that runs the Raly front end in the browser. The
 `logos`-based lexer, the recursive-descent parser, name resolution, the type
 system and the hand-written diagnostic renderer from `compiler/crates/` are
 compiled to WebAssembly; the page analyses the buffer on every keystroke and
@@ -8,8 +8,8 @@ draws the result itself. It calls `raly::compile`, the same function the `raly`
 binary runs for `raly check`, so the browser cannot drift away from the command
 line.
 
-**It is already built.** `playground/wasm/` is committed, so a fresh clone
-needs no Rust toolchain — just open the page.
+The compiled files in `playground/wasm/` are committed, so the page can be used
+from a fresh clone without installing Rust.
 
 ## Run it
 
@@ -88,7 +88,7 @@ playground/
     └── raly_wasm_embedded.js   the module base64-encoded into a script
 ```
 
-No libraries are vendored because none are used: the editor is a `<textarea>`
+The page has no third-party runtime libraries. The editor is a `<textarea>`
 with a highlight layer behind it, coloured from the real token stream rather
 than from a regular expression. Everything the page needs is in this
 directory.
@@ -146,7 +146,7 @@ Two things worth knowing when writing against it:
   indices. They agree for ASCII and diverge the moment a character is not, so
   convert before slicing a string or setting a selection. `playground.js` does
   this in `buildByteMap`.
-- **`phases` is the honest part.** All four phases now report `"ok"` because
+- **`phases` reports each compiler stage.** All four phases report `"ok"` when
   all four run, on every call, on every input. Every phase recovers rather than
   bailing out, so a syntax error does not silence name resolution and an
   unresolved name does not silence the type checker: one call reports
@@ -155,15 +155,15 @@ Two things worth knowing when writing against it:
   that was already in the shape changed meaning, so a caller written against
   the lexer-only build keeps working.
 
-## What this demo does and does not prove
+## Scope and limitations
 
-The whole front end is real, and it is the same code the CLI runs: the caret
+The page uses the same front-end code as the CLI: the caret
 blocks on the page are byte-identical to `raly check` on the same file. The
 examples are taken from `compiler/crates/raly/tests/ui/` and
 `compiler/examples/`, which are covered by the UI test suite, so if the checker
 ever stops reporting what an example claims, a test fails before the page does.
 
-What it does not do is run a program. There is no code generation and no
+It does not run programs. There is no code generation and no
 evaluator, so nothing on the page produces a vector. The capacity numbers come
 from the bound measured in `experiments/04_capacity`, computed at compile time;
 the page reports them, it does not measure them.

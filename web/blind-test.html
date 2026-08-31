@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The blind test: can you tell the readable model from the ordinary one?</title>
-<meta name="description" content="Two small story models, same size and same data. One is readable inside. Read a pair of completions, pick which is which, and see your score next to the judge's 85.4%.">
+<title>Blind test — dense and discrete story models</title>
+<meta name="description" content="Compare outputs from two matched story models and try to identify the model with a 512-entry discrete bottleneck.">
 <meta name="color-scheme" content="dark light">
 <meta property="og:title" content="Ralytable, the blind test">
 <meta property="og:description" content="Run the blind test on yourself, then read what it cost us.">
@@ -284,17 +284,16 @@ html{scroll-behavior:smooth}
 <!-- ==================================================== HERO -->
 <div class="hero">
   <div class="wrap hero-in">
-    <h1>We built a model you can read inside. <em>It writes worse stories.</em></h1>
+    <h1>The discrete model is easier to inspect, but it writes worse stories.</h1>
     <p class="sub">
       Two models of the same size, trained on the same children's stories for the same
-      amount of compute. One is an ordinary transformer. The other has to push everything
-      it knows through 512 fixed symbols, which is the thing that makes its insides
-      readable. We asked a judge to compare their writing without telling it which was
-      which. It picked the ordinary model 85.4% of the time.
+      amount of compute. One is a standard transformer. The other passes its middle state
+      through a 512-entry discrete codebook, making that state easier to inspect. In blind
+      comparisons, the judge preferred the standard model in 85.4% of pairs.
     </p>
     <p class="sub">
-      Here are the same story pairs the judge saw. Pick which one you think came from the
-      readable model, and see how your score compares.
+      The test below uses the same story pairs. Choose the completion you think came from
+      the discrete model and compare your result with the judge's.
     </p>
     <div class="statline">
       <span><b>29.5M</b> parameters each, matched to 0.25%</span>
@@ -309,12 +308,12 @@ html{scroll-behavior:smooth}
 <section id="test">
   <div class="wrap sec" style="padding-top:clamp(26px,4vw,44px)">
     <p class="eyebrow">Take the test</p>
-    <h2 class="big">Ten pairs. Which one is the readable model?</h2>
+    <h2 class="big">Which completion came from the discrete model?</h2>
     <p class="lede">
       Each story opening is the first 40 tokens of a real story the models never saw in
       training. Both completions were written under identical settings and cut off at 200
-      new tokens, so every one of them stops mid-sentence. Which completion sits on the
-      left and which sits on the right is decided fresh every time this page loads.
+      new tokens, so each one stops mid-sentence. Their left-right order is randomized when
+      the page loads.
     </p>
 
     <div class="test" style="margin-top:30px">
@@ -346,9 +345,9 @@ html{scroll-behavior:smooth}
           </div>
 
           <div class="picks" id="picks">
-            <p class="q">Which one came from the readable model, the one with 512 symbols?</p>
-            <button type="button" class="btn" id="pick0">A is the readable one</button>
-            <button type="button" class="btn" id="pick1">B is the readable one</button>
+            <p class="q">Which one came from the model with the 512-entry codebook?</p>
+            <button type="button" class="btn" id="pick0">A is the discrete model</button>
+            <button type="button" class="btn" id="pick1">B is the discrete model</button>
             <button type="button" class="btn" id="pickT">Cannot tell</button>
           </div>
 
@@ -372,15 +371,14 @@ html{scroll-behavior:smooth}
               <div class="track"><span class="fill grey" id="bf-judge"></span></div>
             </div>
             <div>
-              <div class="bar-lab"><span>The judge on two copies of the ordinary model</span><b>51.7%</b></div>
+              <div class="bar-lab"><span>The judge on two copies of the standard model</span><b>51.7%</b></div>
               <div class="track"><span class="fill grey" id="bf-null"></span></div>
             </div>
           </div>
           <p class="lede" style="margin-top:20px;font-size:15.5px">
-            The bottom bar is the floor. Two seeds of the ordinary model are draws from the
-            same recipe, so the truthful answer there is a coin flip, and the judge returned
-            51.7%. That is what a real inability to tell two models apart looks like. 85.4%
-            is not that.
+            The bottom bar is the null comparison. Two seeds of the standard model should be
+            indistinguishable on average, and the judge returned 51.7%. The 85.4% preference
+            in the main comparison is well above that reference point.
           </p>
           <div class="picks" style="margin-top:24px">
             <button type="button" class="btn primary" id="again">Ten more pairs</button>
@@ -392,8 +390,7 @@ html{scroll-behavior:smooth}
 
     <p class="lede" style="margin-top:18px;font-size:14.5px;color:var(--fg-3)">
       All 60 pairs come from <code>experiments/09_story_quality/generations.json</code>, taken
-      in the order the generator produced them. Nothing was picked for being flattering or
-      embarrassing.
+      in the order produced by the generator. The examples were not selected by quality.
     </p>
   </div>
 </section>
@@ -404,25 +401,24 @@ html{scroll-behavior:smooth}
     <div class="grid split">
       <div>
         <p class="eyebrow">The result</p>
-        <h2 class="big">The threshold we wrote down in advance was not met.</h2>
+        <h2 class="big">The discrete model did not meet the preregistered threshold.</h2>
         <p class="lede">
-          Before a single story existed we committed a rule to the repository: the readable
-          model is good enough if its grammar and consistency scores land within noise of the
-          ordinary model, even though we already knew its
+          Before generating the stories, we committed a rule to the repository: the discrete
+          model would pass if its grammar and consistency scores were within the uncertainty
+          range of the standard model, even though its
           <button type="button" class="dfn" data-t="Perplexity" data-d="A measure of how surprised a language model is by real text. Lower means the model predicted it better.">perplexity</button>
-          was worse. Then we generated, judged and applied the rule mechanically. Both
-          criteria missed by a wide margin.
+          was already worse. The generated samples were then judged and evaluated using that
+          rule. Both criteria missed by a wide margin.
         </p>
         <p class="lede">
-          So this page reports a loss for our own idea. Legibility is not free here, and it
-          is not cheap either.
+          In this experiment, the added inspectability came with a substantial capability cost.
         </p>
       </div>
 
       <div>
         <div class="scroller">
           <table class="nums">
-            <thead><tr><th>what was measured</th><th>ordinary</th><th>readable</th><th>real stories</th></tr></thead>
+            <thead><tr><th>what was measured</th><th>standard</th><th>discrete</th><th>real stories</th></tr></thead>
             <tbody>
               <tr>
                 <td><button type="button" class="dfn" data-t="Cross-entropy" data-d="The average number of nats of surprise per token on text the model was not trained on. Lower is better.">Validation cross-entropy</button></td>
@@ -446,7 +442,7 @@ html{scroll-behavior:smooth}
               </tr>
               <tr>
                 <td>Head-to-head win rate</td>
-                <td colspan="3"><b>85.4%</b> to the ordinary model, <span style="font-size:12.5px">[79.5, 89.8]</span> over 179 comparisons</td>
+                <td colspan="3"><b>85.4%</b> to the standard model, <span style="font-size:12.5px">[79.5, 89.8]</span> over 179 comparisons</td>
               </tr>
             </tbody>
           </table>
@@ -465,30 +461,29 @@ html{scroll-behavior:smooth}
 <!-- ==================================================== CONTROLS -->
 <section>
   <div class="wrap sec">
-    <p class="eyebrow">Why the number can be trusted</p>
-    <h2 class="big">A judge that cannot fail is worth nothing, so we gave it two ways to fail.</h2>
+    <p class="eyebrow">Judge controls</p>
+    <h2 class="big">Two controls check whether the judge can separate quality from noise.</h2>
 
     <div class="grid split" style="margin-top:30px">
       <div>
         <p class="lede" style="margin-top:0">
           <b style="color:var(--fg)">It can spot good writing.</b> Real human-written passages
           from the same story collection were dropped into the same blind format and judged as
-          if they were model output. They scored 9.47 on grammar and beat the ordinary model
-          93% of the time. Had the judge shrugged at real writing, nothing else here would
-          mean anything.
+          if they were model output. They scored 9.47 on grammar and beat the standard model
+          93% of the time. This checks that the judge can recognize a clear quality difference.
         </p>
         <p class="lede">
-          <b style="color:var(--fg)">It does not invent winners.</b> We also ran the ordinary
+          <b style="color:var(--fg)">It does not invent winners.</b> We also ran the standard
           model against a second copy of itself trained with a different random seed. Those
-          two are genuinely equivalent, and the judge returned 51.7%. That is the reference
-          point for indistinguishable.
+          two use the same architecture and training recipe, and the judge returned 51.7%.
+          This is the reference point for an indistinguishable pair.
         </p>
         <p class="lede">
           <b style="color:var(--fg)">Position bias is present and cannot explain it.</b> The
           judge picks whichever completion it reads first 41.6% of the time. That leaning is
           the same size in every comparison type, and sides were shuffled, so a constant
           offset cannot produce an 85 to 15 split in one comparison and a 52 to 48 split in
-          another.
+          another in this balanced design.
         </p>
       </div>
 
@@ -497,14 +492,14 @@ html{scroll-behavior:smooth}
           <table class="nums">
             <thead><tr><th>comparison</th><th>n</th><th>win rate</th></tr></thead>
             <tbody>
-              <tr><td>ordinary against readable</td><td>179</td><td><b>85.4%</b> <span style="font-size:12.5px">[79.5, 89.8]</span></td></tr>
-              <tr><td>ordinary seed 0 against ordinary seed 1</td><td>60</td><td><b>51.7%</b> <span style="font-size:12.5px">[39.3, 63.8]</span></td></tr>
-              <tr><td>real human stories against ordinary</td><td>60</td><td><b>93.3%</b> <span style="font-size:12.5px">[84.1, 97.4]</span></td></tr>
+              <tr><td>standard against discrete</td><td>179</td><td><b>85.4%</b> <span style="font-size:12.5px">[79.5, 89.8]</span></td></tr>
+              <tr><td>standard seed 0 against standard seed 1</td><td>60</td><td><b>51.7%</b> <span style="font-size:12.5px">[39.3, 63.8]</span></td></tr>
+              <tr><td>real human stories against standard</td><td>60</td><td><b>93.3%</b> <span style="font-size:12.5px">[84.1, 97.4]</span></td></tr>
             </tbody>
           </table>
         </div>
         <div class="limits" style="margin-top:26px">
-          <p class="eyebrow" style="margin-bottom:0">Limitations, stated once</p>
+          <p class="eyebrow" style="margin-bottom:0">Limitations</p>
           <ul>
             <li><b>The judge almost never called a tie</b>, once in about 300 comparisons,
               including zero times in the 60 comparisons where a tie was the honest answer.
@@ -527,12 +522,12 @@ html{scroll-behavior:smooth}
 <!-- ==================================================== THE FAILURE MODE -->
 <section id="drift">
   <div class="wrap sec">
-    <p class="eyebrow">What actually breaks</p>
-    <h2 class="big">Grammar survives the bottleneck. Knowing what a thing is does not.</h2>
+    <p class="eyebrow">Observed failure</p>
+    <h2 class="big">The discrete model often loses track of entities.</h2>
     <p class="lede">
-      The interesting part of the loss is where it lands. Sentences from the readable model
-      are mostly well formed. What it loses is track of the object it is talking about. Given
-      an opening about a kite, it produces this, inside one paragraph:
+      Many sentences from the discrete model are locally well formed, but the samples often
+      switch the identity of an object. Given an opening about a kite, one completion contains
+      the following sequence in a single paragraph:
     </p>
 
     <blockquote class="drift">
@@ -543,16 +538,13 @@ html{scroll-behavior:smooth}
     </blockquote>
 
     <p class="lede">
-      Six names for one object in a few lines. The ordinary model, given the same opening,
-      stays on the kite and repeats itself instead. Grammar is a local property: the next few
-      words only need the last few words, and 512 symbols carry that fine. Holding on to
-      which object is which needs an identity to survive dozens of tokens, and that is what
-      the bottleneck drops. This is a description of one failure we can see in the samples,
-      not a measured mechanism.
+      The object changes names six times. The standard model stays on the kite but becomes
+      repetitive. One possible explanation is that local grammar requires less persistent state
+      than entity identity. This is an interpretation of the samples, not a measured mechanism.
     </p>
     <p class="lede">
       It shows in the scores too. Consistency falls further than grammar, 2.72 points against
-      2.44, and the ordinary model's own consistency score of 5.83 is not good either.
+      2.44, and the standard model's own consistency score of 5.83 is also low.
     </p>
   </div>
 </section>
@@ -560,14 +552,14 @@ html{scroll-behavior:smooth}
 <!-- ==================================================== CTA -->
 <section>
   <div class="wrap sec" style="padding-bottom:clamp(44px,7vw,80px)">
-    <h2 class="big" style="max-width:22ch">The negative results are in the repository along with the rest.</h2>
+    <h2 class="big" style="max-width:22ch">The full results and evaluation data are available in the repository.</h2>
     <p class="lede">
       The write-up, the 420 generations, the 720 judge calls and the exact prompt the judge
       was given are all committed. The total spend on judging was $0.03.
     </p>
     <div class="picks" style="margin-top:26px">
       <a class="btn primary" href="https://github.com/RaphaelKhalid/ralytable/blob/main/experiments/09_story_quality/FINDINGS.md">Read the full finding <span class="arr">&#8594;</span></a>
-      <a class="btn" href="./interpretability.html">See what readable means</a>
+      <a class="btn" href="./interpretability.html">Inspect the discrete model</a>
       <a class="btn" href="./index.html">Back to the project</a>
     </div>
   </div>
@@ -609,7 +601,7 @@ html{scroll-behavior:smooth}
   "use strict";
 
   /* Each entry: p = the story opening, t = the two completions, k = which slot of t
-     holds the ordinary model's text. The slots were shuffled when this file was built,
+     holds the standard model's text. The slots were shuffled when this file was built,
      and shuffled again below at render time, so the pair the visitor reads carries no
      ordering clue. Nothing about the identity of either completion is ever written into
      the document: no class, no id, no data attribute, no order. It lives only in the
@@ -637,7 +629,7 @@ html{scroll-behavior:smooth}
   var idx = 0;         /* how far through the round */
   var right = 0;       /* correct answers so far */
   var answered = 0;    /* pairs answered, ties included */
-  var ANS = -1;        /* slot showing the readable model, for the pair on screen */
+  var ANS = -1;        /* slot showing the discrete model for the pair on screen */
 
   function shuffle(a){
     for(var i = a.length - 1; i > 0; i--){
@@ -671,7 +663,7 @@ html{scroll-behavior:smooth}
     paragraphs(texts[0], item.t[flip]);
     paragraphs(texts[1], item.t[1 - flip]);
 
-    /* the ordinary model sits at item.k, so the readable one is at 1 - item.k */
+    /* the standard model sits at item.k, so the discrete model is at 1 - item.k */
     ANS = ((1 - item.k) === flip) ? 0 : 1;
 
     heads[0].textContent = "Completion A";
@@ -690,8 +682,8 @@ html{scroll-behavior:smooth}
     var readable = ANS, ordinary = 1 - ANS;
     heads[readable].textContent = "Completion " + (readable ? "B" : "A");
     heads[ordinary].textContent = "Completion " + (ordinary ? "B" : "A");
-    verds[readable].textContent = "the readable model, 512 symbols";
-    verds[ordinary].textContent = "the ordinary model";
+    verds[readable].textContent = "the discrete model, 512 entries";
+    verds[ordinary].textContent = "the standard model";
     cols[readable].className = "col named win";
     cols[ordinary].className = "col named";
 
@@ -706,11 +698,11 @@ html{scroll-behavior:smooth}
     } else if(got){
       mark.className = "mark yes";
       mark.textContent = "Right";
-      revText.textContent = "The readable model is the one now marked in red.";
+      revText.textContent = "The discrete model is now marked in red.";
     } else {
       mark.className = "mark no";
       mark.textContent = "Wrong";
-      revText.textContent = "The readable model is the one now marked in red. It gets picked over the ordinary one in about 15% of judged comparisons.";
+      revText.textContent = "The discrete model is now marked in red. The judge preferred it in about 15% of comparisons.";
     }
 
     picks.classList.add("hidden");
@@ -725,7 +717,7 @@ html{scroll-behavior:smooth}
     document.getElementById("fin-head").textContent =
       "You got " + right + " of " + answered + " right.";
     document.getElementById("fin-sub").textContent =
-      "That is " + pct + "%. Here it is next to the judge's number on the same task, and next to the floor.";
+      "That is " + pct + "%. The chart compares it with the judge's result and the null comparison.";
     document.getElementById("bl-you").textContent = "You, " + answered + " pairs";
     document.getElementById("bv-you").textContent = pct + "%";
     document.getElementById("bf-you").style.width = pct + "%";
