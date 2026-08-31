@@ -1,24 +1,22 @@
 // Preloaded programs for the Raly playground.
 //
-// These are real Raly programs. The playground runs the same front end the
-// `raly` binary runs -- lexer, parser, name resolution, type checker -- so
-// what you see here is what `raly check` prints on the command line.
+// The playground runs the same lexer, parser, name resolver, and type checker
+// as the `raly` command-line tool.
 //
 // Most of them come straight from the compiler's own test suite
 // (compiler/crates/raly/tests/ui/) and from compiler/examples/, so if the
-// checker ever stops reporting what a blurb claims, a UI test fails first.
+// checker changes behavior, the corresponding UI test should fail.
 
 window.RALY_EXAMPLES = [
   {
     id: 'capacity',
     name: 'Capacity',
-    blurb: 'RALY5001: four items into a space measurement says holds three.',
-    source: `// The error the language exists for.
+    blurb: 'RALY5001: four items exceed this space\'s measured capacity of three.',
+    source: `// A capacity error based on measured effective dimension.
 //
 // MiniLM hands you 384 numbers per sentence. Measurement says only about 111
 // of those dimensions carry usable variance, and a space can say so. The
-// capacity bound is then computed from the measured number rather than the
-// flattering one.
+// capacity bound is computed from the measured value rather than the nominal one.
 
 space Sentences = MAP[384] where effective = 111
 
@@ -29,10 +27,9 @@ fn scene(s: Sym[Sentences], v: Sym[Sentences], o: Sym[Sentences]) -> Vec[Sentenc
     bundle(bind(Subject, s), bind(Verb, v), bind(Object, o))
 }
 
-// Not fine. Every vector here is the right length and every operation is
-// defined, so a tensor library would run this and hand back a number. What it
-// would not tell you is that cleanup on the result comes back with the wrong
-// atom often enough to matter, and accuracy just quietly sags.
+// This exceeds the measured capacity. The vector widths still match and each
+// operation is defined, so an ordinary tensor library would not report an error,
+// even though retrieval accuracy is expected to fall.
 fn quad(
     a: Sym[Sentences],
     b: Sym[Sentences],
