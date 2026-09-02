@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -508,9 +508,19 @@ footer code { font-family: var(--mono); font-size: 12px; }
   white-space: pre-wrap;
 }
 </style>
+<style>
+@font-face{font-family:"KaTeX Main";src:url("../assets/KaTeX_Main-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("../assets/KaTeX_Main-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("../assets/KaTeX_Main-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+:root{color-scheme:dark;--bg:#090909;--bg-panel:#111;--bg-sunken:#0d0d0c;--bg-hover:#1b1b1a;--border:#30302d;--border-strong:#44413c;--fg:#f0ede6;--fg-muted:#b8b4ab;--fg-faint:#77736c;--accent:#a33a32;--accent-soft:#2a1513;--aurora:linear-gradient(105deg,#6f6b63 0%,#d9d4c8 45%,#8a857b 100%);--error:#ff6b5b;--error-soft:#351b18;--warn:#f4c66d;--warn-soft:#302817;--ok:#4ad493;--ok-soft:#14291f;--sans:"KaTeX Main","Computer Modern",Georgia,serif;--radius:1px}
+h1{font-family:var(--sans)}h1 .dot{background:none;color:var(--accent);animation:none}.badge,button.chip{border-radius:1px}.honest{border-left-color:var(--accent)}
+.archive-nav{height:50px;margin:-8px 0 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:12px}.archive-nav>a{font-family:var(--sans);font-size:17px;font-weight:700;text-decoration:none}.archive-nav div{display:flex;gap:18px}.archive-nav div a{color:var(--fg-muted);text-decoration:none}.archive-nav div a:hover{color:var(--fg)}
+@media(max-width:560px){.archive-nav div a:nth-child(2){display:none}}
+</style>
 </head>
 <body>
 <div class="wrap">
+<nav class="archive-nav"><a href="../index.html">Ralytable</a><div><a href="../index.html">Flagship</a><a href="../blind-test.html">Blind test</a><a href="https://github.com/RaphaelKhalid/ralytable">GitHub</a></div></nav>
 
 <header class="masthead">
   <div class="title-row">
