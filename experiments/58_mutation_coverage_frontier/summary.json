@@ -1,0 +1,55 @@
+{
+  "suite_sizes": {
+    "surface_only": 2,
+    "typed_core": 5,
+    "structural_plus": 7
+  },
+  "mutations": [
+    "constant",
+    "first_argument",
+    "commutative_add_only",
+    "surface_sensitive",
+    "semantic"
+  ],
+  "killed_matrix": {
+    "surface_only": {
+      "constant": false,
+      "first_argument": true,
+      "commutative_add_only": false,
+      "surface_sensitive": true,
+      "semantic": false
+    },
+    "typed_core": {
+      "constant": true,
+      "first_argument": true,
+      "commutative_add_only": true,
+      "surface_sensitive": true,
+      "semantic": false
+    },
+    "structural_plus": {
+      "constant": true,
+      "first_argument": true,
+      "commutative_add_only": true,
+      "surface_sensitive": true,
+      "semantic": false
+    }
+  },
+  "killed_counts": {
+    "surface_only": 2,
+    "typed_core": 4,
+    "structural_plus": 4
+  },
+  "surviving_mutants": {
+    "surface_only": [
+      "constant",
+      "commutative_add_only",
+      "semantic"
+    ],
+    "typed_core": [
+      "semantic"
+    ],
+    "structural_plus": [
+      "semantic"
+    ]
+  }
+}

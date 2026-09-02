@@ -1,0 +1,52 @@
+{
+  "slice": {
+    "existing_reusable_boundaries": [
+      {
+        "boundary": "raly_ast",
+        "evidence": "arena/index nodes, Origin provenance, canonical commutative operands",
+        "action": "reuse ExprId/ItemId/Span as stable front-end references"
+      },
+      {
+        "boundary": "raly_resolve",
+        "evidence": "pure resolve; hoisted items; sequential lets; DefId references",
+        "action": "reuse DefId for binder identity and add recursive-group metadata in side tables"
+      },
+      {
+        "boundary": "raly_types",
+        "evidence": "dimension, family, load/capacity, and role-row solvers",
+        "action": "reuse Ty as the initial typed-ledger annotation layer"
+      }
+    ],
+    "missing_required_contracts": [
+      "effect/capability closure",
+      "resource alias and move safety",
+      "refinement proof DAG",
+      "content-addressed ordered provenance",
+      "deterministic execution receipts",
+      "code generation/execution backend"
+    ],
+    "smallest_prototype": [
+      "Add a pure sidecar Ledger keyed by existing ExprId/DefId and source Span; do not replace the AST.",
+      "Materialize alpha-normalized binder edges and typed operation signatures from existing resolver/type outputs.",
+      "Add deterministic content addresses over operation, parameters, ordered inputs, and semantic types; exclude decorative metadata.",
+      "Implement one proof-gated, effect-free interpreter for a tiny primitive library before external effects.",
+      "Emit per-step replay receipts and run grouped metamorphic/no-bypass tests before training any parser."
+    ],
+    "do_not_build_yet": [
+      "salsa/query-engine migration",
+      "MLIR dependency",
+      "opaque neural residual from prompt to renderer",
+      "SMT/dependent-type proof search",
+      "real external side effects in speculative execution"
+    ],
+    "hard_gates": [
+      "cargo workspace tests and UI diagnostics remain green",
+      "no-bypass field/state interventions pass",
+      "grouped semantic split has zero equivalence overlap",
+      "replay localizes the first divergent step",
+      "learned parameters remain below 40M with zero opaque bypass"
+    ]
+  },
+  "training_started": false,
+  "behavior_changed": false
+}

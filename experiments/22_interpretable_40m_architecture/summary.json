@@ -1,0 +1,486 @@
+{
+  "aggregate": {
+    "entity_slots": {
+      "branch_merge_recovery": 0.0,
+      "exact_recovery": 0.375,
+      "irrelevant_placebo_preservation": 0.375,
+      "linear_recovery": 0.75,
+      "permutation_invariance": 1.0,
+      "relevant_counterfactual_change": 0.375
+    },
+    "flat_sketch": {
+      "branch_merge_recovery": 0.07666666666666666,
+      "exact_recovery": 0.13166666666666665,
+      "irrelevant_placebo_preservation": 0.0,
+      "linear_recovery": 0.18666666666666668,
+      "permutation_invariance": 1.0,
+      "relevant_counterfactual_change": 0.13166666666666665
+    },
+    "typed_program_graph": {
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "relevant_counterfactual_change": 1.0
+    },
+    "typed_program_ledger": {
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "relevant_counterfactual_change": 1.0
+    }
+  },
+  "note": "Synthetic representational probe; no model was trained.",
+  "runs": [
+    {
+      "architecture": "flat_sketch",
+      "audit_surface": "dense vector; no named binding",
+      "branch_merge_recovery": 0.08333333333333333,
+      "exact_recovery": 0.13333333333333333,
+      "irrelevant_placebo_preservation": 0.0,
+      "learned_parameters": 39600000,
+      "linear_recovery": 0.18333333333333332,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 0.4,
+        "4": 0.26666666666666666,
+        "5": 0.13333333333333333,
+        "6": 0.0,
+        "7": 0.06666666666666667,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.13333333333333333,
+      "seed": 11,
+      "state_budget": 12,
+      "tasks": 120
+    },
+    {
+      "architecture": "entity_slots",
+      "audit_surface": "named slots; sequence edges only",
+      "branch_merge_recovery": 0.0,
+      "exact_recovery": 0.375,
+      "irrelevant_placebo_preservation": 0.375,
+      "learned_parameters": 12700000,
+      "linear_recovery": 0.75,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 0.0,
+        "5": 0.5,
+        "6": 0.0,
+        "7": 0.5,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.375,
+      "seed": 11,
+      "state_budget": 8,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_graph",
+      "audit_surface": "typed nodes + explicit edges",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 18400000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 11,
+      "state_budget": 16,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_ledger",
+      "audit_surface": "content-addressed typed nodes + reversible edges + provenance",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 23600000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 11,
+      "state_budget": 24,
+      "tasks": 120
+    },
+    {
+      "architecture": "flat_sketch",
+      "audit_surface": "dense vector; no named binding",
+      "branch_merge_recovery": 0.11666666666666667,
+      "exact_recovery": 0.15,
+      "irrelevant_placebo_preservation": 0.0,
+      "learned_parameters": 39600000,
+      "linear_recovery": 0.18333333333333332,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 0.4666666666666667,
+        "4": 0.13333333333333333,
+        "5": 0.3,
+        "6": 0.0,
+        "7": 0.0,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.15,
+      "seed": 23,
+      "state_budget": 12,
+      "tasks": 120
+    },
+    {
+      "architecture": "entity_slots",
+      "audit_surface": "named slots; sequence edges only",
+      "branch_merge_recovery": 0.0,
+      "exact_recovery": 0.375,
+      "irrelevant_placebo_preservation": 0.375,
+      "learned_parameters": 12700000,
+      "linear_recovery": 0.75,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 0.0,
+        "5": 0.5,
+        "6": 0.0,
+        "7": 0.5,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.375,
+      "seed": 23,
+      "state_budget": 8,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_graph",
+      "audit_surface": "typed nodes + explicit edges",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 18400000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 23,
+      "state_budget": 16,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_ledger",
+      "audit_surface": "content-addressed typed nodes + reversible edges + provenance",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 23600000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 23,
+      "state_budget": 24,
+      "tasks": 120
+    },
+    {
+      "architecture": "flat_sketch",
+      "audit_surface": "dense vector; no named binding",
+      "branch_merge_recovery": 0.1,
+      "exact_recovery": 0.15833333333333333,
+      "irrelevant_placebo_preservation": 0.0,
+      "learned_parameters": 39600000,
+      "linear_recovery": 0.21666666666666667,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 0.6,
+        "4": 0.2,
+        "5": 0.2,
+        "6": 0.0,
+        "7": 0.03333333333333333,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.15833333333333333,
+      "seed": 37,
+      "state_budget": 12,
+      "tasks": 120
+    },
+    {
+      "architecture": "entity_slots",
+      "audit_surface": "named slots; sequence edges only",
+      "branch_merge_recovery": 0.0,
+      "exact_recovery": 0.375,
+      "irrelevant_placebo_preservation": 0.375,
+      "learned_parameters": 12700000,
+      "linear_recovery": 0.75,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 0.0,
+        "5": 0.5,
+        "6": 0.0,
+        "7": 0.5,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.375,
+      "seed": 37,
+      "state_budget": 8,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_graph",
+      "audit_surface": "typed nodes + explicit edges",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 18400000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 37,
+      "state_budget": 16,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_ledger",
+      "audit_surface": "content-addressed typed nodes + reversible edges + provenance",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 23600000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 37,
+      "state_budget": 24,
+      "tasks": 120
+    },
+    {
+      "architecture": "flat_sketch",
+      "audit_surface": "dense vector; no named binding",
+      "branch_merge_recovery": 0.0,
+      "exact_recovery": 0.06666666666666667,
+      "irrelevant_placebo_preservation": 0.0,
+      "learned_parameters": 39600000,
+      "linear_recovery": 0.13333333333333333,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 0.4666666666666667,
+        "4": 0.0,
+        "5": 0.03333333333333333,
+        "6": 0.0,
+        "7": 0.0,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.06666666666666667,
+      "seed": 41,
+      "state_budget": 12,
+      "tasks": 120
+    },
+    {
+      "architecture": "entity_slots",
+      "audit_surface": "named slots; sequence edges only",
+      "branch_merge_recovery": 0.0,
+      "exact_recovery": 0.375,
+      "irrelevant_placebo_preservation": 0.375,
+      "learned_parameters": 12700000,
+      "linear_recovery": 0.75,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 0.0,
+        "5": 0.5,
+        "6": 0.0,
+        "7": 0.5,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.375,
+      "seed": 41,
+      "state_budget": 8,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_graph",
+      "audit_surface": "typed nodes + explicit edges",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 18400000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 41,
+      "state_budget": 16,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_ledger",
+      "audit_surface": "content-addressed typed nodes + reversible edges + provenance",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 23600000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 41,
+      "state_budget": 24,
+      "tasks": 120
+    },
+    {
+      "architecture": "flat_sketch",
+      "audit_surface": "dense vector; no named binding",
+      "branch_merge_recovery": 0.08333333333333333,
+      "exact_recovery": 0.15,
+      "irrelevant_placebo_preservation": 0.0,
+      "learned_parameters": 39600000,
+      "linear_recovery": 0.21666666666666667,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 0.6,
+        "4": 0.06666666666666667,
+        "5": 0.2,
+        "6": 0.0,
+        "7": 0.06666666666666667,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.15,
+      "seed": 53,
+      "state_budget": 12,
+      "tasks": 120
+    },
+    {
+      "architecture": "entity_slots",
+      "audit_surface": "named slots; sequence edges only",
+      "branch_merge_recovery": 0.0,
+      "exact_recovery": 0.375,
+      "irrelevant_placebo_preservation": 0.375,
+      "learned_parameters": 12700000,
+      "linear_recovery": 0.75,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 0.0,
+        "5": 0.5,
+        "6": 0.0,
+        "7": 0.5,
+        "9": 0.0
+      },
+      "relevant_counterfactual_change": 0.375,
+      "seed": 53,
+      "state_budget": 8,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_graph",
+      "audit_surface": "typed nodes + explicit edges",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 18400000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 53,
+      "state_budget": 16,
+      "tasks": 120
+    },
+    {
+      "architecture": "typed_program_ledger",
+      "audit_surface": "content-addressed typed nodes + reversible edges + provenance",
+      "branch_merge_recovery": 1.0,
+      "exact_recovery": 1.0,
+      "irrelevant_placebo_preservation": 1.0,
+      "learned_parameters": 23600000,
+      "linear_recovery": 1.0,
+      "permutation_invariance": 1.0,
+      "recovery_by_node_count": {
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "9": 1.0
+      },
+      "relevant_counterfactual_change": 1.0,
+      "seed": 53,
+      "state_budget": 24,
+      "tasks": 120
+    }
+  ],
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    53
+  ]
+}

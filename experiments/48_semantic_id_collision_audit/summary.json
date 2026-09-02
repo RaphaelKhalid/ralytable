@@ -1,0 +1,63 @@
+{
+  "architectures": [
+    "raw_hash",
+    "truncated_unchecked",
+    "truncated_collision_checked",
+    "full_hash"
+  ],
+  "pass_counts": {
+    "equivalence": 3,
+    "decorative_invariance": 3,
+    "mutation_sensitivity": 4,
+    "collision_safety": 3
+  },
+  "pass_rates": {
+    "equivalence": 0.75,
+    "decorative_invariance": 0.75,
+    "mutation_sensitivity": 1.0,
+    "collision_safety": 0.75
+  },
+  "collision_id": "94",
+  "collision_payloads": [
+    [
+      "literal",
+      18,
+      []
+    ],
+    [
+      "literal",
+      20,
+      []
+    ]
+  ],
+  "rows": [
+    {
+      "architecture": "raw_hash",
+      "equivalent_ids": false,
+      "decorative_invariant": false,
+      "mutation_sensitive": true,
+      "collision_safe": true
+    },
+    {
+      "architecture": "truncated_unchecked",
+      "equivalent_ids": true,
+      "decorative_invariant": true,
+      "mutation_sensitive": true,
+      "collision_safe": false
+    },
+    {
+      "architecture": "truncated_collision_checked",
+      "equivalent_ids": true,
+      "decorative_invariant": true,
+      "mutation_sensitive": true,
+      "collision_safe": true
+    },
+    {
+      "architecture": "full_hash",
+      "equivalent_ids": true,
+      "decorative_invariant": true,
+      "mutation_sensitive": true,
+      "collision_safe": true
+    }
+  ]
+}

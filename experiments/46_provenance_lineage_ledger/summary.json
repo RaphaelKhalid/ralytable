@@ -1,0 +1,167 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "value_only",
+    "one_hop_metadata",
+    "lineage_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 5,
+    "reorder": 5,
+    "lineage_sensitivity": 5,
+    "placebo": 5,
+    "label_change": 5
+  },
+  "pass_rates": {
+    "original": 0.3333,
+    "reorder": 0.3333,
+    "lineage_sensitivity": 0.3333,
+    "placebo": 0.3333,
+    "label_change": 0.3333
+  },
+  "base_lineage": [
+    "file_a.py:1",
+    "file_b.py:4"
+  ],
+  "mutated_lineage": [
+    "file_b.py:4"
+  ],
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "value_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "one_hop_metadata",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "lineage_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "lineage_sensitivity_ok": true,
+      "placebo_ok": true,
+      "label_change_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "value_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "one_hop_metadata",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "lineage_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "lineage_sensitivity_ok": true,
+      "placebo_ok": true,
+      "label_change_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "value_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "one_hop_metadata",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "lineage_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "lineage_sensitivity_ok": true,
+      "placebo_ok": true,
+      "label_change_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "value_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "one_hop_metadata",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "lineage_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "lineage_sensitivity_ok": true,
+      "placebo_ok": true,
+      "label_change_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "value_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "one_hop_metadata",
+      "original_exact": false,
+      "reorder_ok": false,
+      "lineage_sensitivity_ok": false,
+      "placebo_ok": false,
+      "label_change_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "lineage_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "lineage_sensitivity_ok": true,
+      "placebo_ok": true,
+      "label_change_ok": true
+    }
+  ]
+}

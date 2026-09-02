@@ -1,0 +1,191 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "value_type_only",
+    "effect_tags",
+    "capability_effect_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 10,
+    "pure_reorder": 10,
+    "effect_order_sensitivity": 10,
+    "capability_rejection": 10,
+    "throw_rejection": 10,
+    "placebo": 10
+  },
+  "pass_rates": {
+    "original": 0.6667,
+    "pure_reorder": 0.6667,
+    "effect_order_sensitivity": 0.6667,
+    "capability_rejection": 0.6667,
+    "throw_rejection": 0.6667,
+    "placebo": 0.6667
+  },
+  "base_target": [
+    true,
+    [
+      2,
+      1
+    ]
+  ],
+  "swapped_target": [
+    true,
+    [
+      1,
+      2
+    ]
+  ],
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "value_type_only",
+      "original_exact": false,
+      "pure_reorder_ok": false,
+      "effect_order_sensitivity_ok": false,
+      "capability_rejection_ok": false,
+      "throw_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "effect_tags",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "capability_effect_ledger",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "value_type_only",
+      "original_exact": false,
+      "pure_reorder_ok": false,
+      "effect_order_sensitivity_ok": false,
+      "capability_rejection_ok": false,
+      "throw_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "effect_tags",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "capability_effect_ledger",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "value_type_only",
+      "original_exact": false,
+      "pure_reorder_ok": false,
+      "effect_order_sensitivity_ok": false,
+      "capability_rejection_ok": false,
+      "throw_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "effect_tags",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "capability_effect_ledger",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "value_type_only",
+      "original_exact": false,
+      "pure_reorder_ok": false,
+      "effect_order_sensitivity_ok": false,
+      "capability_rejection_ok": false,
+      "throw_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "effect_tags",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "capability_effect_ledger",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "value_type_only",
+      "original_exact": false,
+      "pure_reorder_ok": false,
+      "effect_order_sensitivity_ok": false,
+      "capability_rejection_ok": false,
+      "throw_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "effect_tags",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "capability_effect_ledger",
+      "original_exact": true,
+      "pure_reorder_ok": true,
+      "effect_order_sensitivity_ok": true,
+      "capability_rejection_ok": true,
+      "throw_rejection_ok": true,
+      "placebo_ok": true
+    }
+  ]
+}

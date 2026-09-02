@@ -1,0 +1,90 @@
+{
+  "configs": [
+    {
+      "formula_terms": {
+        "byte_embedding": 131584,
+        "low_rank_attention": 2097152,
+        "low_rank_state_update": 1056768,
+        "module_descriptors": 8192,
+        "module_router": 532480,
+        "normalisation_and_bias": 16512,
+        "slot_queries": 8192,
+        "type_and_schema_heads": 2359296
+      },
+      "learned_parameters": 6210176,
+      "max_ledger_nodes": 32,
+      "module_count": 128,
+      "name": "byte_lowrank_ledger",
+      "named_mechanism_fraction": 0.46828946554815837,
+      "named_mechanism_parameters": 2908160,
+      "opaque_front_end_fraction": 0.5317105344518416,
+      "opaque_front_end_parameters": 3302016,
+      "under_40m": true
+    },
+    {
+      "formula_terms": {
+        "byte_embedding": 98688,
+        "low_rank_attention": 884736,
+        "low_rank_state_update": 446976,
+        "module_descriptors": 9216,
+        "module_router": 451584,
+        "normalisation_and_bias": 9408,
+        "slot_queries": 9216,
+        "type_and_schema_heads": 1474560
+      },
+      "learned_parameters": 3384384,
+      "max_ledger_nodes": 48,
+      "module_count": 192,
+      "name": "compact_graph_router",
+      "named_mechanism_fraction": 0.5745730980881603,
+      "named_mechanism_parameters": 1944576,
+      "opaque_front_end_fraction": 0.4254269019118398,
+      "opaque_front_end_parameters": 1439808,
+      "under_40m": true
+    },
+    {
+      "formula_terms": {
+        "byte_embedding": 65792,
+        "low_rank_attention": 262144,
+        "low_rank_state_update": 133120,
+        "module_descriptors": 8192,
+        "module_router": 270336,
+        "normalisation_and_bias": 4352,
+        "slot_queries": 8192,
+        "type_and_schema_heads": 786432
+      },
+      "learned_parameters": 1538560,
+      "max_ledger_nodes": 64,
+      "module_count": 256,
+      "name": "retrieval_heavy_router",
+      "named_mechanism_fraction": 0.697504159733777,
+      "named_mechanism_parameters": 1073152,
+      "opaque_front_end_fraction": 0.30249584026622295,
+      "opaque_front_end_parameters": 465408,
+      "under_40m": true
+    },
+    {
+      "formula_terms": {
+        "byte_embedding": 131584,
+        "low_rank_attention": 1179648,
+        "low_rank_state_update": 595968,
+        "module_descriptors": 16384,
+        "module_router": 540672,
+        "normalisation_and_bias": 12544,
+        "slot_queries": 8192,
+        "type_and_schema_heads": 2621440
+      },
+      "learned_parameters": 5106432,
+      "max_ledger_nodes": 32,
+      "module_count": 256,
+      "name": "wide_module_bank",
+      "named_mechanism_fraction": 0.6240537424174061,
+      "named_mechanism_parameters": 3186688,
+      "opaque_front_end_fraction": 0.37594625758259387,
+      "opaque_front_end_parameters": 1919744,
+      "under_40m": true
+    }
+  ],
+  "limit": 40000000,
+  "note": "Budget accounting only; no model was trained and no capability score is implied."
+}

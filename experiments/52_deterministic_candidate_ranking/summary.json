@@ -1,0 +1,164 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "input_order_argmax",
+    "float_rank",
+    "deterministic_exact"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 10,
+    "reorder": 14,
+    "near_tie": 15,
+    "invalid_filter": 10,
+    "semantic_tie": 10
+  },
+  "pass_rates": {
+    "original": 0.6667,
+    "reorder": 0.9333,
+    "near_tie": 1.0,
+    "invalid_filter": 0.6667,
+    "semantic_tie": 0.6667
+  },
+  "base_target": 1,
+  "near_tie_target": 1,
+  "invalid_high_score_target": 1,
+  "semantic_tie_target": 1,
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "input_order_argmax",
+      "original_exact": false,
+      "reorder_ok": false,
+      "near_tie_ok": true,
+      "invalid_filter_ok": false,
+      "semantic_tie_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "float_rank",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "deterministic_exact",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "input_order_argmax",
+      "original_exact": false,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": false,
+      "semantic_tie_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "float_rank",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "deterministic_exact",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "input_order_argmax",
+      "original_exact": false,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": false,
+      "semantic_tie_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "float_rank",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "deterministic_exact",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "input_order_argmax",
+      "original_exact": false,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": false,
+      "semantic_tie_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "float_rank",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "deterministic_exact",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "input_order_argmax",
+      "original_exact": false,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": false,
+      "semantic_tie_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "float_rank",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "deterministic_exact",
+      "original_exact": true,
+      "reorder_ok": true,
+      "near_tie_ok": true,
+      "invalid_filter_ok": true,
+      "semantic_tie_ok": true
+    }
+  ]
+}

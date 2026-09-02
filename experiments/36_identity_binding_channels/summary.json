@@ -1,0 +1,685 @@
+{
+  "aggregate": {
+    "hashed_slots": {
+      "16": {
+        "identity_correct": 0.46625,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 0.87
+      },
+      "32": {
+        "identity_correct": 0.26125,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 0.86875
+      },
+      "4": {
+        "identity_correct": 0.835,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 0.88625
+      },
+      "8": {
+        "identity_correct": 0.67875,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 0.87875
+      }
+    },
+    "opaque_residual": {
+      "16": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 0.0,
+        "relevant_state_change": 0.0
+      },
+      "32": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 0.0,
+        "relevant_state_change": 0.0
+      },
+      "4": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 0.0,
+        "relevant_state_change": 0.0
+      },
+      "8": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 0.0,
+        "relevant_state_change": 0.0
+      }
+    },
+    "typed_copy_table": {
+      "16": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 1.0
+      },
+      "32": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 1.0
+      },
+      "4": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 1.0
+      },
+      "8": {
+        "identity_correct": 1.0,
+        "placebo_preservation": 1.0,
+        "raw_path_invariance": 1.0,
+        "relevant_state_change": 1.0
+      }
+    }
+  },
+  "note": "Synthetic identity-channel probe; no learned model or benchmark was run.",
+  "runs": [
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.8625,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.88125,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.7,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.86875,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.4625,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.89375,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.29375,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.8625,
+      "seed": 11,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.85625,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.90625,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.7125,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.9125,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.40625,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.875,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.25,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.9,
+      "seed": 23,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.79375,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.85,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.725,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.875,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.48125,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.8625,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.2375,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.8375,
+      "seed": 37,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.85625,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.9125,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.63125,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.8625,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.525,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.8625,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.31875,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.9,
+      "seed": 41,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.80625,
+      "length": 4,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.88125,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.625,
+      "length": 8,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.875,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.45625,
+      "length": 16,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.85625,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "opaque_residual",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "typed_copy_table",
+      "identity_correct": 1.0,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 53,
+      "tasks": 160
+    },
+    {
+      "architecture": "hashed_slots",
+      "identity_correct": 0.20625,
+      "length": 32,
+      "placebo_preservation": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 0.84375,
+      "seed": 53,
+      "tasks": 160
+    }
+  ]
+}

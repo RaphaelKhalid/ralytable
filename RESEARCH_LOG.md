@@ -2,6 +2,64 @@
 
 Append-only. Dead ends stay in.
 
+## 2026-08-31 -- autoresearch heartbeat mechinterp-20260831T071743596Z-001
+
+Verdict: the bounded Experiment 17 reproducibility smoke audit passed, so the
+dependency-free trust-kernel and candidate path is operational on this
+checkout. No candidate was kept or reverted, no GPU job was launched, and no
+HumanEval+ or other scientific score was produced.
+
+Question/hypothesis: can the existing trust-kernel, ledger, AR0-AR2 recovery,
+receipt, evaluator-contract, and candidate smoke tests run from the current
+Windows checkout without changing frozen research code? Baseline/null: no
+model execution; raw learned, full-system, and deterministic-null scores are
+unmeasured, not zero claims. The current AR2 fixed MAP-Elites result remains
+the incumbent.
+
+Exact command and result:
+
+- `PYTHONDONTWRITEBYTECODE=1; C:\\Users\\rapha\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe -m unittest tools.autoresearch_next.tests.test_core -v` — 14 tests passed in 2.305 seconds (`OK`), including candidate learned-parameter and exact-trace-replay checks.
+
+Seed/config: the test suite uses its pre-existing fixed test seeds (including
+3, 11, 17, 101, 1201, and 1403); this is a smoke configuration, not a
+multi-seed experiment and not confirmatory evidence. Files changed by this
+invocation: this append-only log entry only; `autoresearch.lock` was a
+transient lease and was released normally.
+
+Validity/limitation: valid engineering smoke result. WSL remains unavailable
+(`wsl.exe -l -v` returned `E_ACCESSDENIED`), so the approved PyTorch/RTX 4060
+training route cannot be run from this host. The under-40M protocol remains a
+review draft and its GPU tournament remains gated on explicit approval. Next
+action: re-check WSL access and the validated training environment; if still
+blocked, perform the next bounded dependency/environment audit without
+launching model work.
+
+## 2026-08-31 -- autoresearch heartbeat 20260831T001245753-456ab4f1
+
+Verdict: the bounded reproducibility-audit iteration was skipped after an
+environment check found no usable local Python interpreter and WSL access
+denied. No scientific score was produced, no GPU job was launched, and no
+candidate was kept or reverted.
+
+Question/hypothesis: can the existing Experiment 17 trust-kernel,
+checkpoint/receipt, and candidate smoke tests run from this checkout without
+altering the frozen evaluator or benchmark contract? Baseline/null: no model
+execution; raw learned, full-system, and deterministic-null scores are all
+unmeasured (not zero claims).
+
+Exact commands and observations:
+
+- `PYTHONDONTWRITEBYTECODE=1; python -m unittest tools.autoresearch_next.tests.test_core -v` — failed before launch because `python` is not on PATH.
+- `Get-Command py,python3,python,uv,pixi` — only `uv.exe` was found.
+- `uv python list; uv python find --system` — cache initialization failed because `C:\Users\rapha\AppData\Local\uv\cache` already exists as a conflicting filesystem entry; no interpreter was found.
+- `wsl.exe -l -v` — denied with `E_ACCESSDENIED` while enumerating distributions.
+
+Validity/limitation: valid operational blocker record, not experiment evidence;
+no seed/config was executed. The existing under-40M protocol remains a review
+draft and its GPU run remains gated on explicit approval. Next action: on a
+future invocation, re-check for an already-installed interpreter or restored
+WSL access, then run the same bounded local audit before any model work.
+
 ## 2026-08-26 -- repo created
 
 Scoping. Direction chosen: reasoning-model interpretability, building on and then
@@ -125,3 +183,63 @@ fit is easy at this scale; the defensible product is the appliance, interaction,
 privacy, offline behavior, and legible record. Hardware work must not displace
 the model experiment, but model runs should record quantization damage, memory,
 latency, energy, and exportability.
+
+## 2026-08-31 -- autoresearch heartbeat mechinterp-20260831T072228495Z-31300
+
+Verdict: the bounded primary-environment recheck remains blocked by WSL
+service access denial. No model, GPU, HumanEval+, or proxy scientific score
+was produced; AR2 fixed MAP-Elites remains the incumbent.
+
+Question/hypothesis: is the previously validated WSL/PyTorch RTX 4060
+training environment available for the next approved under-40M experiment?
+Baseline/null: no model execution; raw learned, full-system, and
+deterministic-null scores are unmeasured, not zero claims.
+
+Exact commands and observations:
+
+- `wsl.exe --status` and `wsl.exe -l -v` — both returned
+  `Wsl/EnumerateDistros/Service/E_ACCESSDENIED`.
+- `wsl.exe --version` — WSL 2.7.12.0, kernel 6.18.33.2-2.
+- `wsl.exe -d Ubuntu --user root -- bash -lc "set -u; printf WSL_OK; uname -a; if test -x /home/rapha/ralytable-autoresearch-next/.venv/bin/python; then /home/rapha/ralytable-autoresearch-next/.venv/bin/python -c 'import torch; print(torch.__version__, torch.cuda.is_available(), torch.cuda.get_device_name(0), torch.cuda.is_bf16_supported())'; else echo TRAINING_VENV_MISSING; fi"` — failed immediately with `Wsl/Service/E_ACCESSDENIED`.
+- Cached Windows interpreter check — Python 3.12.13 is present, but importing
+  `torch` raises `ModuleNotFoundError`; no CUDA fallback is authorized.
+- `nvidia-smi --query-gpu=name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits` — RTX 4060 Laptop GPU, 2185 MiB used of 8188 MiB, 17% utilization; no research process was launched.
+
+Seed/config: none; this is an exploratory environment audit, not a
+multi-seed experiment or confirmatory result. Files changed by this
+invocation: this append-only log entry only; the durable lease was transient
+and released normally. The pre-existing `RESEARCH_LOG.md` changes were
+preserved.
+
+Validity/limitation: valid operational blocker record. The approved WSL
+training route remains unavailable, and the protocol explicitly says to stop
+WSL writes after the prior I/O failures; do not install another wheel, churn
+the VHD, or start the GPU tournament. Next action: re-check for restored WSL
+access or an already-installed validated environment on a later invocation;
+if still blocked, perform only a bounded dependency-free audit or document
+the unchanged blocker.
+
+## 2026-09-01 -- autonomous 40M interpretable-coder architecture loops
+
+The dedicated dated log is `RESEARCH_LOG_2026-09-01_to_2026-09-02.md`.
+Dependency-free loops 02–11 tested typed graph/ledger capacity, duplicate
+robustness, beam verification, no-bypass causality, field-level steganography,
+40M budget feasibility, compositional scaling, invariant pruning, and a
+proof-carrying runtime contract. No LLM was fine-tuned and no benchmark or
+Qwen score was produced.
+
+Current design decision: keep a typed program ledger with explicit dataflow,
+content-addressed deduplication, typed primitive modules, bounded hypothesis
+beam search, deterministic execution verification, conservative abstract
+invariants, field-level causal audits, and replayable receipts. The strongest
+negative result is that type legality alone does not supply semantic validation
+or meaningful search pruning; the strongest positive result is synthetic
+support for verifier-guided search and exact typed graph semantics.
+
+Do not claim fully interpretable T3 status until a learned front end passes raw
+path, relevant-state, placebo, and every-unused-field interventions. Do not
+claim parity with a 27B coder except on a frozen, explicitly scoped task
+distribution with retrieval, module coverage, verifier calls, and search
+budget reported separately. The PyTorch/WSL training environment remains
+unavailable on this host, so the next loop should continue with compiler/runtime
+semantics or a learned-parser surrogate without training an LLM.

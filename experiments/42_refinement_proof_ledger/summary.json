@@ -1,0 +1,179 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "base_type_checker",
+    "predicate_tags",
+    "proof_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 15,
+    "erase_proof": 5,
+    "wrong_proof": 5,
+    "annotation_corruption": 10,
+    "step_reorder": 15,
+    "placebo": 15
+  },
+  "pass_rates": {
+    "original": 1.0,
+    "erase_proof": 0.3333,
+    "wrong_proof": 0.3333,
+    "annotation_corruption": 0.6667,
+    "step_reorder": 1.0,
+    "placebo": 1.0
+  },
+  "base_target": true,
+  "erased_proof_target": false,
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "base_type_checker",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "predicate_tags",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": false,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "proof_ledger",
+      "original_exact": true,
+      "erase_proof_ok": true,
+      "wrong_proof_ok": true,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "base_type_checker",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "predicate_tags",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": false,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "proof_ledger",
+      "original_exact": true,
+      "erase_proof_ok": true,
+      "wrong_proof_ok": true,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "base_type_checker",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "predicate_tags",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": false,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "proof_ledger",
+      "original_exact": true,
+      "erase_proof_ok": true,
+      "wrong_proof_ok": true,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "base_type_checker",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "predicate_tags",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": false,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "proof_ledger",
+      "original_exact": true,
+      "erase_proof_ok": true,
+      "wrong_proof_ok": true,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "base_type_checker",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "predicate_tags",
+      "original_exact": true,
+      "erase_proof_ok": false,
+      "wrong_proof_ok": false,
+      "annotation_corruption_ok": false,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "proof_ledger",
+      "original_exact": true,
+      "erase_proof_ok": true,
+      "wrong_proof_ok": true,
+      "annotation_corruption_ok": true,
+      "step_reorder_ok": true,
+      "placebo_ok": true
+    }
+  ]
+}

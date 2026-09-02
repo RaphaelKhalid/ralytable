@@ -1,0 +1,222 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "position_sequence",
+    "flat_name_map",
+    "scoped_name_map",
+    "scoped_typed_ledger"
+  ],
+  "total_architecture_runs": 20,
+  "pass_counts": {
+    "original": 10,
+    "alpha_rename": 20,
+    "reorder": 10,
+    "binding_change": 20,
+    "placebo": 10
+  },
+  "pass_rates": {
+    "original": 0.5,
+    "alpha_rename": 1.0,
+    "reorder": 0.5,
+    "binding_change": 1.0,
+    "placebo": 0.5
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "position_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "flat_name_map",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "scoped_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "scoped_typed_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "position_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "flat_name_map",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "scoped_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "scoped_typed_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "position_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "flat_name_map",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "scoped_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "scoped_typed_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "position_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "flat_name_map",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "scoped_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "scoped_typed_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "position_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "flat_name_map",
+      "original_exact": false,
+      "alpha_rename_ok": true,
+      "reorder_ok": false,
+      "binding_change_ok": true,
+      "placebo_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "scoped_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "scoped_typed_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "reorder_ok": true,
+      "binding_change_ok": true,
+      "placebo_ok": true
+    }
+  ],
+  "targets": {
+    "original": [
+      0,
+      1,
+      2,
+      1,
+      3
+    ],
+    "binding_change": [
+      0,
+      1,
+      2,
+      0,
+      3
+    ]
+  }
+}

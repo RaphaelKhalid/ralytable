@@ -1,0 +1,184 @@
+{
+  "policies": [
+    "single_execution",
+    "majority",
+    "unanimous"
+  ],
+  "base_metrics": {
+    "single_execution": {
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "disagreements_emitted": 2
+    },
+    "majority": {
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "disagreements_emitted": 3
+    },
+    "unanimous": {
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "disagreements_emitted": 0
+    }
+  },
+  "averaged_metrics": {
+    "single_execution": {
+      "coverage": 0.625,
+      "risk": 0.4,
+      "disagreements_emitted": 2.0
+    },
+    "majority": {
+      "coverage": 0.75,
+      "risk": 0.5,
+      "disagreements_emitted": 3.0
+    },
+    "unanimous": {
+      "coverage": 0.375,
+      "risk": 0.0,
+      "disagreements_emitted": 0.0
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "policy": "single_execution",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "disagreements_emitted": 2
+    },
+    {
+      "seed": 0,
+      "policy": "majority",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "disagreements_emitted": 3
+    },
+    {
+      "seed": 0,
+      "policy": "unanimous",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "disagreements_emitted": 0
+    },
+    {
+      "seed": 1,
+      "policy": "single_execution",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "disagreements_emitted": 2
+    },
+    {
+      "seed": 1,
+      "policy": "majority",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "disagreements_emitted": 3
+    },
+    {
+      "seed": 1,
+      "policy": "unanimous",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "disagreements_emitted": 0
+    },
+    {
+      "seed": 2,
+      "policy": "single_execution",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "disagreements_emitted": 2
+    },
+    {
+      "seed": 2,
+      "policy": "majority",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "disagreements_emitted": 3
+    },
+    {
+      "seed": 2,
+      "policy": "unanimous",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "disagreements_emitted": 0
+    },
+    {
+      "seed": 3,
+      "policy": "single_execution",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "disagreements_emitted": 2
+    },
+    {
+      "seed": 3,
+      "policy": "majority",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "disagreements_emitted": 3
+    },
+    {
+      "seed": 3,
+      "policy": "unanimous",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "disagreements_emitted": 0
+    },
+    {
+      "seed": 4,
+      "policy": "single_execution",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "disagreements_emitted": 2
+    },
+    {
+      "seed": 4,
+      "policy": "majority",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "disagreements_emitted": 3
+    },
+    {
+      "seed": 4,
+      "policy": "unanimous",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "disagreements_emitted": 0
+    }
+  ]
+}

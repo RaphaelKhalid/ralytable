@@ -1,0 +1,155 @@
+{
+  "architectures": [
+    "constant_shortcut",
+    "surface_sensitive",
+    "semantic_evaluator"
+  ],
+  "suite_size": 5,
+  "base_output": 7,
+  "leak_findings_clean": [],
+  "leak_findings_contaminated": [
+    "alpha_rename"
+  ],
+  "base_scores": {
+    "constant_shortcut": {
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    "surface_sensitive": {
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    "semantic_evaluator": {
+      "preserve_pass": 2,
+      "change_pass": 3,
+      "total_preserve": 2,
+      "total_change": 3
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "constant_shortcut",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 0,
+      "architecture": "surface_sensitive",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 0,
+      "architecture": "semantic_evaluator",
+      "preserve_pass": 2,
+      "change_pass": 3,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 1,
+      "architecture": "constant_shortcut",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 1,
+      "architecture": "surface_sensitive",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 1,
+      "architecture": "semantic_evaluator",
+      "preserve_pass": 2,
+      "change_pass": 3,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 2,
+      "architecture": "constant_shortcut",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 2,
+      "architecture": "surface_sensitive",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 2,
+      "architecture": "semantic_evaluator",
+      "preserve_pass": 2,
+      "change_pass": 3,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 3,
+      "architecture": "constant_shortcut",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 3,
+      "architecture": "surface_sensitive",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 3,
+      "architecture": "semantic_evaluator",
+      "preserve_pass": 2,
+      "change_pass": 3,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 4,
+      "architecture": "constant_shortcut",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 4,
+      "architecture": "surface_sensitive",
+      "preserve_pass": 2,
+      "change_pass": 0,
+      "total_preserve": 2,
+      "total_change": 3
+    },
+    {
+      "seed": 4,
+      "architecture": "semantic_evaluator",
+      "preserve_pass": 2,
+      "change_pass": 3,
+      "total_preserve": 2,
+      "total_change": 3
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "clean_accepted": 100,
+  "clean_records": 100,
+  "contaminated_records": 4,
+  "contaminated_rejected": 4,
+  "loss_contract": {
+    "answer_bits": false,
+    "counterfactual": 0.5,
+    "graph": 1.0,
+    "hidden_tests": false,
+    "raw_renderer_bypass": false,
+    "replay": 0.5,
+    "unused_field": 0.25
+  },
+  "note": "Schema smoke audit only; no model was trained and no benchmark was run."
+}

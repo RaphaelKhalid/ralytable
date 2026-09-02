@@ -1,0 +1,302 @@
+{
+  "aggregate": {
+    "confidence_router": {
+      "confidence_invariance": {
+        "mean": 0.641875,
+        "seed_sd": 0.04590666482113464
+      },
+      "field_level_gate": {
+        "mean": 0.583125,
+        "seed_sd": 0.0452100134096419
+      },
+      "metadata_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "provenance_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "semantic_change": {
+        "mean": 0.760625,
+        "seed_sd": 0.02729683475240305
+      }
+    },
+    "metadata_router": {
+      "confidence_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "field_level_gate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "metadata_invariance": {
+        "mean": 0.264375,
+        "seed_sd": 0.02817703519712463
+      },
+      "provenance_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "semantic_change": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      }
+    },
+    "provenance_router": {
+      "confidence_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "field_level_gate": {
+        "mean": 0.24625,
+        "seed_sd": 0.026089539330927256
+      },
+      "metadata_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "provenance_invariance": {
+        "mean": 0.24625,
+        "seed_sd": 0.026089539330927256
+      },
+      "semantic_change": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      }
+    },
+    "semantic_renderer": {
+      "confidence_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "field_level_gate": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "metadata_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "provenance_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "semantic_change": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      }
+    }
+  },
+  "note": "Synthetic ledger-field audit; no learned model or benchmark was run.",
+  "runs": [
+    {
+      "architecture": "semantic_renderer",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 1.0,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 11,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "metadata_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.0,
+      "metadata_invariance": 0.275,
+      "provenance_invariance": 1.0,
+      "seed": 11,
+      "semantic_change": 0.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "provenance_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.221875,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 0.221875,
+      "seed": 11,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "confidence_router",
+      "confidence_invariance": 0.7125,
+      "field_level_gate": 0.653125,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 11,
+      "semantic_change": 0.79375,
+      "tasks": 320
+    },
+    {
+      "architecture": "semantic_renderer",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 1.0,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 23,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "metadata_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.0,
+      "metadata_invariance": 0.284375,
+      "provenance_invariance": 1.0,
+      "seed": 23,
+      "semantic_change": 0.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "provenance_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.25625,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 0.25625,
+      "seed": 23,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "confidence_router",
+      "confidence_invariance": 0.6125,
+      "field_level_gate": 0.54375,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 23,
+      "semantic_change": 0.721875,
+      "tasks": 320
+    },
+    {
+      "architecture": "semantic_renderer",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 1.0,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 37,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "metadata_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.0,
+      "metadata_invariance": 0.29375,
+      "provenance_invariance": 1.0,
+      "seed": 37,
+      "semantic_change": 0.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "provenance_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.275,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 0.275,
+      "seed": 37,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "confidence_router",
+      "confidence_invariance": 0.621875,
+      "field_level_gate": 0.553125,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 37,
+      "semantic_change": 0.746875,
+      "tasks": 320
+    },
+    {
+      "architecture": "semantic_renderer",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 1.0,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 41,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "metadata_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.0,
+      "metadata_invariance": 0.234375,
+      "provenance_invariance": 1.0,
+      "seed": 41,
+      "semantic_change": 0.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "provenance_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.2625,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 0.2625,
+      "seed": 41,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "confidence_router",
+      "confidence_invariance": 0.6625,
+      "field_level_gate": 0.603125,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 41,
+      "semantic_change": 0.76875,
+      "tasks": 320
+    },
+    {
+      "architecture": "semantic_renderer",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 1.0,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 53,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "metadata_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.0,
+      "metadata_invariance": 0.234375,
+      "provenance_invariance": 1.0,
+      "seed": 53,
+      "semantic_change": 0.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "provenance_router",
+      "confidence_invariance": 1.0,
+      "field_level_gate": 0.215625,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 0.215625,
+      "seed": 53,
+      "semantic_change": 1.0,
+      "tasks": 320
+    },
+    {
+      "architecture": "confidence_router",
+      "confidence_invariance": 0.6,
+      "field_level_gate": 0.5625,
+      "metadata_invariance": 1.0,
+      "provenance_invariance": 1.0,
+      "seed": 53,
+      "semantic_change": 0.771875,
+      "tasks": 320
+    }
+  ],
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    53
+  ]
+}

@@ -1,0 +1,464 @@
+{
+  "aggregate": {
+    "beam1_none": {
+      "exact_graph_mean": 0.11750000000000001,
+      "hidden_pass_mean": 0.31125,
+      "hidden_pass_seed_sd": 0.03289424341735192
+    },
+    "beam1_public_execution": {
+      "exact_graph_mean": 0.11750000000000001,
+      "hidden_pass_mean": 0.285,
+      "hidden_pass_seed_sd": 0.026368778887161236
+    },
+    "beam1_type": {
+      "exact_graph_mean": 0.11750000000000001,
+      "hidden_pass_mean": 0.31125,
+      "hidden_pass_seed_sd": 0.03289424341735192
+    },
+    "beam4_none": {
+      "exact_graph_mean": 0.11750000000000001,
+      "hidden_pass_mean": 0.31125,
+      "hidden_pass_seed_sd": 0.03289424341735192
+    },
+    "beam4_public_execution": {
+      "exact_graph_mean": 0.31375,
+      "hidden_pass_mean": 0.66375,
+      "hidden_pass_seed_sd": 0.04248161366991608
+    },
+    "beam4_type": {
+      "exact_graph_mean": 0.14250000000000002,
+      "hidden_pass_mean": 0.36875,
+      "hidden_pass_seed_sd": 0.012500000000000004
+    },
+    "beam8_none": {
+      "exact_graph_mean": 0.11750000000000001,
+      "hidden_pass_mean": 0.31125,
+      "hidden_pass_seed_sd": 0.03289424341735192
+    },
+    "beam8_public_execution": {
+      "exact_graph_mean": 0.41625,
+      "hidden_pass_mean": 0.79,
+      "hidden_pass_seed_sd": 0.02951429738279397
+    },
+    "beam8_type": {
+      "exact_graph_mean": 0.14250000000000002,
+      "hidden_pass_mean": 0.36875,
+      "hidden_pass_seed_sd": 0.012500000000000004
+    }
+  },
+  "note": "Synthetic hypothesis beam; no learned model or benchmark was run.",
+  "runs": [
+    {
+      "beam": 1,
+      "exact_graph": 0.09375,
+      "hidden_pass": 0.275,
+      "seed": 11,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.09375,
+      "hidden_pass": 0.275,
+      "seed": 11,
+      "selected": 128,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.09375,
+      "hidden_pass": 0.25625,
+      "seed": 11,
+      "selected": 57,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.09375,
+      "hidden_pass": 0.275,
+      "seed": 11,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.1375,
+      "hidden_pass": 0.375,
+      "seed": 11,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.26875,
+      "hidden_pass": 0.6,
+      "seed": 11,
+      "selected": 134,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.09375,
+      "hidden_pass": 0.275,
+      "seed": 11,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.1375,
+      "hidden_pass": 0.375,
+      "seed": 11,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.38125,
+      "hidden_pass": 0.74375,
+      "seed": 11,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.14375,
+      "hidden_pass": 0.35625,
+      "seed": 23,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.14375,
+      "hidden_pass": 0.35625,
+      "seed": 23,
+      "selected": 147,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.14375,
+      "hidden_pass": 0.31875,
+      "seed": 23,
+      "selected": 71,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.14375,
+      "hidden_pass": 0.35625,
+      "seed": 23,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.16875,
+      "hidden_pass": 0.3875,
+      "seed": 23,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.35625,
+      "hidden_pass": 0.71875,
+      "seed": 23,
+      "selected": 144,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.14375,
+      "hidden_pass": 0.35625,
+      "seed": 23,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.16875,
+      "hidden_pass": 0.3875,
+      "seed": 23,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.41875,
+      "hidden_pass": 0.79375,
+      "seed": 23,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1125,
+      "hidden_pass": 0.30625,
+      "seed": 37,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1125,
+      "hidden_pass": 0.30625,
+      "seed": 37,
+      "selected": 137,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1125,
+      "hidden_pass": 0.275,
+      "seed": 37,
+      "selected": 55,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.1125,
+      "hidden_pass": 0.30625,
+      "seed": 37,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.13125,
+      "hidden_pass": 0.35625,
+      "seed": 37,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.2875,
+      "hidden_pass": 0.6625,
+      "seed": 37,
+      "selected": 133,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.1125,
+      "hidden_pass": 0.30625,
+      "seed": 37,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.13125,
+      "hidden_pass": 0.35625,
+      "seed": 37,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.43125,
+      "hidden_pass": 0.825,
+      "seed": 37,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1375,
+      "hidden_pass": 0.33125,
+      "seed": 41,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1375,
+      "hidden_pass": 0.33125,
+      "seed": 41,
+      "selected": 134,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1375,
+      "hidden_pass": 0.30625,
+      "seed": 41,
+      "selected": 68,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.1375,
+      "hidden_pass": 0.33125,
+      "seed": 41,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.15,
+      "hidden_pass": 0.3625,
+      "seed": 41,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.35,
+      "hidden_pass": 0.6625,
+      "seed": 41,
+      "selected": 138,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.1375,
+      "hidden_pass": 0.33125,
+      "seed": 41,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.15,
+      "hidden_pass": 0.3625,
+      "seed": 41,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.45,
+      "hidden_pass": 0.7875,
+      "seed": 41,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1,
+      "hidden_pass": 0.2875,
+      "seed": 53,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1,
+      "hidden_pass": 0.2875,
+      "seed": 53,
+      "selected": 134,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 1,
+      "exact_graph": 0.1,
+      "hidden_pass": 0.26875,
+      "seed": 53,
+      "selected": 61,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.1,
+      "hidden_pass": 0.2875,
+      "seed": 53,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.125,
+      "hidden_pass": 0.3625,
+      "seed": 53,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 4,
+      "exact_graph": 0.30625,
+      "hidden_pass": 0.675,
+      "seed": 53,
+      "selected": 137,
+      "tasks": 160,
+      "verifier": "public_execution"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.1,
+      "hidden_pass": 0.2875,
+      "seed": 53,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "none"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.125,
+      "hidden_pass": 0.3625,
+      "seed": 53,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "type"
+    },
+    {
+      "beam": 8,
+      "exact_graph": 0.4,
+      "hidden_pass": 0.8,
+      "seed": 53,
+      "selected": 160,
+      "tasks": 160,
+      "verifier": "public_execution"
+    }
+  ],
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    53
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "hard_constraints": {
+    "parameter_cap": 40000000,
+    "opaque_residual_bypass": 0,
+    "learned_state_roles": [
+      "byte_parser",
+      "typed_graph_router",
+      "typed_module_bank",
+      "retrieval_interfaces",
+      "typed_effect_verifier_heads",
+      "explicit_copy_channel"
+    ]
+  },
+  "rows": [
+    {
+      "name": "lean_parser",
+      "config": {
+        "name": "lean_parser",
+        "hidden": 384,
+        "feedforward": 1536,
+        "parser_layers": 8,
+        "router_hidden": 256,
+        "router_layers": 3,
+        "module_count": 64,
+        "module_width": 128,
+        "verifier_heads": 4
+      },
+      "components": {
+        "byte_parser": 14281728,
+        "typed_graph_router": 2428672,
+        "typed_module_bank": 6356992,
+        "retrieval_interfaces": 296448,
+        "typed_effect_verifier_heads": 295680,
+        "explicit_copy_channel": 40960,
+        "total_learned": 23700480,
+        "opaque_residual_bypass": 0,
+        "headroom_to_40m": 16299520
+      },
+      "under_40m": true
+    },
+    {
+      "name": "balanced_ledger",
+      "config": {
+        "name": "balanced_ledger",
+        "hidden": 448,
+        "feedforward": 1792,
+        "parser_layers": 8,
+        "router_hidden": 288,
+        "router_layers": 4,
+        "module_count": 96,
+        "module_width": 160,
+        "verifier_heads": 6
+      },
+      "components": {
+        "byte_parser": 19414528,
+        "typed_graph_router": 4060800,
+        "typed_module_bank": 13882368,
+        "retrieval_interfaces": 403200,
+        "typed_effect_verifier_heads": 459776,
+        "explicit_copy_channel": 45056,
+        "total_learned": 38265728,
+        "opaque_residual_bypass": 0,
+        "headroom_to_40m": 1734272
+      },
+      "under_40m": true
+    },
+    {
+      "name": "verifier_heavy",
+      "config": {
+        "name": "verifier_heavy",
+        "hidden": 384,
+        "feedforward": 1536,
+        "parser_layers": 6,
+        "router_hidden": 320,
+        "router_layers": 5,
+        "module_count": 80,
+        "module_width": 160,
+        "verifier_heads": 12
+      },
+      "components": {
+        "byte_parser": 10735872,
+        "typed_graph_router": 6233920,
+        "typed_module_bank": 9925120,
+        "retrieval_interfaces": 296448,
+        "typed_effect_verifier_heads": 689920,
+        "explicit_copy_channel": 40960,
+        "total_learned": 27922240,
+        "opaque_residual_bypass": 0,
+        "headroom_to_40m": 12077760
+      },
+      "under_40m": true
+    }
+  ],
+  "all_under_cap": true
+}

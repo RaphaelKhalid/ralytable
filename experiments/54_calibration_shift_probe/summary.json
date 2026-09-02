@@ -1,0 +1,346 @@
+{
+  "source_threshold_for_10_percent_risk": 92,
+  "policies": {
+    "confidence_fixed_80": [
+      80,
+      false
+    ],
+    "source_calibrated": [
+      92,
+      false
+    ],
+    "source_calibrated_plus_verifier": [
+      92,
+      true
+    ]
+  },
+  "source_metrics": {
+    "confidence_fixed_80": {
+      "emitted": 6,
+      "coverage": 0.6,
+      "errors": 2,
+      "risk": 0.3333
+    },
+    "source_calibrated": {
+      "emitted": 2,
+      "coverage": 0.2,
+      "errors": 0,
+      "risk": 0.0
+    },
+    "source_calibrated_plus_verifier": {
+      "emitted": 2,
+      "coverage": 0.2,
+      "errors": 0,
+      "risk": 0.0
+    }
+  },
+  "shifted_metrics": {
+    "confidence_fixed_80": {
+      "emitted": 7,
+      "coverage": 0.7,
+      "errors": 4,
+      "risk": 0.5714
+    },
+    "source_calibrated": {
+      "emitted": 2,
+      "coverage": 0.2,
+      "errors": 2,
+      "risk": 1.0
+    },
+    "source_calibrated_plus_verifier": {
+      "emitted": 0,
+      "coverage": 0.0,
+      "errors": 0,
+      "risk": 0.0
+    }
+  },
+  "averaged_metrics": {
+    "confidence_fixed_80": {
+      "coverage": 0.6,
+      "risk": 0.3333,
+      "shift_risk": 0.5714
+    },
+    "source_calibrated": {
+      "coverage": 0.2,
+      "risk": 0.0,
+      "shift_risk": 1.0
+    },
+    "source_calibrated_plus_verifier": {
+      "coverage": 0.2,
+      "risk": 0.0,
+      "shift_risk": 0.0
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "policy": "confidence_fixed_80",
+      "threshold": 80,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 6,
+        "coverage": 0.6,
+        "errors": 2,
+        "risk": 0.3333
+      },
+      "shifted": {
+        "emitted": 7,
+        "coverage": 0.7,
+        "errors": 4,
+        "risk": 0.5714
+      }
+    },
+    {
+      "seed": 0,
+      "policy": "source_calibrated",
+      "threshold": 92,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 2,
+        "risk": 1.0
+      }
+    },
+    {
+      "seed": 0,
+      "policy": "source_calibrated_plus_verifier",
+      "threshold": 92,
+      "verifier_gate": true,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 0,
+        "coverage": 0.0,
+        "errors": 0,
+        "risk": 0.0
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "confidence_fixed_80",
+      "threshold": 80,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 6,
+        "coverage": 0.6,
+        "errors": 2,
+        "risk": 0.3333
+      },
+      "shifted": {
+        "emitted": 7,
+        "coverage": 0.7,
+        "errors": 4,
+        "risk": 0.5714
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "source_calibrated",
+      "threshold": 92,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 2,
+        "risk": 1.0
+      }
+    },
+    {
+      "seed": 1,
+      "policy": "source_calibrated_plus_verifier",
+      "threshold": 92,
+      "verifier_gate": true,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 0,
+        "coverage": 0.0,
+        "errors": 0,
+        "risk": 0.0
+      }
+    },
+    {
+      "seed": 2,
+      "policy": "confidence_fixed_80",
+      "threshold": 80,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 6,
+        "coverage": 0.6,
+        "errors": 2,
+        "risk": 0.3333
+      },
+      "shifted": {
+        "emitted": 7,
+        "coverage": 0.7,
+        "errors": 4,
+        "risk": 0.5714
+      }
+    },
+    {
+      "seed": 2,
+      "policy": "source_calibrated",
+      "threshold": 92,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 2,
+        "risk": 1.0
+      }
+    },
+    {
+      "seed": 2,
+      "policy": "source_calibrated_plus_verifier",
+      "threshold": 92,
+      "verifier_gate": true,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 0,
+        "coverage": 0.0,
+        "errors": 0,
+        "risk": 0.0
+      }
+    },
+    {
+      "seed": 3,
+      "policy": "confidence_fixed_80",
+      "threshold": 80,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 6,
+        "coverage": 0.6,
+        "errors": 2,
+        "risk": 0.3333
+      },
+      "shifted": {
+        "emitted": 7,
+        "coverage": 0.7,
+        "errors": 4,
+        "risk": 0.5714
+      }
+    },
+    {
+      "seed": 3,
+      "policy": "source_calibrated",
+      "threshold": 92,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 2,
+        "risk": 1.0
+      }
+    },
+    {
+      "seed": 3,
+      "policy": "source_calibrated_plus_verifier",
+      "threshold": 92,
+      "verifier_gate": true,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 0,
+        "coverage": 0.0,
+        "errors": 0,
+        "risk": 0.0
+      }
+    },
+    {
+      "seed": 4,
+      "policy": "confidence_fixed_80",
+      "threshold": 80,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 6,
+        "coverage": 0.6,
+        "errors": 2,
+        "risk": 0.3333
+      },
+      "shifted": {
+        "emitted": 7,
+        "coverage": 0.7,
+        "errors": 4,
+        "risk": 0.5714
+      }
+    },
+    {
+      "seed": 4,
+      "policy": "source_calibrated",
+      "threshold": 92,
+      "verifier_gate": false,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 2,
+        "risk": 1.0
+      }
+    },
+    {
+      "seed": 4,
+      "policy": "source_calibrated_plus_verifier",
+      "threshold": 92,
+      "verifier_gate": true,
+      "source": {
+        "emitted": 2,
+        "coverage": 0.2,
+        "errors": 0,
+        "risk": 0.0
+      },
+      "shifted": {
+        "emitted": 0,
+        "coverage": 0.0,
+        "errors": 0,
+        "risk": 0.0
+      }
+    }
+  ]
+}

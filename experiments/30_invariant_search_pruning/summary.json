@@ -1,0 +1,212 @@
+{
+  "note": "Abstract-state search model only; no learned model or benchmark was run.",
+  "rows": [
+    {
+      "depth": 4,
+      "mode": "unrestricted",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320
+      ],
+      "total_nodes": 426
+    },
+    {
+      "depth": 4,
+      "mode": "typed",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320
+      ],
+      "total_nodes": 426
+    },
+    {
+      "depth": 4,
+      "mode": "invariant",
+      "nodes_by_level": [
+        1,
+        5,
+        18,
+        61,
+        206
+      ],
+      "total_nodes": 291
+    },
+    {
+      "depth": 6,
+      "mode": "unrestricted",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320,
+        1280,
+        5120
+      ],
+      "total_nodes": 6826
+    },
+    {
+      "depth": 6,
+      "mode": "typed",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320,
+        1280,
+        5120
+      ],
+      "total_nodes": 6826
+    },
+    {
+      "depth": 6,
+      "mode": "invariant",
+      "nodes_by_level": [
+        1,
+        5,
+        18,
+        61,
+        206,
+        694,
+        2336
+      ],
+      "total_nodes": 3321
+    },
+    {
+      "depth": 8,
+      "mode": "unrestricted",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320,
+        1280,
+        5120,
+        20480,
+        81920
+      ],
+      "total_nodes": 109226
+    },
+    {
+      "depth": 8,
+      "mode": "typed",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320,
+        1280,
+        5120,
+        20480,
+        81920
+      ],
+      "total_nodes": 109226
+    },
+    {
+      "depth": 8,
+      "mode": "invariant",
+      "nodes_by_level": [
+        1,
+        5,
+        18,
+        61,
+        206,
+        694,
+        2336,
+        7862,
+        26458
+      ],
+      "total_nodes": 37641
+    },
+    {
+      "depth": 10,
+      "mode": "unrestricted",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320,
+        1280,
+        5120,
+        20480,
+        81920,
+        327680,
+        1310720
+      ],
+      "total_nodes": 1747626
+    },
+    {
+      "depth": 10,
+      "mode": "typed",
+      "nodes_by_level": [
+        1,
+        5,
+        20,
+        80,
+        320,
+        1280,
+        5120,
+        20480,
+        81920,
+        327680,
+        1310720
+      ],
+      "total_nodes": 1747626
+    },
+    {
+      "depth": 10,
+      "mode": "invariant",
+      "nodes_by_level": [
+        1,
+        5,
+        18,
+        61,
+        206,
+        694,
+        2336,
+        7862,
+        26458,
+        89038,
+        299634
+      ],
+      "total_nodes": 426313
+    }
+  ],
+  "target_completeness": [
+    {
+      "invariant": 1.0,
+      "seed": 11,
+      "typed": 1.0
+    },
+    {
+      "invariant": 1.0,
+      "seed": 23,
+      "typed": 1.0
+    },
+    {
+      "invariant": 1.0,
+      "seed": 37,
+      "typed": 1.0
+    },
+    {
+      "invariant": 1.0,
+      "seed": 41,
+      "typed": 1.0
+    },
+    {
+      "invariant": 1.0,
+      "seed": 53,
+      "typed": 1.0
+    }
+  ]
+}

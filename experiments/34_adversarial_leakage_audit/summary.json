@@ -1,0 +1,7 @@
+{
+  "clean_accepted": 2,
+  "clean_records": 2,
+  "contaminated_records": 3,
+  "contaminated_rejected": 3,
+  "note": "Adversarial schema audit only; no model or benchmark was run."
+}

@@ -98,6 +98,26 @@ def contract_for(arm: str, index: int, parent: str | None = None) -> CandidateCo
                              files_changed=(), config=config)
 
 
+def next_candidate_index(snapshot: dict[str, Any], arm: str) -> int:
+    """Return the first unused candidate index for an arm in an existing run.
+
+    Runs are intentionally append-only and may be invoked repeatedly through
+    the overnight scheduler. Candidate IDs therefore must not restart at zero
+    when ACTIVE_RUN points at an already-populated ledger, including after a
+    partial attempt has left a failed or running row behind.
+    """
+    prefix = f"{arm}-"
+    used: list[int] = []
+    for row in snapshot.get("experiments", []):
+        if row.get("arm") != arm:
+            continue
+        candidate_id = str(row.get("candidate_id", ""))
+        suffix = candidate_id[len(prefix):] if candidate_id.startswith(prefix) else ""
+        if suffix.isdigit():
+            used.append(int(suffix))
+    return max(used, default=-1) + 1
+
+
 def do_run(args: argparse.Namespace) -> None:
     run_id, path, ledger = load_or_create_run(args.root)
     if not (path / "partitions.json").exists():
@@ -106,10 +126,13 @@ def do_run(args: argparse.Namespace) -> None:
     ledger.event(run_id, "execution_environment", {"requested": args.environment, "use_wsl_subprocess": use_wsl, "orchestrator_host": "wsl" if os.name != "nt" else "windows", "torch_venv": "/home/rapha/ralytable-autoresearch-next/.venv/bin/python" if args.environment == "wsl" else None})
     runner = ExperimentRunner(repo_root(), path / "artifacts", ledger, run_id, use_wsl=use_wsl)
     arms = ["greedy", "evolve"] if args.arm == "both" else [args.arm]
+    initial_snapshot = ledger.snapshot(run_id)
     for arm in arms:
         leader = None
         completed_results = []
-        for i in range(args.experiments):
+        start_index = next_candidate_index(initial_snapshot, arm)
+        for offset in range(args.experiments):
+            i = start_index + offset
             contract = contract_for(arm, i, leader if arm == "evolve" else None)
             result = runner.run_one(arm, contract, args.seconds, 1000 + i, json.loads((path / "partitions.json").read_text(encoding="utf-8")))
             completed_results.append(result)
