@@ -4,6 +4,18 @@ Ralytable is a research project about building models with typed, inspectable in
 
 The central question is whether making a model's internal structure explicit can make its computation easier to inspect without giving up too much capability. That has not been established. The current discrete model performed worse than its matched dense control, and the compiler can type-check programs but cannot run them yet.
 
+## Flagship research story
+
+**I tried to build an AI I could understand. It failed. Then I built the test
+the next one would have to pass.**
+
+The discrete model's failure changed the project from a search for readable
+symbols into a stricter investigation of causal auditability: does an answer
+actually depend on the structure the system exposes, or is that structure only
+decoration? The concise synthesis is in
+[docs/flagship-research-brief.md](docs/flagship-research-brief.md), and the
+interactive version is the site landing page.
+
 See [ROADMAP.md](ROADMAP.md) for the current plan, open questions, and risks.
 
 ## Try it

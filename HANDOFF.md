@@ -5,6 +5,184 @@ anything. Read `CLAUDE.md` (or `AGENTS.md`, same content) first: it holds the
 methodology rules, each written after a result here turned out wrong in that
 exact way.
 
+## 2026-09-02 flagship application artifact handoff
+
+The immediate application-facing deliverable is now one coherent public story,
+not another experiment: **Readable is not reliable.** The homepage opens with
+the failed discrete TinyStories model, shows the identity-drift failure, then
+lets a visitor test whether an explanation is merely readable or actually
+load-bearing by erasing it, changing a real reason, or changing an unused note.
+
+### Files deliberately changed in this pass
+
+- `site/index.html` — canonical static homepage.
+- `site/.openai/hosting.json` — private Sites project metadata for the live
+  application preview.
+- `web/index.html` — exact mirror of `site/index.html` for the existing Vercel
+  configuration.
+- `docs/flagship-research-brief.md` — concise claim/evidence/limitations brief.
+- `README.md` — points readers to the flagship story and brief.
+- `HANDOFF.md` — this section only.
+
+Do not fold the unrelated dirty research tree into this work. In particular,
+the pre-existing edits in `RESEARCH_LOG.md`, `tools/autoresearch_next/`, and the
+untracked experiment/preregistration directories were preserved.
+
+### Claim boundary
+
+The strongest supported claim is that the repository contains concrete,
+falsification-oriented evidence for design requirements on a future typed causal
+ledger. It does **not** contain a trained typed-ledger coding model, a public
+coding-benchmark result, or evidence of parity with Qwen or any 27B model. Those
+limitations are prominent on both the page and the brief.
+
+### Verification completed
+
+- The two published source trees are byte-identical.
+- The visible flagship story was reduced from 1,001 to 444 words (a 55.6%
+  reduction), while preserving the interactive causal test and limitations.
+- Headings and prose now use the bundled KaTeX/Computer Modern face; compact
+  experiment labels remain monospaced.
+- The page serves successfully as a dependency-free static site and its inline
+  JavaScript parses successfully.
+- The seven probes cited by the page were rerun: causal no-bypass, field
+  steganography, scoped identity, calibration shift, equivalence-aware splitting,
+  typed composition, and the under-40M parameter budget.
+- The cited headline values reproduced: `85.4%`, `21/21` versus `0/21`, `25/25`,
+  `7.4/12` versus `0/12`, and `38,265,728` learned parameters with zero opaque
+  residual bypass.
+- `git diff --check` passed; only the repository's existing line-ending warnings
+  appeared.
+- A private production preview was created at
+  `https://ralytable-readable-not-reliable.raphaelbahadurkhan.chatgpt.site`.
+  It remains owner-only until the user explicitly approves public access.
+- The canonical public reviewer URL is `https://ralytable.vercel.app/`; deploy
+  the `web/` tree there from `main` rather than sharing the private preview.
+
+### Next falsifiable research step
+
+Run the preregistered flat/null baseline against a learned structured
+typed-ledger variant on grouped held-out compositional tasks, with alpha-renaming,
+permutation, relevant-state interventions, raw-prompt and unused-field no-bypass
+tests, exact graph/binding recovery, coverage, error, abstention, confidence
+intervals, and transparent parameter accounting. Until that exists, keep calling
+the current artifact an executable surrogate and causal-audit testbed.
+
+## 2026-08-31 website redesign handoff for Claude Fable
+
+The user approved a **silver-gelatin darkroom** redesign for the whole public
+website. Codex stopped before implementing it so Claude Fable can own the visual
+pass without overlapping edits.
+
+### Current Git state
+
+- Branch: `codex/moonshot-photography`
+- Current pushed commit: `3e6dc48` (`Rewrite public copy in plain language`)
+- Remote branch: `origin/codex/moonshot-photography`
+- PR creation URL:
+  <https://github.com/RaphaelKhalid/ralytable/pull/new/codex/moonshot-photography>
+- The plain-language copy pass is finished and pushed. Preserve that copy unless
+  a small wording change is required by the new visual treatment.
+- No silver-gelatin implementation has been started.
+
+There are unrelated uncommitted research changes in `RESEARCH_LOG.md`,
+`tools/autoresearch_next/`, `experiments/16_humaneval_plus_baseline/`,
+`experiments/21_under40m_neurosymbolic/`, and
+`preregistrations/21_under40m_neurosymbolic.md`, plus
+`.codex/autoresearch.lock`. Do not stage, rewrite, or commit them as part of the
+website work.
+
+### Approved art direction
+
+Treat the site as a **silver-gelatin research archive**, not a generic retro
+theme. The photographs and atmosphere can feel analogue; scientific data,
+controls, code, charts, and claims must remain crisp and easy to read.
+
+- Near-black charcoal and warm photographic-paper whites, with a broad grayscale
+  range. Suggested dark tokens: background `#090909`, raised surface `#111111`,
+  line `#303030`, primary text `#F0EDE6`, secondary text `#B8B4AB`, dim text
+  `#77736C`.
+- Use one restrained darkroom red, suggested `#A33A32`, for focus, selection,
+  active states, and occasional editorial marks. Keep success/error semantics
+  independently recognizable; do not turn every accent or chart series red.
+- Remove the animated cyan/violet/pink Aurora Foil gradient. Replace it with
+  silver highlights, soft exposure blooms, and static tonal contrast.
+- Keep the existing seagull hero photograph. It is strong because the left-side
+  negative space supports the headline and the bird supplies directional motion.
+  Grade it as a high-contrast black-and-white print with controlled grain and a
+  slight edge burn or vignette; preserve feather and water detail.
+- Add subtle film grain, dust, contact-sheet frame numbers, crop marks, or
+  handwritten grease-pencil annotations as sparse editorial details. Keep
+  texture away from body copy, code, charts, buttons, and interactive controls.
+- Prefer square or nearly square corners, thin keylines, generous margins, and
+  photographic caption typography over glossy cards and rounded gradient pills.
+- Preserve the current typographic hierarchy and locally available KaTeX faces
+  unless a change clearly improves the archive/editorial character. Monospace
+  metadata can carry frame numbers, dates, experiment IDs, and exposure-style
+  labels.
+- Motion should feel mechanical and photographic: a brief exposure fade, contact
+  sheet reveal, or focus transition. Avoid looping gradients, fake projector
+  jitter, flashing, and continuous film scratches. Respect
+  `prefers-reduced-motion`.
+- Light mode can read as warm fiber paper with black ink rather than merely an
+  inverted dark UI. Maintain usable contrast in both modes.
+
+Suggested motifs, used sparingly:
+
+- `FRAME 03 / EXPERIMENT 21` metadata above research sections.
+- A red proofing mark or stamped verdict on failed/null results.
+- Contact-sheet borders for photographic separators or key experiment cards.
+- Silver highlight lines that resemble reflected light on a developed print.
+- Small captions such as `ARCHIVE PRINT · RAPHAEL KHALID`, without inventing
+  camera, film-stock, exposure, or date metadata.
+
+Do not bury the site's actual research behind decorative film language. Do not
+rewrite measured findings into metaphors, add unsupported scientific claims, or
+make negative results look like success.
+
+### Photography
+
+The only reliably available personal photograph in this checkout is
+`site/assets/seagull.webp` / `site/assets/seagull.png`, mirrored under
+`web/assets/`. The user says there are other strong options in their photography,
+but no portfolio URL is recorded here and a previous search could not identify a
+definitive portfolio. Ask the user for the exact photography URL before importing
+or selecting additional images. Do not substitute stock photography.
+
+### Files and synchronization
+
+The site is static and has no build step. The editable public pages are:
+
+- `site/index.html`
+- `site/research.html`
+- `site/interpretability.html`
+- `site/blind-test.html`
+- `playground/index.html` for the local/source playground presentation
+
+The deployable Vercel copy lives under `web/`. Mirror the corresponding page and
+asset changes into `web/`, including `web/playground/index.html` where relevant.
+The `site/` and `web/` copies of the four main pages should finish identical.
+Preserve codebook data, experiment data, WASM, and page behavior.
+
+### Smallest useful implementation sequence
+
+1. Apply the new tokens and silver-gelatin treatment to the landing-page hero,
+   navigation, one representative card, and one primary button in both
+   `site/index.html` and `web/index.html`.
+2. Show that first coherent slice to the user before expanding the treatment.
+3. Carry the same tokens and motifs through research, interpretability, blind
+   test, and playground pages without forcing identical layouts.
+4. Keep the seagull social-preview image unless the final grading makes a new
+   preview necessary; if it changes, keep Open Graph and X metadata aligned.
+5. Check mobile widths, keyboard focus, reduced motion, light/dark contrast,
+   interactive diagrams, the blind-test controls, and playground behavior.
+6. Run `git diff --check`, parse every inline `<script>` with JavaScript, compare
+   the mirrored `site/` and `web/` pages, and review the final diff before staging
+   only website files.
+
+The next smallest action is therefore the landing-page representative slice,
+not a full-site blind rewrite.
+
 ## What this is
 
 **Raly** is a programming language and compiler. **Ralytable** is the model and
