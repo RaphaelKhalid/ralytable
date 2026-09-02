@@ -1,0 +1,62 @@
+"""Audit claims against evidence and explicit invalidation criteria."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+
+CLAIMS = (
+    {
+        "claim": "typed graph state can be causally audited",
+        "evidence": "Loops 16-18, 27-29 synthetic state interventions",
+        "unmeasured": "learned parser dependence on the graph",
+        "invalidate_if": "raw-prompt or unused-field intervention changes output while typed state is fixed",
+    },
+    {
+        "claim": "explicit identity can preserve bindings and literals",
+        "evidence": "Loops 17-19 and 36-37 copy/binding probes",
+        "unmeasured": "identity recall on real long-context code",
+        "invalidate_if": "identity recall falls below declared context target or uses an opaque residual path",
+    },
+    {
+        "claim": "typed modules support systematic novel composition",
+        "evidence": "Loop 41: 21/21 novel synthetic compositions",
+        "unmeasured": "learned semantic routing and real repository APIs",
+        "invalidate_if": "grouped, contamination-free held-out compositions do not exceed whole-program retrieval",
+    },
+    {
+        "claim": "runtime receipts and proofs are replayable",
+        "evidence": "Loops 23-26 and 31-33 deterministic synthetic runtimes",
+        "unmeasured": "compiler integration and adversarial real programs",
+        "invalidate_if": "replay misses a changed operation, proof cycle, effect leak, or schedule divergence",
+    },
+    {
+        "claim": "a fully interpretable learned architecture fits under 40M",
+        "evidence": "Loop 44 role-constrained parameter accounting",
+        "unmeasured": "trained loss/quality and wall-clock throughput",
+        "invalidate_if": "measured learned parameters exceed 40M or a raw bypass is required for parity",
+    },
+    {
+        "claim": "the design rivals Qwen27B",
+        "evidence": "none; deliberately not claimed",
+        "unmeasured": "all coding benchmark scores, latency, memory, and distribution definition",
+        "invalidate_if": "any parity statement is made before a preregistered grouped benchmark and resource comparison",
+    },
+)
+
+
+def main() -> None:
+    summary = {
+        "claims": CLAIMS,
+        "claim_count": len(CLAIMS),
+        "claims_with_direct_learned_model_evidence": sum(claim["evidence"] != "none; deliberately not claimed" for claim in CLAIMS),
+        "parity_claim_status": "unmeasured and not claimed",
+        "required_next_gate": "train one role-constrained configuration, run grouped metamorphic/coder evaluation, then apply no-bypass and resource gates",
+    }
+    Path(__file__).with_name("summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"claim_count": summary["claim_count"], "parity_claim_status": summary["parity_claim_status"], "required_next_gate": summary["required_next_gate"]}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,42 @@
+{
+  "all_replay": true,
+  "all_tamper_detected": true,
+  "invalid_rejected": [
+    true,
+    true
+  ],
+  "note": "Executable synthetic ledger contract; no learned model or benchmark was run.",
+  "valid_control_accepted": true,
+  "valid_runs": [
+    {
+      "nodes": 7,
+      "replay": true,
+      "seed": 11,
+      "tamper_detected": true
+    },
+    {
+      "nodes": 6,
+      "replay": true,
+      "seed": 23,
+      "tamper_detected": true
+    },
+    {
+      "nodes": 4,
+      "replay": true,
+      "seed": 37,
+      "tamper_detected": true
+    },
+    {
+      "nodes": 7,
+      "replay": true,
+      "seed": 41,
+      "tamper_detected": true
+    },
+    {
+      "nodes": 5,
+      "replay": true,
+      "seed": 53,
+      "tamper_detected": true
+    }
+  ]
+}

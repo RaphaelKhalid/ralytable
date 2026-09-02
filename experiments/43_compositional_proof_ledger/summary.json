@@ -1,0 +1,196 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "conclusion_presence",
+    "shallow_rule_checker",
+    "compositional_proof_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 15,
+    "reorder": 15,
+    "forged_rule_rejection": 10,
+    "missing_premise_rejection": 10,
+    "cycle_rejection": 5,
+    "placebo": 15,
+    "chain_extension": 15
+  },
+  "pass_rates": {
+    "original": 1.0,
+    "reorder": 1.0,
+    "forged_rule_rejection": 0.6667,
+    "missing_premise_rejection": 0.6667,
+    "cycle_rejection": 0.3333,
+    "placebo": 1.0,
+    "chain_extension": 1.0
+  },
+  "base_certificate_nodes": 4,
+  "extended_certificate_nodes": 5,
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "conclusion_presence",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": false,
+      "missing_premise_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "shallow_rule_checker",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "compositional_proof_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "conclusion_presence",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": false,
+      "missing_premise_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "shallow_rule_checker",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "compositional_proof_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "conclusion_presence",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": false,
+      "missing_premise_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "shallow_rule_checker",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "compositional_proof_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "conclusion_presence",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": false,
+      "missing_premise_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "shallow_rule_checker",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "compositional_proof_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "conclusion_presence",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": false,
+      "missing_premise_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "shallow_rule_checker",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": false,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "compositional_proof_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "forged_rule_rejection_ok": true,
+      "missing_premise_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "placebo_ok": true,
+      "chain_extension_ok": true
+    }
+  ]
+}

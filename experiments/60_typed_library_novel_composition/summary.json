@@ -1,0 +1,17 @@
+{
+  "all_valid_compositions": 42,
+  "training_compositions": 21,
+  "evaluation_novel_compositions": 21,
+  "primitive_library_size": 10,
+  "correct_counts": {
+    "whole_program_retrieval": 0,
+    "typed_library_composition": 21,
+    "untyped_library_composition": 10
+  },
+  "exact_rates": {
+    "whole_program_retrieval": 0.0,
+    "typed_library_composition": 1.0,
+    "untyped_library_composition": 0.4762
+  },
+  "no_exact_composition_overlap": true
+}

@@ -1,0 +1,48 @@
+{
+  "examples": 36,
+  "semantic_families": 12,
+  "surface_families": 12,
+  "averages": {
+    "random_semantic_overlap": 7.4,
+    "random_family_overlap": 7.4,
+    "grouped_semantic_overlap": 0.0,
+    "grouped_family_overlap": 0.0
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "random_semantic_overlap": 7,
+      "random_family_overlap": 7,
+      "grouped_semantic_overlap": 0,
+      "grouped_family_overlap": 0
+    },
+    {
+      "seed": 1,
+      "random_semantic_overlap": 7,
+      "random_family_overlap": 7,
+      "grouped_semantic_overlap": 0,
+      "grouped_family_overlap": 0
+    },
+    {
+      "seed": 2,
+      "random_semantic_overlap": 8,
+      "random_family_overlap": 8,
+      "grouped_semantic_overlap": 0,
+      "grouped_family_overlap": 0
+    },
+    {
+      "seed": 3,
+      "random_semantic_overlap": 6,
+      "random_family_overlap": 6,
+      "grouped_semantic_overlap": 0,
+      "grouped_family_overlap": 0
+    },
+    {
+      "seed": 4,
+      "random_semantic_overlap": 9,
+      "random_family_overlap": 9,
+      "grouped_semantic_overlap": 0,
+      "grouped_family_overlap": 0
+    }
+  ]
+}

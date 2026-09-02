@@ -1,0 +1,185 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "source_only",
+    "operation_tags",
+    "content_addressed"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 5,
+    "reorder": 5,
+    "parameter_sensitivity": 5,
+    "operand_sensitivity": 5,
+    "placebo": 5
+  },
+  "pass_rates": {
+    "original": 0.3333,
+    "reorder": 0.3333,
+    "parameter_sensitivity": 0.3333,
+    "operand_sensitivity": 0.3333,
+    "placebo": 0.3333
+  },
+  "base_sources": [
+    "a.py:1",
+    "b.py:2"
+  ],
+  "base_operation_tags": [
+    [
+      "add_constant",
+      1
+    ],
+    [
+      "source",
+      null
+    ],
+    [
+      "source",
+      null
+    ],
+    [
+      "subtract",
+      null
+    ]
+  ],
+  "base_address": "b99392fa60efd7be873de1542005e03caf2f78e03abff3197fb2b2aaf9d70d53",
+  "parameter_address": "9b5edcc2dff20510f02ff9ad54f6a222766ca4b835d55783daddbcd2717136fc",
+  "operand_address": "8252aadc749f1513e43ceca79546d77bf68763622e2d286bb7def2d6ef23b7a9",
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "source_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "operation_tags",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "content_addressed",
+      "original_exact": true,
+      "reorder_ok": true,
+      "parameter_sensitivity_ok": true,
+      "operand_sensitivity_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "source_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "operation_tags",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "content_addressed",
+      "original_exact": true,
+      "reorder_ok": true,
+      "parameter_sensitivity_ok": true,
+      "operand_sensitivity_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "source_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "operation_tags",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "content_addressed",
+      "original_exact": true,
+      "reorder_ok": true,
+      "parameter_sensitivity_ok": true,
+      "operand_sensitivity_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "source_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "operation_tags",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "content_addressed",
+      "original_exact": true,
+      "reorder_ok": true,
+      "parameter_sensitivity_ok": true,
+      "operand_sensitivity_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "source_only",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "operation_tags",
+      "original_exact": false,
+      "reorder_ok": false,
+      "parameter_sensitivity_ok": false,
+      "operand_sensitivity_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "content_addressed",
+      "original_exact": true,
+      "reorder_ok": true,
+      "parameter_sensitivity_ok": true,
+      "operand_sensitivity_ok": true,
+      "placebo_ok": true
+    }
+  ]
+}

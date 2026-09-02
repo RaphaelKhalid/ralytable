@@ -1,0 +1,379 @@
+{
+  "assumptions": {
+    "execution_accuracy": 0.98,
+    "hypothesis_recall_per_beam": 0.38,
+    "module_accuracy": 0.99,
+    "note": "The score function weights non-module tasks 75/25 retrievable/novel; module_coverage is varied and is not fixed to the illustrative bucket row.",
+    "novel_accuracy": 0.18,
+    "task_buckets": {
+      "exact_module": 0.6,
+      "novel": 0.1,
+      "retrievable": 0.3
+    }
+  },
+  "note": "Feasibility sensitivity model only; no learned model, benchmark, or Qwen score was run.",
+  "rows": [
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.626,
+      "coverage_for_0.80": 0.755,
+      "coverage_for_0.90": 0.884,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.6805224
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.62,
+      "coverage_for_0.80": 0.751,
+      "coverage_for_0.90": 0.882,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.6853632
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.615,
+      "coverage_for_0.80": 0.748,
+      "coverage_for_0.90": 0.881,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.6889938
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.613,
+      "coverage_for_0.80": 0.747,
+      "coverage_for_0.90": 0.88,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.6905772
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.602,
+      "coverage_for_0.80": 0.74,
+      "coverage_for_0.90": 0.877,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.6987696
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.594,
+      "coverage_for_0.80": 0.734,
+      "coverage_for_0.90": 0.874,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.7049139
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.604,
+      "coverage_for_0.80": 0.741,
+      "coverage_for_0.90": 0.878,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.6972803999999999
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.59,
+      "coverage_for_0.80": 0.731,
+      "coverage_for_0.90": 0.873,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.7077072
+    },
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.578,
+      "coverage_for_0.80": 0.724,
+      "coverage_for_0.90": 0.869,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.7155273
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.539,
+      "coverage_for_0.80": 0.698,
+      "coverage_for_0.90": 0.857,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.7388341803071999
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.489,
+      "coverage_for_0.80": 0.666,
+      "coverage_for_0.90": 0.842,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.7631122404096
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.445,
+      "coverage_for_0.80": 0.636,
+      "coverage_for_0.90": 0.828,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.7813207854863999
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.493,
+      "coverage_for_0.80": 0.668,
+      "coverage_for_0.90": 0.843,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.7613843618016
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.411,
+      "coverage_for_0.80": 0.614,
+      "coverage_for_0.90": 0.818,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.7931791490687999
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.33,
+      "coverage_for_0.80": 0.561,
+      "coverage_for_0.90": 0.792,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8170252395192
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.457,
+      "coverage_for_0.80": 0.645,
+      "coverage_for_0.90": 0.832,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.7764178161312
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.344,
+      "coverage_for_0.80": 0.571,
+      "coverage_for_0.90": 0.797,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.8132237548416
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.223,
+      "coverage_for_0.80": 0.491,
+      "coverage_for_0.90": 0.759,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8408282088744
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.508,
+      "coverage_for_0.80": 0.678,
+      "coverage_for_0.90": 0.848,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.7543839363762377
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.438,
+      "coverage_for_0.80": 0.632,
+      "coverage_for_0.90": 0.826,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.7838452485016503
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.37,
+      "coverage_for_0.80": 0.588,
+      "coverage_for_0.90": 0.805,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8059412325957097
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.447,
+      "coverage_for_0.80": 0.638,
+      "coverage_for_0.90": 0.829,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.78026620845686
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.325,
+      "coverage_for_0.80": 0.558,
+      "coverage_for_0.90": 0.791,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.8183549446091468
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.19,
+      "coverage_for_0.80": 0.469,
+      "coverage_for_0.90": 0.749,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8469214967233618
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.398,
+      "coverage_for_0.80": 0.606,
+      "coverage_for_0.90": 0.813,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.7975210565106083
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.22,
+      "coverage_for_0.80": 0.489,
+      "coverage_for_0.90": 0.758,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.8413614086808111
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.0,
+      "coverage_for_0.80": 0.344,
+      "coverage_for_0.90": 0.69,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8742416728084632
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.503,
+      "coverage_for_0.80": 0.674,
+      "coverage_for_0.90": 0.846,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.7570211341183724
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.428,
+      "coverage_for_0.80": 0.625,
+      "coverage_for_0.90": 0.823,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.7873615121578299
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.356,
+      "coverage_for_0.80": 0.578,
+      "coverage_for_0.90": 0.8,
+      "parser_accuracy": 0.7,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.810116795687423
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.439,
+      "coverage_for_0.80": 0.633,
+      "coverage_for_0.90": 0.826,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.7834685200008807
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.307,
+      "coverage_for_0.80": 0.546,
+      "coverage_for_0.90": 0.785,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.8226246933345077
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.16,
+      "coverage_for_0.80": 0.45,
+      "coverage_for_0.90": 0.74,
+      "parser_accuracy": 0.85,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8519918233347279
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.386,
+      "coverage_for_0.80": 0.598,
+      "coverage_for_0.90": 0.81,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.6,
+      "score_at_coverage_0.60": 0.8011001105892197
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.194,
+      "coverage_for_0.80": 0.472,
+      "coverage_for_0.90": 0.75,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.8,
+      "score_at_coverage_0.60": 0.8461334807856262
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.0,
+      "coverage_for_0.80": 0.31,
+      "coverage_for_0.90": 0.673,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8799085084329312
+    }
+  ],
+  "strongest_parser_retrieval": [
+    {
+      "beam": 1,
+      "coverage_for_0.70": 0.578,
+      "coverage_for_0.80": 0.724,
+      "coverage_for_0.90": 0.869,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.7155273
+    },
+    {
+      "beam": 4,
+      "coverage_for_0.70": 0.223,
+      "coverage_for_0.80": 0.491,
+      "coverage_for_0.90": 0.759,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8408282088744
+    },
+    {
+      "beam": 8,
+      "coverage_for_0.70": 0.0,
+      "coverage_for_0.80": 0.344,
+      "coverage_for_0.90": 0.69,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8742416728084632
+    },
+    {
+      "beam": 16,
+      "coverage_for_0.70": 0.0,
+      "coverage_for_0.80": 0.31,
+      "coverage_for_0.90": 0.673,
+      "parser_accuracy": 0.95,
+      "retrieval_hit": 0.95,
+      "score_at_coverage_0.60": 0.8799085084329312
+    }
+  ]
+}

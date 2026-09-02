@@ -1,0 +1,284 @@
+{
+  "families": [
+    [
+      2,
+      4
+    ],
+    [
+      4,
+      4
+    ],
+    [
+      8,
+      4
+    ],
+    [
+      16,
+      4
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      8,
+      8
+    ]
+  ],
+  "cost_rows": [
+    {
+      "branches": 2,
+      "depth": 4,
+      "common_depth": 2,
+      "flat_all_cost": 30,
+      "shared_all_cost": 26,
+      "hash_all_cost": 4,
+      "shared_saves_percent": 13.33
+    },
+    {
+      "branches": 4,
+      "depth": 4,
+      "common_depth": 2,
+      "flat_all_cost": 60,
+      "shared_all_cost": 44,
+      "hash_all_cost": 8,
+      "shared_saves_percent": 26.67
+    },
+    {
+      "branches": 8,
+      "depth": 4,
+      "common_depth": 2,
+      "flat_all_cost": 120,
+      "shared_all_cost": 80,
+      "hash_all_cost": 16,
+      "shared_saves_percent": 33.33
+    },
+    {
+      "branches": 16,
+      "depth": 4,
+      "common_depth": 2,
+      "flat_all_cost": 240,
+      "shared_all_cost": 152,
+      "hash_all_cost": 32,
+      "shared_saves_percent": 36.67
+    },
+    {
+      "branches": 4,
+      "depth": 8,
+      "common_depth": 4,
+      "flat_all_cost": 124,
+      "shared_all_cost": 84,
+      "hash_all_cost": 8,
+      "shared_saves_percent": 32.26
+    },
+    {
+      "branches": 8,
+      "depth": 8,
+      "common_depth": 4,
+      "flat_all_cost": 248,
+      "shared_all_cost": 152,
+      "hash_all_cost": 16,
+      "shared_saves_percent": 38.71
+    }
+  ],
+  "budget_rows": [
+    {
+      "branches": 2,
+      "depth": 4,
+      "budget": 64,
+      "flat_obligations": 2,
+      "shared_obligations": 2,
+      "hash_obligations": 2
+    },
+    {
+      "branches": 2,
+      "depth": 4,
+      "budget": 128,
+      "flat_obligations": 2,
+      "shared_obligations": 2,
+      "hash_obligations": 2
+    },
+    {
+      "branches": 2,
+      "depth": 4,
+      "budget": 256,
+      "flat_obligations": 2,
+      "shared_obligations": 2,
+      "hash_obligations": 2
+    },
+    {
+      "branches": 2,
+      "depth": 4,
+      "budget": 512,
+      "flat_obligations": 2,
+      "shared_obligations": 2,
+      "hash_obligations": 2
+    },
+    {
+      "branches": 4,
+      "depth": 4,
+      "budget": 64,
+      "flat_obligations": 4,
+      "shared_obligations": 4,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 4,
+      "depth": 4,
+      "budget": 128,
+      "flat_obligations": 4,
+      "shared_obligations": 4,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 4,
+      "depth": 4,
+      "budget": 256,
+      "flat_obligations": 4,
+      "shared_obligations": 4,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 4,
+      "depth": 4,
+      "budget": 512,
+      "flat_obligations": 4,
+      "shared_obligations": 4,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 8,
+      "depth": 4,
+      "budget": 64,
+      "flat_obligations": 4,
+      "shared_obligations": 6,
+      "hash_obligations": 8
+    },
+    {
+      "branches": 8,
+      "depth": 4,
+      "budget": 128,
+      "flat_obligations": 8,
+      "shared_obligations": 8,
+      "hash_obligations": 8
+    },
+    {
+      "branches": 8,
+      "depth": 4,
+      "budget": 256,
+      "flat_obligations": 8,
+      "shared_obligations": 8,
+      "hash_obligations": 8
+    },
+    {
+      "branches": 8,
+      "depth": 4,
+      "budget": 512,
+      "flat_obligations": 8,
+      "shared_obligations": 8,
+      "hash_obligations": 8
+    },
+    {
+      "branches": 16,
+      "depth": 4,
+      "budget": 64,
+      "flat_obligations": 4,
+      "shared_obligations": 6,
+      "hash_obligations": 16
+    },
+    {
+      "branches": 16,
+      "depth": 4,
+      "budget": 128,
+      "flat_obligations": 8,
+      "shared_obligations": 13,
+      "hash_obligations": 16
+    },
+    {
+      "branches": 16,
+      "depth": 4,
+      "budget": 256,
+      "flat_obligations": 16,
+      "shared_obligations": 16,
+      "hash_obligations": 16
+    },
+    {
+      "branches": 16,
+      "depth": 4,
+      "budget": 512,
+      "flat_obligations": 16,
+      "shared_obligations": 16,
+      "hash_obligations": 16
+    },
+    {
+      "branches": 4,
+      "depth": 8,
+      "budget": 64,
+      "flat_obligations": 2,
+      "shared_obligations": 2,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 4,
+      "depth": 8,
+      "budget": 128,
+      "flat_obligations": 4,
+      "shared_obligations": 4,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 4,
+      "depth": 8,
+      "budget": 256,
+      "flat_obligations": 4,
+      "shared_obligations": 4,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 4,
+      "depth": 8,
+      "budget": 512,
+      "flat_obligations": 4,
+      "shared_obligations": 4,
+      "hash_obligations": 4
+    },
+    {
+      "branches": 8,
+      "depth": 8,
+      "budget": 64,
+      "flat_obligations": 2,
+      "shared_obligations": 2,
+      "hash_obligations": 8
+    },
+    {
+      "branches": 8,
+      "depth": 8,
+      "budget": 128,
+      "flat_obligations": 4,
+      "shared_obligations": 6,
+      "hash_obligations": 8
+    },
+    {
+      "branches": 8,
+      "depth": 8,
+      "budget": 256,
+      "flat_obligations": 8,
+      "shared_obligations": 8,
+      "hash_obligations": 8
+    },
+    {
+      "branches": 8,
+      "depth": 8,
+      "budget": 512,
+      "flat_obligations": 8,
+      "shared_obligations": 8,
+      "hash_obligations": 8
+    }
+  ],
+  "proof_audit": {
+    "valid_shared_graph": true,
+    "mutated_shared_graph": false,
+    "shared_nodes": 36
+  },
+  "interpretability_note": "hash_only is a cost lower bound, not an accepted architecture because it omits local premises and rules"
+}

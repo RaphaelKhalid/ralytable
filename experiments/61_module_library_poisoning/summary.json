@@ -1,0 +1,148 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "name_only",
+    "typed_only",
+    "signed_content_addressed"
+  ],
+  "trusted_manifest_size": 2,
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 15,
+    "poison_rejection": 5,
+    "counterfeit_rejection": 5,
+    "reorder_invariance": 15
+  },
+  "pass_rates": {
+    "original": 1.0,
+    "poison_rejection": 0.3333,
+    "counterfeit_rejection": 0.3333,
+    "reorder_invariance": 1.0
+  },
+  "trusted_target": [
+    "parse_int_lines_v1",
+    "sum_checked_v1"
+  ],
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "name_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "typed_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "signed_content_addressed",
+      "original_ok": true,
+      "poison_rejection_ok": true,
+      "counterfeit_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "name_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "typed_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "signed_content_addressed",
+      "original_ok": true,
+      "poison_rejection_ok": true,
+      "counterfeit_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "name_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "typed_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "signed_content_addressed",
+      "original_ok": true,
+      "poison_rejection_ok": true,
+      "counterfeit_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "name_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "typed_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "signed_content_addressed",
+      "original_ok": true,
+      "poison_rejection_ok": true,
+      "counterfeit_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "name_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "typed_only",
+      "original_ok": true,
+      "poison_rejection_ok": false,
+      "counterfeit_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "signed_content_addressed",
+      "original_ok": true,
+      "poison_rejection_ok": true,
+      "counterfeit_rejection_ok": true,
+      "reorder_invariance_ok": true
+    }
+  ]
+}

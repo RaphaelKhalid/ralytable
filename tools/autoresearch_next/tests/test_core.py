@@ -11,6 +11,7 @@ from tools.autoresearch_next.archive import ArchiveEntry, MapElitesArchive
 from tools.autoresearch_next.ar0 import recovery_check, run_trial
 from tools.autoresearch_next.ar1 import AR1Trial, make_landscape
 from tools.autoresearch_next.ar2 import AR2Trial, make_landscape as make_ar2_landscape, recovery_check as ar2_recovery_check, verify_receipt_chain, verify_receipt_stream
+from tools.autoresearch_next.cli import next_candidate_index
 from tools.autoresearch_next.evaluator_contract import EvaluatorContract
 from tools.autoresearch_next.ledger import AppendOnlyLedger
 from tools.autoresearch_next.policy import PolicyManager
@@ -21,6 +22,17 @@ from tools.autoresearch_next.meta_landscapes import make_landscapes
 
 
 class TrustKernelTests(unittest.TestCase):
+    def test_next_candidate_index_continues_append_only_run(self):
+        snapshot = {"experiments": [
+            {"arm": "greedy", "candidate_id": "greedy-000"},
+            {"arm": "greedy", "candidate_id": "greedy-009"},
+            {"arm": "greedy", "candidate_id": "greedy-010"},
+            {"arm": "evolve", "candidate_id": "evolve-003"},
+            {"arm": "greedy", "candidate_id": "greedy-not-a-number"},
+        ]}
+        self.assertEqual(next_candidate_index(snapshot, "greedy"), 11)
+        self.assertEqual(next_candidate_index(snapshot, "evolve"), 4)
+
     def test_partition_is_deterministic_and_outside_repo(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d); artifact = root / "artifacts"; kernel = TrustKernel(Path.cwd(), artifact)

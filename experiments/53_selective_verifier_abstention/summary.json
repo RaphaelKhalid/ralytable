@@ -1,0 +1,500 @@
+{
+  "seeds": 5,
+  "policies": [
+    "confidence_only",
+    "proof_gated",
+    "proof_selective"
+  ],
+  "averaged_metrics": {
+    "confidence_only": {
+      "coverage": 0.75,
+      "risk": 0.4444,
+      "high_conf_invalid_emitted": 2.0
+    },
+    "proof_gated": {
+      "coverage": 0.5,
+      "risk": 0.1667,
+      "high_conf_invalid_emitted": 0.0
+    },
+    "proof_selective": {
+      "coverage": 0.4167,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0.0
+    }
+  },
+  "base_metrics": {
+    "confidence_only": {
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    "proof_gated": {
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    "proof_selective": {
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "variant": "original",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 0,
+      "variant": "original",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 0,
+      "variant": "original",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 0,
+      "variant": "reorder",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 0,
+      "variant": "reorder",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 0,
+      "variant": "reorder",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 0,
+      "variant": "verifier_improvement",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 2,
+      "risk": 0.3333,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 0,
+      "variant": "verifier_improvement",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 0,
+      "variant": "verifier_improvement",
+      "policy": "proof_selective",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 1,
+      "variant": "original",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 1,
+      "variant": "original",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 1,
+      "variant": "original",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 1,
+      "variant": "reorder",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 1,
+      "variant": "reorder",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 1,
+      "variant": "reorder",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 1,
+      "variant": "verifier_improvement",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 2,
+      "risk": 0.3333,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 1,
+      "variant": "verifier_improvement",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 1,
+      "variant": "verifier_improvement",
+      "policy": "proof_selective",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 2,
+      "variant": "original",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 2,
+      "variant": "original",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 2,
+      "variant": "original",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 2,
+      "variant": "reorder",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 2,
+      "variant": "reorder",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 2,
+      "variant": "reorder",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 2,
+      "variant": "verifier_improvement",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 2,
+      "risk": 0.3333,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 2,
+      "variant": "verifier_improvement",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 2,
+      "variant": "verifier_improvement",
+      "policy": "proof_selective",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 3,
+      "variant": "original",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 3,
+      "variant": "original",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 3,
+      "variant": "original",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 3,
+      "variant": "reorder",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 3,
+      "variant": "reorder",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 3,
+      "variant": "reorder",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 3,
+      "variant": "verifier_improvement",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 2,
+      "risk": 0.3333,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 3,
+      "variant": "verifier_improvement",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 3,
+      "variant": "verifier_improvement",
+      "policy": "proof_selective",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 4,
+      "variant": "original",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 4,
+      "variant": "original",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 4,
+      "variant": "original",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 4,
+      "variant": "reorder",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 3,
+      "risk": 0.5,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 4,
+      "variant": "reorder",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 1,
+      "risk": 0.25,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 4,
+      "variant": "reorder",
+      "policy": "proof_selective",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 4,
+      "variant": "verifier_improvement",
+      "policy": "confidence_only",
+      "emitted": 6,
+      "coverage": 0.75,
+      "errors": 2,
+      "risk": 0.3333,
+      "high_conf_invalid_emitted": 2
+    },
+    {
+      "seed": 4,
+      "variant": "verifier_improvement",
+      "policy": "proof_gated",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    },
+    {
+      "seed": 4,
+      "variant": "verifier_improvement",
+      "policy": "proof_selective",
+      "emitted": 4,
+      "coverage": 0.5,
+      "errors": 0,
+      "risk": 0.0,
+      "high_conf_invalid_emitted": 0
+    }
+  ]
+}

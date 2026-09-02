@@ -1,0 +1,126 @@
+{
+  "policies": [
+    "unanimous_standard",
+    "unanimous_plus_challenge"
+  ],
+  "base_metrics": {
+    "unanimous_standard": {
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "correlated_blindspot_errors": 2
+    },
+    "unanimous_plus_challenge": {
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "correlated_blindspot_errors": 0
+    }
+  },
+  "averaged_metrics": {
+    "unanimous_standard": {
+      "coverage": 0.625,
+      "risk": 0.4,
+      "correlated_blindspot_errors": 2.0
+    },
+    "unanimous_plus_challenge": {
+      "coverage": 0.375,
+      "risk": 0.0,
+      "correlated_blindspot_errors": 0.0
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "policy": "unanimous_standard",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "correlated_blindspot_errors": 2
+    },
+    {
+      "seed": 0,
+      "policy": "unanimous_plus_challenge",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "correlated_blindspot_errors": 0
+    },
+    {
+      "seed": 1,
+      "policy": "unanimous_standard",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "correlated_blindspot_errors": 2
+    },
+    {
+      "seed": 1,
+      "policy": "unanimous_plus_challenge",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "correlated_blindspot_errors": 0
+    },
+    {
+      "seed": 2,
+      "policy": "unanimous_standard",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "correlated_blindspot_errors": 2
+    },
+    {
+      "seed": 2,
+      "policy": "unanimous_plus_challenge",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "correlated_blindspot_errors": 0
+    },
+    {
+      "seed": 3,
+      "policy": "unanimous_standard",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "correlated_blindspot_errors": 2
+    },
+    {
+      "seed": 3,
+      "policy": "unanimous_plus_challenge",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "correlated_blindspot_errors": 0
+    },
+    {
+      "seed": 4,
+      "policy": "unanimous_standard",
+      "emitted": 5,
+      "coverage": 0.625,
+      "errors": 2,
+      "risk": 0.4,
+      "correlated_blindspot_errors": 2
+    },
+    {
+      "seed": 4,
+      "policy": "unanimous_plus_challenge",
+      "emitted": 3,
+      "coverage": 0.375,
+      "errors": 0,
+      "risk": 0.0,
+      "correlated_blindspot_errors": 0
+    }
+  ]
+}

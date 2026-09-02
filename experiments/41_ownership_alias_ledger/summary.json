@@ -1,0 +1,180 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "value_only",
+    "interval_borrow_checker",
+    "ownership_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 15,
+    "rename": 15,
+    "reorder": 15,
+    "overlap_rejection": 10,
+    "move_rejection": 5,
+    "placebo": 15
+  },
+  "pass_rates": {
+    "original": 1.0,
+    "rename": 1.0,
+    "reorder": 1.0,
+    "overlap_rejection": 0.6667,
+    "move_rejection": 0.3333,
+    "placebo": 1.0
+  },
+  "base_target": true,
+  "overlap_target": false,
+  "move_target": false,
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "value_only",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": false,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "interval_borrow_checker",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "ownership_ledger",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "value_only",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": false,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "interval_borrow_checker",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "ownership_ledger",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "value_only",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": false,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "interval_borrow_checker",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "ownership_ledger",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "value_only",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": false,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "interval_borrow_checker",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "ownership_ledger",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "value_only",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": false,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "interval_borrow_checker",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "ownership_ledger",
+      "original_exact": true,
+      "rename_ok": true,
+      "reorder_ok": true,
+      "overlap_rejection_ok": true,
+      "move_rejection_ok": true,
+      "placebo_ok": true
+    }
+  ]
+}

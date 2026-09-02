@@ -1,0 +1,200 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "prior_decl_sequence",
+    "scope_name_map",
+    "recursive_group_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 10,
+    "alpha_rename": 10,
+    "group_reorder": 10,
+    "illegal_rejection": 5,
+    "placebo": 10
+  },
+  "pass_rates": {
+    "original": 0.6667,
+    "alpha_rename": 0.6667,
+    "group_reorder": 0.6667,
+    "illegal_rejection": 0.3333,
+    "placebo": 0.6667
+  },
+  "legal_original": [
+    [
+      0,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      0,
+      true
+    ],
+    [
+      0,
+      true
+    ]
+  ],
+  "illegal_self_reference": [
+    [
+      0,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      0,
+      true
+    ],
+    [
+      0,
+      true
+    ],
+    [
+      3,
+      false
+    ]
+  ],
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "prior_decl_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": false,
+      "group_reorder_ok": false,
+      "illegal_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "scope_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "recursive_group_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "prior_decl_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": false,
+      "group_reorder_ok": false,
+      "illegal_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "scope_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "recursive_group_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "prior_decl_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": false,
+      "group_reorder_ok": false,
+      "illegal_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "scope_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "recursive_group_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "prior_decl_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": false,
+      "group_reorder_ok": false,
+      "illegal_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "scope_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "recursive_group_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": true,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "prior_decl_sequence",
+      "original_exact": false,
+      "alpha_rename_ok": false,
+      "group_reorder_ok": false,
+      "illegal_rejection_ok": false,
+      "placebo_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "scope_name_map",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": false,
+      "placebo_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "recursive_group_ledger",
+      "original_exact": true,
+      "alpha_rename_ok": true,
+      "group_reorder_ok": true,
+      "illegal_rejection_ok": true,
+      "placebo_ok": true
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "declared_only",
+    "shallow_effects",
+    "transitive_capability_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 15,
+    "hidden_network_rejection": 10,
+    "nested_hidden_rejection": 5,
+    "cycle_rejection": 5,
+    "reorder_invariance": 15
+  },
+  "pass_rates": {
+    "original": 1.0,
+    "hidden_network_rejection": 0.6667,
+    "nested_hidden_rejection": 0.3333,
+    "cycle_rejection": 0.3333,
+    "reorder_invariance": 1.0
+  },
+  "base_effects": [
+    "read"
+  ],
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "declared_only",
+      "original_exact": true,
+      "hidden_network_rejection_ok": false,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "shallow_effects",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 0,
+      "architecture": "transitive_capability_ledger",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "declared_only",
+      "original_exact": true,
+      "hidden_network_rejection_ok": false,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "shallow_effects",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "transitive_capability_ledger",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "declared_only",
+      "original_exact": true,
+      "hidden_network_rejection_ok": false,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "shallow_effects",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "transitive_capability_ledger",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "declared_only",
+      "original_exact": true,
+      "hidden_network_rejection_ok": false,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "shallow_effects",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "transitive_capability_ledger",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "declared_only",
+      "original_exact": true,
+      "hidden_network_rejection_ok": false,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "shallow_effects",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": false,
+      "cycle_rejection_ok": false,
+      "reorder_invariance_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "transitive_capability_ledger",
+      "original_exact": true,
+      "hidden_network_rejection_ok": true,
+      "nested_hidden_rejection_ok": true,
+      "cycle_rejection_ok": true,
+      "reorder_invariance_ok": true
+    }
+  ]
+}

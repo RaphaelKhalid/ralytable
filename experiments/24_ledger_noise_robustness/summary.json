@@ -1,0 +1,90 @@
+{
+  "aggregate": {
+    "entity_slots": {
+      "drop": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "duplicate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "mutate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "reorder": {
+        "mean": 0.375,
+        "seed_sd": 0.0
+      }
+    },
+    "flat_sketch": {
+      "drop": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "duplicate": {
+        "mean": 0.13166666666666665,
+        "seed_sd": 0.03745367509040705
+      },
+      "mutate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "reorder": {
+        "mean": 0.13166666666666665,
+        "seed_sd": 0.03745367509040705
+      }
+    },
+    "typed_program_graph": {
+      "drop": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "duplicate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "mutate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "reorder": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      }
+    },
+    "typed_program_ledger": {
+      "drop": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "duplicate": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "mutate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "reorder": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      }
+    }
+  },
+  "modes": [
+    "reorder",
+    "duplicate",
+    "drop",
+    "mutate"
+  ],
+  "note": "Synthetic supplied-fact noise probe; no learned model or benchmark was run.",
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    53
+  ]
+}

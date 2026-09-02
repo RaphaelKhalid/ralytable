@@ -1,0 +1,173 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "eager_executor",
+    "undo_log",
+    "transactional_ledger"
+  ],
+  "total_architecture_runs": 15,
+  "pass_counts": {
+    "original": 5,
+    "reorder": 5,
+    "late_failure_isolation": 5,
+    "all_invalid": 5,
+    "placebo_isolation": 5
+  },
+  "pass_rates": {
+    "original": 0.3333,
+    "reorder": 0.3333,
+    "late_failure_isolation": 0.3333,
+    "all_invalid": 0.3333,
+    "placebo_isolation": 0.3333
+  },
+  "base_target": {
+    "candidate": 1,
+    "effects": [
+      [
+        "memory",
+        "answer"
+      ],
+      [
+        "external",
+        "write_good"
+      ]
+    ]
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "eager_executor",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "undo_log",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 0,
+      "architecture": "transactional_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "late_failure_isolation_ok": true,
+      "all_invalid_ok": true,
+      "placebo_isolation_ok": true
+    },
+    {
+      "seed": 1,
+      "architecture": "eager_executor",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "undo_log",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 1,
+      "architecture": "transactional_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "late_failure_isolation_ok": true,
+      "all_invalid_ok": true,
+      "placebo_isolation_ok": true
+    },
+    {
+      "seed": 2,
+      "architecture": "eager_executor",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "undo_log",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 2,
+      "architecture": "transactional_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "late_failure_isolation_ok": true,
+      "all_invalid_ok": true,
+      "placebo_isolation_ok": true
+    },
+    {
+      "seed": 3,
+      "architecture": "eager_executor",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "undo_log",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 3,
+      "architecture": "transactional_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "late_failure_isolation_ok": true,
+      "all_invalid_ok": true,
+      "placebo_isolation_ok": true
+    },
+    {
+      "seed": 4,
+      "architecture": "eager_executor",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "undo_log",
+      "original_exact": false,
+      "reorder_ok": false,
+      "late_failure_isolation_ok": false,
+      "all_invalid_ok": false,
+      "placebo_isolation_ok": false
+    },
+    {
+      "seed": 4,
+      "architecture": "transactional_ledger",
+      "original_exact": true,
+      "reorder_ok": true,
+      "late_failure_isolation_ok": true,
+      "all_invalid_ok": true,
+      "placebo_isolation_ok": true
+    }
+  ]
+}

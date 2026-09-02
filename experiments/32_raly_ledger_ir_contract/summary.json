@@ -1,0 +1,12 @@
+{
+  "all_roundtrips": true,
+  "all_tamper_changes": true,
+  "invalid_rejected": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "note": "Raly-aligned synthetic IR contract; no compiler or learned model was run.",
+  "valid_graphs": 5
+}

@@ -1,0 +1,266 @@
+{
+  "aggregate": {
+    "decorative_trace": {
+      "irrelevant_placebo_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "passes_no_bypass_gate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "raw_path_invariance": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "relevant_state_change": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      }
+    },
+    "ledger_only": {
+      "irrelevant_placebo_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "passes_no_bypass_gate": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "raw_path_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "relevant_state_change": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      }
+    },
+    "mixed": {
+      "irrelevant_placebo_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "passes_no_bypass_gate": {
+        "mean": 0.5008333333333334,
+        "seed_sd": 0.02345948043376542
+      },
+      "raw_path_invariance": {
+        "mean": 0.5008333333333334,
+        "seed_sd": 0.02345948043376542
+      },
+      "relevant_state_change": {
+        "mean": 0.5008333333333334,
+        "seed_sd": 0.02345948043376542
+      }
+    },
+    "raw_shortcut": {
+      "irrelevant_placebo_invariance": {
+        "mean": 1.0,
+        "seed_sd": 0.0
+      },
+      "passes_no_bypass_gate": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "raw_path_invariance": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      },
+      "relevant_state_change": {
+        "mean": 0.0,
+        "seed_sd": 0.0
+      }
+    }
+  },
+  "note": "Synthetic causal audit; no learned model or coding benchmark was run.",
+  "runs": [
+    {
+      "architecture": "raw_shortcut",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 11,
+      "tasks": 240
+    },
+    {
+      "architecture": "decorative_trace",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 11,
+      "tasks": 240
+    },
+    {
+      "architecture": "mixed",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.5208333333333334,
+      "raw_path_invariance": 0.5208333333333334,
+      "relevant_state_change": 0.5208333333333334,
+      "seed": 11,
+      "tasks": 240
+    },
+    {
+      "architecture": "ledger_only",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 11,
+      "tasks": 240
+    },
+    {
+      "architecture": "raw_shortcut",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 23,
+      "tasks": 240
+    },
+    {
+      "architecture": "decorative_trace",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 23,
+      "tasks": 240
+    },
+    {
+      "architecture": "mixed",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.525,
+      "raw_path_invariance": 0.525,
+      "relevant_state_change": 0.525,
+      "seed": 23,
+      "tasks": 240
+    },
+    {
+      "architecture": "ledger_only",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 23,
+      "tasks": 240
+    },
+    {
+      "architecture": "raw_shortcut",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 37,
+      "tasks": 240
+    },
+    {
+      "architecture": "decorative_trace",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 37,
+      "tasks": 240
+    },
+    {
+      "architecture": "mixed",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.49583333333333335,
+      "raw_path_invariance": 0.49583333333333335,
+      "relevant_state_change": 0.49583333333333335,
+      "seed": 37,
+      "tasks": 240
+    },
+    {
+      "architecture": "ledger_only",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 37,
+      "tasks": 240
+    },
+    {
+      "architecture": "raw_shortcut",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 41,
+      "tasks": 240
+    },
+    {
+      "architecture": "decorative_trace",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 41,
+      "tasks": 240
+    },
+    {
+      "architecture": "mixed",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.4666666666666667,
+      "raw_path_invariance": 0.4666666666666667,
+      "relevant_state_change": 0.4666666666666667,
+      "seed": 41,
+      "tasks": 240
+    },
+    {
+      "architecture": "ledger_only",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 41,
+      "tasks": 240
+    },
+    {
+      "architecture": "raw_shortcut",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 53,
+      "tasks": 240
+    },
+    {
+      "architecture": "decorative_trace",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.0,
+      "raw_path_invariance": 0.0,
+      "relevant_state_change": 0.0,
+      "seed": 53,
+      "tasks": 240
+    },
+    {
+      "architecture": "mixed",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 0.49583333333333335,
+      "raw_path_invariance": 0.49583333333333335,
+      "relevant_state_change": 0.49583333333333335,
+      "seed": 53,
+      "tasks": 240
+    },
+    {
+      "architecture": "ledger_only",
+      "irrelevant_placebo_invariance": 1.0,
+      "passes_no_bypass_gate": 1.0,
+      "raw_path_invariance": 1.0,
+      "relevant_state_change": 1.0,
+      "seed": 53,
+      "tasks": 240
+    }
+  ],
+  "seeds": [
+    11,
+    23,
+    37,
+    41,
+    53
+  ]
+}

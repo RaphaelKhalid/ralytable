@@ -1,0 +1,1335 @@
+{
+  "seeds": 5,
+  "architectures": [
+    "input_fifo",
+    "random_ready_queue",
+    "semantic_topological"
+  ],
+  "total_architecture_runs": 15,
+  "semantic_expected_schedule": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "pass_counts": {
+    "original_valid": 15,
+    "reorder_invariance": 6,
+    "repeatability": 10,
+    "ordering_constraint": 15
+  },
+  "pass_rates": {
+    "original_valid": 1.0,
+    "reorder_invariance": 0.4,
+    "repeatability": 0.6667,
+    "ordering_constraint": 1.0
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "architecture": "input_fifo",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 0,
+      "architecture": "random_ready_queue",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": false,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          2,
+          1,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 0,
+      "architecture": "semantic_topological",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": true,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 1,
+      "architecture": "input_fifo",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 1,
+      "architecture": "random_ready_queue",
+      "base_schedule": [
+        1,
+        0,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": false,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          2,
+          1,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 1,
+      "architecture": "semantic_topological",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": true,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 2,
+      "architecture": "input_fifo",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 2,
+      "architecture": "random_ready_queue",
+      "base_schedule": [
+        1,
+        0,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": false,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          2,
+          1,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 2,
+      "architecture": "semantic_topological",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": true,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 3,
+      "architecture": "input_fifo",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 3,
+      "architecture": "random_ready_queue",
+      "base_schedule": [
+        1,
+        0,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": true,
+      "repeatable": false,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          2,
+          1,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 3,
+      "architecture": "semantic_topological",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": true,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 4,
+      "architecture": "input_fifo",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 4,
+      "architecture": "random_ready_queue",
+      "base_schedule": [
+        1,
+        0,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": false,
+      "repeatable": false,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          2,
+          1,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          1,
+          0,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "seed": 4,
+      "architecture": "semantic_topological",
+      "base_schedule": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "original_valid": true,
+      "reorder_invariant": true,
+      "repeatable": true,
+      "ordering_constraint": true,
+      "repeated_schedules": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ]
+    }
+  ]
+}

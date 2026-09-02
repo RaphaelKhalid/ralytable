@@ -1,0 +1,145 @@
+{
+  "aggregate": {
+    "alpha_typed_graph": {
+      "binding_change": 1.0,
+      "placebo_preservation": 1.0,
+      "rename_invariance": 1.0,
+      "reorder_invariance": 1.0
+    },
+    "name_normalized": {
+      "binding_change": 1.0,
+      "placebo_preservation": 0.0,
+      "rename_invariance": 0.0,
+      "reorder_invariance": 0.6
+    },
+    "surface_position": {
+      "binding_change": 1.0,
+      "placebo_preservation": 0.0,
+      "rename_invariance": 0.0,
+      "reorder_invariance": 0.0
+    }
+  },
+  "note": "Synthetic binding-invariance probe; no learned model or benchmark was run.",
+  "runs": [
+    {
+      "architecture": "surface_position",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": false,
+      "seed": 11
+    },
+    {
+      "architecture": "name_normalized",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": true,
+      "seed": 11
+    },
+    {
+      "architecture": "alpha_typed_graph",
+      "binding_change": true,
+      "placebo_preservation": true,
+      "rename_invariance": true,
+      "reorder_invariance": true,
+      "seed": 11
+    },
+    {
+      "architecture": "surface_position",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": false,
+      "seed": 23
+    },
+    {
+      "architecture": "name_normalized",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": true,
+      "seed": 23
+    },
+    {
+      "architecture": "alpha_typed_graph",
+      "binding_change": true,
+      "placebo_preservation": true,
+      "rename_invariance": true,
+      "reorder_invariance": true,
+      "seed": 23
+    },
+    {
+      "architecture": "surface_position",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": false,
+      "seed": 37
+    },
+    {
+      "architecture": "name_normalized",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": true,
+      "seed": 37
+    },
+    {
+      "architecture": "alpha_typed_graph",
+      "binding_change": true,
+      "placebo_preservation": true,
+      "rename_invariance": true,
+      "reorder_invariance": true,
+      "seed": 37
+    },
+    {
+      "architecture": "surface_position",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": false,
+      "seed": 41
+    },
+    {
+      "architecture": "name_normalized",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": false,
+      "seed": 41
+    },
+    {
+      "architecture": "alpha_typed_graph",
+      "binding_change": true,
+      "placebo_preservation": true,
+      "rename_invariance": true,
+      "reorder_invariance": true,
+      "seed": 41
+    },
+    {
+      "architecture": "surface_position",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": false,
+      "seed": 53
+    },
+    {
+      "architecture": "name_normalized",
+      "binding_change": true,
+      "placebo_preservation": false,
+      "rename_invariance": false,
+      "reorder_invariance": false,
+      "seed": 53
+    },
+    {
+      "architecture": "alpha_typed_graph",
+      "binding_change": true,
+      "placebo_preservation": true,
+      "rename_invariance": true,
+      "reorder_invariance": true,
+      "seed": 53
+    }
+  ]
+}
