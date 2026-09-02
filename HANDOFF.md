@@ -5,6 +5,29 @@ anything. Read `CLAUDE.md` (or `AGENTS.md`, same content) first: it holds the
 methodology rules, each written after a result here turned out wrong in that
 exact way.
 
+## 2026-09-02 full-site and research consolidation
+
+The public Vercel surface now uses one visual system on every shipped route:
+`index.html`, `research.html`, `interpretability.html`, `blind-test.html`, and
+`playground/index.html`. Each uses the bundled KaTeX/Computer Modern face,
+near-black silver-gelatin palette, square archival panels, restrained darkroom
+red, and common project navigation. The interactive behavior was preserved.
+
+The substantive local research backlog was also prepared for `main`: updated
+research logs and autoresearch code/tests, experiments 21 through 65, the two
+preregistrations, the under-40M architecture document, and the flagship brief.
+The temporary `.codex/autoresearch.lock` and the obsolete private-preview
+`site/.openai/hosting.json` are intentionally excluded.
+
+Validation for this consolidation:
+
+- all five public routes returned HTTP 200 locally;
+- every inline page script parsed;
+- 15 `autoresearch_next` unit tests passed;
+- all 44 standalone probes from experiments 22 through 65 exited successfully;
+- all new Python sources compiled; and
+- `git diff --check` passed apart from existing line-ending notices.
+
 ## 2026-09-02 flagship application artifact handoff
 
 The immediate application-facing deliverable is now one coherent public story,

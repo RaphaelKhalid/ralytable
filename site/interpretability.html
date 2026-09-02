@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -414,6 +414,14 @@ a.tile .go{
 .btn .arr{font-family:var(--mono);opacity:.7}
 @keyframes aurora-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @media(prefers-reduced-motion:reduce){.dot,.eyebrow::before,h1 em,.btn.primary{animation:none}}
+</style>
+<style>
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+:root{--bg:#090909;--bg-2:#0d0d0c;--panel:#111;--panel-2:#161615;--line:#262624;--line-2:#33322f;--fg:#f0ede6;--fg-2:#b8b4ab;--fg-3:#77736c;--accent:#a33a32;--accent-fill:#8f332c;--accent-dim:#77736c;--accent-ink:#f0ede6;--aurora:linear-gradient(105deg,#6f6b63 0%,#d9d4c8 45%,#8a857b 100%);--sel:rgba(163,58,50,.32);--disp:"KaTeX Main","Computer Modern",Georgia,serif;--body:"KaTeX Main","Computer Modern",Georgia,serif;--grid:rgba(240,237,230,.07)}
+.dot{background:var(--accent);animation:none;border-radius:1px}.eyebrow{color:var(--accent)}.eyebrow::before{background:var(--aurora);animation:none}
+h1 em{background:none;color:var(--accent);animation:none}.panel,.card,.tip,.chip,.track,.rolebar{border-radius:1px}.nav-links a.ghost{border-radius:1px}.nav-links a.ghost:hover{border-color:var(--fg-2);color:var(--fg)}
 </style>
 </head>
 <body>
