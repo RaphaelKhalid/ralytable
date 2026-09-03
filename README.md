@@ -2,7 +2,7 @@
 
 Ralytable is a research project about building models with typed, inspectable intermediate state. **Raly** is the experimental language and compiler used to describe that state.
 
-The central question is whether making a model's internal structure explicit can make its computation easier to inspect without giving up too much capability. That has not been established. The current discrete model performed worse than its matched dense control, and the compiler can type-check programs but cannot run them yet.
+The central question is whether making a model's internal structure explicit can make its computation easier to inspect without giving up too much capability. That has not been established. The current discrete model performed worse than its matched dense control. The compiler now runs a small pure subset, while vector-symbolic execution and a learned-model bridge remain unbuilt.
 
 ## Flagship research story
 
@@ -19,6 +19,9 @@ interactive version is the site landing page.
 See [ROADMAP.md](ROADMAP.md) for the current plan, open questions, and risks.
 
 ## Try it
+
+The interactive [Raly concept atlas](https://ralytable.vercel.app/docs.html)
+explains the language from the whole idea down to ordinary dictionary words.
 
 The compiler runs in a browser and does not require a local Rust toolchain.
 

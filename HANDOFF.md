@@ -5,6 +5,20 @@ anything. Read `CLAUDE.md` (or `AGENTS.md`, same content) first: it holds the
 methodology rules, each written after a result here turned out wrong in that
 exact way.
 
+## 2026-09-03 interactive Raly documentation atlas
+
+The site now includes `docs.html`, an 84-concept searchable SVG tree that
+defines Raly from the complete project down through compiler stages, types,
+vector-symbolic operations, receipts, current capabilities, and ordinary-word
+leaves. Cards progressively expand, search opens a concept's full path, a
+detail panel supplies the plain sentence and why it matters, and the canvas can
+be dragged and zoomed. Motion (the library formerly called Framer Motion)
+provides spring cursor reactions with a reduced-motion and no-network fallback.
+
+The page is mirrored byte-for-byte under `site/` and `web/`. Every public route
+links to it, and stale site copy now distinguishes the command-line pure-subset
+runtime from the browser playground and the still-unimplemented VSA backend.
+
 ## 2026-09-03 typed-ledger runtime and learned-parser gate
 
 Raly now has its first executable vertical slice. The new `raly-ledger` crate

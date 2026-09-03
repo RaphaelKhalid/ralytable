@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raly, from the whole idea to ordinary words</title>
+<meta name="description" content="A searchable, interactive concept tree that explains the Raly programming language from its purpose down to everyday words.">
+<meta name="color-scheme" content="dark light">
+<style>
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"KaTeX Main";src:url("./assets/KaTeX_Main-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+:root{--ink:#f6f2e8;--muted:#bcb6aa;--dim:#7f796e;--black:#08090b;--panel:#101216;--line:#30343d;--acid:#d8ff52;--pink:#ff6fb2;--blue:#73d7ff;--orange:#ff9c52;--violet:#ad8cff;--green:#61e8a7;--display:"KaTeX Main",Georgia,serif;--mono:"Cascadia Mono","SFMono-Regular",Consolas,monospace;--mx:50%;--my:35%}
+*{box-sizing:border-box}html{background:var(--black);scroll-behavior:smooth}body{margin:0;color:var(--ink);background:radial-gradient(circle at var(--mx) var(--my),rgba(115,215,255,.09),transparent 24rem),var(--black);font:17px/1.55 var(--display);min-height:100vh;overflow-x:hidden}button,input{font:inherit}button{color:inherit}a{color:inherit}.skip{position:fixed;left:12px;top:-80px;z-index:100;background:var(--acid);color:#0a0b0d;padding:9px 14px}.skip:focus{top:12px}
+.nav{height:58px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 clamp(16px,4vw,42px);gap:22px;position:sticky;top:0;z-index:20;background:rgba(8,9,11,.86);backdrop-filter:blur(14px)}.brand{font-size:19px;font-weight:700;text-decoration:none;letter-spacing:-.03em}.brand i{display:inline-block;width:9px;height:9px;background:var(--pink);border-radius:50%;margin-left:3px;box-shadow:0 0 0 4px rgba(255,111,178,.14)}.nav-links{margin-left:auto;display:flex;gap:18px;align-items:center;font:13px var(--mono);color:var(--muted)}.nav-links a{text-decoration:none}.nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--acid)}
+.page{padding:clamp(20px,4vw,44px);max-width:1760px;margin:0 auto}.intro{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:22px;margin-bottom:22px}.kicker{font:12px var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--acid);margin:0 0 10px}.intro h1{font-size:clamp(36px,6vw,82px);line-height:.91;letter-spacing:-.065em;margin:0;max-width:15ch}.intro h1 span{color:var(--blue);font-style:italic}.intro p{color:var(--muted);max-width:62ch;margin:18px 0 0;font-size:clamp(16px,1.4vw,20px)}.legend{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}.legend span{border:1px solid var(--line);padding:5px 9px;font:11px var(--mono);color:var(--muted);background:var(--panel)}.legend b{color:var(--ink)}
+.toolbar{display:grid;grid-template-columns:minmax(220px,1fr) auto auto auto;gap:8px;margin-bottom:10px}.search{position:relative}.search input{width:100%;height:46px;border:1px solid var(--line);background:#0d0f12;color:var(--ink);padding:0 44px 0 15px;outline:none}.search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(115,215,255,.13)}.search kbd{position:absolute;right:12px;top:12px;color:var(--dim);font:11px var(--mono);border:1px solid var(--line);padding:3px 6px}.tool{height:46px;border:1px solid var(--line);background:var(--panel);padding:0 14px;font:12px var(--mono);cursor:pointer}.tool:hover,.tool:focus-visible{border-color:var(--acid);color:var(--acid);outline:none}.search-note{font:12px var(--mono);color:var(--dim);margin:0 0 10px;min-height:1.4em}
+.atlas{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);height:min(73vh,820px);min-height:590px;border:1px solid var(--line);background:#0b0d10;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.38)}.stage{position:relative;overflow:hidden;cursor:grab;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:28px 28px}.stage:active{cursor:grabbing}.stage::after{content:"drag to roam · wheel to zoom";position:absolute;left:14px;bottom:11px;color:var(--dim);font:10px var(--mono);letter-spacing:.08em;pointer-events:none}.tree{display:block;width:100%;height:100%;touch-action:none}.edge{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round}.edge.hot{stroke:var(--acid);filter:drop-shadow(0 0 5px rgba(216,255,82,.35))}.node{cursor:pointer;outline:none}.node-card{stroke-width:2;filter:drop-shadow(0 8px 12px rgba(0,0,0,.32));transition:stroke .16s,filter .16s}.node:focus-visible .node-card,.node:hover .node-card{stroke:var(--acid);filter:drop-shadow(0 0 9px rgba(216,255,82,.32))}.node.search-hit .node-card{stroke:var(--pink);stroke-width:4}.node.selected .node-card{stroke:var(--acid);stroke-width:4}.node-title{font-family:var(--display);font-size:16px;font-weight:700;fill:#08090b;pointer-events:none}.node-meta{font-family:var(--mono);font-size:9px;fill:#2d3035;letter-spacing:.05em;pointer-events:none}.leaf-dot{fill:#0b0d10;opacity:.55}.pulse{fill:none;stroke:var(--acid);stroke-width:2;opacity:0;pointer-events:none}.node.selected .pulse{animation:pulse 1.8s ease-out infinite}@keyframes pulse{0%{opacity:.7;transform:scale(.96)}100%{opacity:0;transform:scale(1.12)}}
+.detail{border-left:1px solid var(--line);padding:clamp(20px,3vw,34px);background:linear-gradient(160deg,rgba(255,255,255,.035),transparent 40%),var(--panel);overflow:auto;position:relative}.detail::before{content:"";position:absolute;width:90px;height:6px;right:24px;top:24px;background:repeating-linear-gradient(90deg,var(--pink) 0 12px,transparent 12px 18px);transform:rotate(-3deg)}.crumbs{font:11px var(--mono);color:var(--dim);margin:0 0 36px;line-height:1.7}.crumbs button{background:none;border:0;padding:0;color:inherit;cursor:pointer}.crumbs button:hover{color:var(--blue)}.depth{font:11px var(--mono);color:var(--acid);letter-spacing:.14em;text-transform:uppercase}.detail h2{font-size:clamp(29px,3vw,44px);line-height:1;letter-spacing:-.045em;margin:9px 0 16px}.plain{font-size:20px;line-height:1.42;margin:0 0 18px}.why{border-left:4px solid var(--pink);padding:2px 0 2px 15px;color:var(--muted);margin:0 0 22px}.example{font:13px/1.65 var(--mono);background:#090a0c;border:1px solid var(--line);padding:14px;white-space:pre-wrap;color:var(--blue);margin:18px 0}.children{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}.children button{border:1px solid var(--line);background:#0b0d10;padding:7px 10px;font:11px var(--mono);cursor:pointer}.children button:hover{border-color:var(--acid);color:var(--acid)}.leaf-note{font:12px var(--mono);color:var(--green);margin-top:22px}
+.truth{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.truth article{border:1px solid var(--line);padding:20px;background:var(--panel)}.truth h3{font-size:18px;margin:0 0 8px}.truth p{color:var(--muted);margin:0;font-size:15px}.truth .now{border-top:4px solid var(--green)}.truth .next{border-top:4px solid var(--orange)}.truth .nope{border-top:4px solid var(--pink)}.how{margin:50px auto 28px;max-width:900px}.how h2{font-size:clamp(28px,4vw,48px);margin:0 0 14px}.how p{color:var(--muted)}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:20px}.steps div{background:var(--black);padding:18px}.steps b{display:block;color:var(--acid);font:12px var(--mono);margin-bottom:8px}.steps span{font-size:15px;color:var(--muted)}footer{border-top:1px solid var(--line);margin-top:54px;padding:28px clamp(16px,4vw,42px);display:flex;justify-content:space-between;gap:20px;color:var(--dim);font:12px var(--mono)}footer a:hover{color:var(--acid)}
+@media(max-width:900px){.intro{grid-template-columns:1fr}.legend{justify-content:flex-start}.atlas{grid-template-columns:1fr;height:auto}.stage{height:62vh;min-height:500px}.detail{border-left:0;border-top:1px solid var(--line);min-height:360px}.truth{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}}@media(max-width:620px){.nav-links a:not([aria-current="page"]){display:none}.page{padding:20px 12px}.toolbar{grid-template-columns:1fr 1fr}.search{grid-column:1/-1}.tool{padding:0 8px}.stage{height:58vh;min-height:440px}.intro h1{font-size:44px}.steps{grid-template-columns:1fr}.atlas{min-height:0}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.node.selected .pulse{animation:none}.node-reactor{transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#atlas">Skip to the concept tree</a>
+<nav class="nav" aria-label="Main navigation"><a class="brand" href="./index.html">Ralytable<i aria-hidden="true"></i></a><div class="nav-links"><a aria-current="page" href="./docs.html">Raly docs</a><a href="./playground/">Playground</a><a href="./research.html">Research</a><a href="https://github.com/RaphaelKhalid/ralytable">GitHub</a></div></nav>
+<main class="page">
+  <header class="intro"><div><p class="kicker">Raly concept atlas · click any card</p><h1>The whole language, down to <span>ordinary words.</span></h1><p>Start with Raly. Open a branch. Keep going until the idea is explained with words like “number,” “name,” “before,” and “same.” Search jumps straight to any concept.</p></div><div class="legend" aria-label="Tree color legend"><span><b>whole</b> project</span><span>language</span><span>compiler</span><span>trust</span><span>limits</span></div></header>
+  <section aria-label="Interactive Raly concept tree">
+    <div class="toolbar"><label class="search"><span class="skip">Search concepts</span><input id="search" type="search" autocomplete="off" placeholder="Search: receipt, bind, type, runtime…"><kbd>/</kbd></label><button class="tool" id="expand" type="button">open all</button><button class="tool" id="collapse" type="button">start over</button><button class="tool" id="fit" type="button">fit tree</button></div>
+    <p class="search-note" id="search-note" aria-live="polite">Tip: click a card with a + to reveal simpler ideas beneath it.</p>
+    <div class="atlas" id="atlas"><div class="stage" id="stage"><svg class="tree" id="tree" role="tree" aria-label="Raly concepts, arranged from the whole project to basic words"><g id="viewport"><g id="edges"></g><g id="nodes"></g></g></svg></div><aside class="detail" id="detail" aria-live="polite"></aside></div>
+  </section>
+  <section class="truth" aria-label="Current status"><article class="now"><h3>Works now</h3><p>Raly reads, checks, and explains <code>.raly</code> files. Its new CPU interpreter runs pure constants, arithmetic, comparisons, strings, lists, and tuples, with replay receipts.</p></article><article class="next"><h3>Being built</h3><p>The next runtime layers are executable vector-symbolic operations, stable declaration identities, functions, and a bridge between the ledger and a learned model.</p></article><article class="nope"><h3>Not claimed</h3><p>Ralytable is not yet a reasoning model, a replacement for Python, or proof that typed internal steps make AI trustworthy. The first learned-parser gate failed.</p></article></section>
+  <section class="how"><h2>How to read the tree</h2><p>Every branch answers “what does that mean?” The leaves stop when another definition would mostly repeat common dictionary words.</p><div class="steps"><div><b>01 · SEARCH</b><span>Type a word. Its whole path opens.</span></div><div><b>02 · OPEN</b><span>Click + cards to go one layer deeper.</span></div><div><b>03 · READ</b><span>The right panel gives the plain sentence.</span></div><div><b>04 · PLAY</b><span>Drag, zoom, and follow the bright branches.</span></div></div></section>
+</main>
+<footer><span>Raly is the language. Ralytable is the research project.</span><span><a href="./playground/">Try the compiler</a> · <a href="https://github.com/RaphaelKhalid/ralytable/tree/main/compiler">Read the source</a></span></footer>
+<script type="module">
+const C = [
+  {id:"raly",title:"Raly",plain:"Raly is a programming language for writing computations whose important steps can be checked, named, and replayed.",why:"It is the language at the center of the Ralytable research project.",example:"let answer: Int = 6 * 7"},
+  {id:"identity",p:"raly",title:"What Raly is",plain:"It is a small experimental programming language, a compiler, and the beginning of a runtime.",why:"The language is the rules; the compiler understands the rules; the runtime performs them."},
+  {id:"language",p:"identity",title:"Programming language",plain:"A programming language is a set of words and rules people use to tell a computer what to do.",why:"Raly source files use the ending .raly."},
+  {id:"words",p:"language",title:"Words",plain:"Words are written marks that carry a shared meaning.",why:"In code, words such as let and Int have exact agreed meanings."},
+  {id:"rules",p:"language",title:"Rules",plain:"Rules say what is allowed and what something means.",why:"Raly requires a declared type to agree with its value."},
+  {id:"computer",p:"language",title:"Computer",plain:"A computer is a machine that follows instructions and works with information.",why:"Raly turns human-written instructions into work the machine can perform."},
+  {id:"experimental",p:"identity",title:"Experimental",plain:"Experimental means it is being built to test an idea, and the answer may be no.",why:"Raly is working software, but its larger AI hypothesis is not established."},
+  {id:"compiler",p:"identity",title:"Compiler",plain:"The compiler reads Raly code, checks it, and builds a precise internal description of it.",why:"It catches mistakes before the program runs."},
+  {id:"runtime",p:"identity",title:"Runtime",plain:"A runtime is the part that actually performs a program's operations.",why:"Raly's first runtime can perform pure constants and arithmetic today."},
+
+  {id:"purpose",p:"raly",title:"Why it exists",plain:"Raly explores whether important AI computation can be made visible and testable while it happens.",why:"A fluent explanation written after an answer may sound good without being the real cause of the answer."},
+  {id:"visible",p:"purpose",title:"Visible computation",plain:"Visible computation means a person or tool can inspect the important steps between input and output.",why:"Seeing a real step lets us test it instead of trusting a story about it."},
+  {id:"step",p:"visible",title:"Step",plain:"A step is one change made during a piece of work.",why:"Adding two numbers is one step; using that answer in a comparison is another."},
+  {id:"input",p:"visible",title:"Input",plain:"An input is information given to a process before it starts.",why:"In 6 × 7, the numbers 6 and 7 are inputs."},
+  {id:"output",p:"visible",title:"Output",plain:"An output is information produced after a process does its work.",why:"In 6 × 7, the output is 42."},
+  {id:"testable",p:"purpose",title:"Testable",plain:"Testable means we can make a check that can succeed or fail.",why:"A useful claim must risk being shown wrong."},
+  {id:"cause",p:"testable",title:"Cause",plain:"A cause is something whose change helps produce a change in what happens next.",why:"If changing a claimed reasoning step never changes the answer, that step may be decoration."},
+  {id:"same",p:"testable",title:"Same and different",plain:"Same means matching in the way we care about. Different means not matching.",why:"Replay asks whether two executions have the same ordered receipts."},
+
+  {id:"pipeline",p:"raly",title:"From code to result",plain:"Raly passes source code through several checking stages before its small runtime performs it.",why:"Each stage answers a different question and can report its own mistakes."},
+  {id:"source",p:"pipeline",title:"Source code",plain:"Source code is the text a person writes in a programming language.",why:"A Raly source file might contain let answer: Int = 6 * 7."},
+  {id:"text",p:"source",title:"Text",plain:"Text is a sequence of written characters.",why:"The compiler begins with characters before it knows which ones form names or numbers."},
+  {id:"character",p:"text",title:"Character",plain:"A character is one written mark, such as R, 7, +, or (.",why:"Characters are the smallest written pieces the lexer reads."},
+  {id:"lexer",p:"pipeline",title:"Lexer",plain:"The lexer groups source characters into meaningful pieces called tokens.",why:"It recognizes that 42 is one number rather than two unrelated characters."},
+  {id:"token",p:"lexer",title:"Token",plain:"A token is one recognized piece of code, such as a name, number, keyword, or symbol.",why:"let, answer, :, Int, =, and 42 are tokens."},
+  {id:"parser",p:"pipeline",title:"Parser",plain:"The parser arranges tokens into a tree that represents the structure of the program.",why:"It knows that multiplication belongs inside the value assigned to answer."},
+  {id:"tree",p:"parser",title:"Tree",plain:"A tree is a shape where one thing can lead to several things below it.",why:"A multiplication node has two children: its left and right values."},
+  {id:"resolver",p:"pipeline",title:"Name resolver",plain:"The resolver connects every used name to the place where that name was introduced.",why:"It proves that answer in answer > 40 means the earlier answer, not an unknown word."},
+  {id:"name",p:"resolver",title:"Name",plain:"A name is a word used to identify one thing.",why:"answer is a name for the value 42."},
+  {id:"checker",p:"pipeline",title:"Type checker",plain:"The type checker proves that values and operations fit the program's declared rules.",why:"It rejects using a string where an integer is required."},
+  {id:"ledger",p:"pipeline",title:"Typed ledger",plain:"The ledger is an ordered, inspectable record of the program's meaningful operations and types.",why:"It gives execution steps stable identities without replacing the source tree."},
+  {id:"interpreter",p:"pipeline",title:"Interpreter",plain:"An interpreter performs instructions directly from an internal program description.",why:"Raly's interpreter currently evaluates a deliberately small, pure subset."},
+  {id:"result",p:"pipeline",title:"Result",plain:"A result is the value left after an operation finishes.",why:"The result of 6 × 7 is the integer 42."},
+  {id:"types",p:"raly",title:"What the types know",plain:"Raly types describe ordinary values and properties of vector-symbolic computation that tensor shapes usually omit.",why:"The compiler can reject operations that look numerically possible but are semantically wrong."},
+  {id:"type",p:"types",title:"Type",plain:"A type is a rule that says what kind of value something is and which operations make sense for it.",why:"Int means a whole number; Bool means true or false."},
+  {id:"value",p:"type",title:"Value",plain:"A value is a piece of information a program can store or use.",why:"42, true, hello, and [1, 2] are values."},
+  {id:"integer",p:"value",title:"Integer",plain:"An integer is a whole number with no fractional part.",why:"-2, 0, and 42 are integers."},
+  {id:"boolean",p:"value",title:"Boolean",plain:"A Boolean value is either true or false.",why:"answer > 40 produces true when answer is 42."},
+  {id:"string",p:"value",title:"String",plain:"A string is text stored as a value.",why:"typed ledger can be stored as a string."},
+  {id:"list",p:"value",title:"List",plain:"A list is an ordered group of values.",why:"[42, 43] is a list containing two integers."},
+  {id:"dimension",p:"types",title:"Dimension",plain:"Dimension is the number of positions in a vector space.",why:"Raly can prove that operations use compatible spaces instead of relying only on runtime tensor shapes."},
+  {id:"number",p:"dimension",title:"Number",plain:"A number is a written way to describe an amount or position.",why:"A dimension such as 1,024 describes how many vector positions exist."},
+  {id:"family",p:"types",title:"VSA family",plain:"A VSA family is the chosen mathematical recipe for representing and combining symbolic vectors.",why:"Two spaces with incompatible recipes should not be silently mixed."},
+  {id:"recipe",p:"family",title:"Recipe",plain:"A recipe is an ordered set of instructions for making something.",why:"Here it means the mathematical rules used to bind, bundle, and compare vectors."},
+  {id:"load",p:"types",title:"Superposition load",plain:"Load is how many items have been placed together in one vector representation.",why:"Too many items make reliable retrieval less likely."},
+  {id:"capacity",p:"load",title:"Capacity",plain:"Capacity is the measured amount a space can hold while meeting a chosen retrieval accuracy.",why:"Raly can reject a bundle known to exceed that measured limit."},
+  {id:"role-schema",p:"types",title:"Role schema",plain:"A role schema records which named roles are present in a structured vector.",why:"The compiler can reject asking for a role that was never bound."},
+  {id:"role",p:"role-schema",title:"Role",plain:"A role is a named place in a structure, such as subject, action, or object.",why:"A role says what a bound value means, not merely where bytes sit."},
+  {id:"clean",p:"types",title:"Cleanliness and depth",plain:"Raly tracks whether a vector may be noisy and how many retrieval layers it has crossed.",why:"Repeated approximate retrieval can make an answer less dependable."},
+  {id:"noise",p:"clean",title:"Noise",plain:"Noise is unwanted variation that makes the intended information harder to recognize.",why:"Cleanup tries to move a noisy vector toward a known clean atom."},
+
+  {id:"vsa",p:"raly",title:"Vector-symbolic operations",plain:"Vector-symbolic architecture, or VSA, represents symbols with large vectors and combines them using special operations.",why:"Raly makes those operations part of the language so their meaning can be checked."},
+  {id:"vector",p:"vsa",title:"Vector",plain:"A vector is an ordered list of numbers.",why:"In VSA, a long vector can stand for a symbol or a structured memory."},
+  {id:"symbol",p:"vsa",title:"Symbol",plain:"A symbol is something used to stand for another idea or thing.",why:"A vector can stand for the idea red without spelling the word red inside every number."},
+  {id:"space",p:"vsa",title:"Space",plain:"A space defines which vectors belong together, their dimension, and their mathematical family.",why:"It is the declared home and rulebook for a group of vectors."},
+  {id:"atom",p:"vsa",title:"Atom",plain:"An atom is one basic known vector that stands for one symbol.",why:"More complex structures are built by combining atoms."},
+  {id:"bind",p:"vsa",title:"bind",plain:"bind combines two vectors so the result records that they belong together.",why:"Binding a role to a value is like recording subject = bird without storing a normal table row."},
+  {id:"combine",p:"bind",title:"Combine",plain:"Combine means join two or more things to make one new thing.",why:"The new thing can carry a relationship between its parts."},
+  {id:"bundle",p:"vsa",title:"bundle",plain:"bundle places several vectors together so one vector represents the collection.",why:"A bundle is useful memory, but it has a measurable capacity."},
+  {id:"collection",p:"bundle",title:"Collection",plain:"A collection is a group of things considered together.",why:"A bundle can represent several memories at once."},
+  {id:"permute",p:"vsa",title:"permute",plain:"permute changes the order of a vector's positions in a repeatable way.",why:"A repeatable rearrangement can mark position, sequence, or another role."},
+  {id:"order",p:"permute",title:"Order",plain:"Order is the arrangement of things as first, second, third, and so on.",why:"Changing order can change meaning."},
+  {id:"unbind",p:"vsa",title:"unbind",plain:"unbind uses a known role or key to recover the value joined to it.",why:"It asks a structured memory for one part."},
+  {id:"recover",p:"unbind",title:"Recover",plain:"Recover means get something back from where it was stored or hidden.",why:"The recovered vector may be approximate rather than perfectly identical."},
+  {id:"cleanup",p:"vsa",title:"cleanup",plain:"cleanup replaces a noisy result with the closest known atom when confidence is sufficient.",why:"It turns an approximate memory back into a recognized symbol."},
+  {id:"closest",p:"cleanup",title:"Closest",plain:"Closest means more alike by a chosen measure than the available alternatives.",why:"VSA cleanup compares vectors and selects the best match."},
+  {id:"trust",p:"raly",title:"How it can be checked",plain:"Raly attaches identity, provenance, receipts, and replay checks to computation.",why:"Together they make a concrete audit trail, not proof that every program is correct."},
+  {id:"semantic-id",p:"trust",title:"Semantic identity",plain:"A semantic identity is a fingerprint made from what an operation means: its operation, parameters, inputs, and output type.",why:"Changing whitespace or a variable's spelling should not change the identity of the computation."},
+  {id:"fingerprint",p:"semantic-id",title:"Fingerprint",plain:"A fingerprint is a short mark used to recognize a larger thing.",why:"Raly uses deterministic hashes as compact recognition marks."},
+  {id:"hash",p:"fingerprint",title:"Hash",plain:"A hash is a fixed-size value calculated from information so changes are easy to notice.",why:"The current hash is an identity key with collision checks, not a cryptographic promise."},
+  {id:"provenance",p:"trust",title:"Provenance",plain:"Provenance records where something came from.",why:"Raly keeps the source location even though that location is not part of semantic identity."},
+  {id:"receipt",p:"trust",title:"Execution receipt",plain:"A receipt records one executed node, the state before it, the state after it, and the value produced.",why:"It is the machine-readable show-your-work record."},
+  {id:"before",p:"receipt",title:"Before and after",plain:"Before means earlier than a change. After means later than that change.",why:"Comparing them shows which step changed execution state."},
+  {id:"replay",p:"trust",title:"Replay",plain:"Replay means perform the same recorded computation again and compare the new receipts with the old ones.",why:"Raly reports the first receipt where the two runs differ."},
+  {id:"compare",p:"replay",title:"Compare",plain:"Compare means look at two things to learn how they are the same or different.",why:"Receipt comparison is exact and ordered."},
+  {id:"intervention",p:"trust",title:"Causal intervention",plain:"A causal intervention deliberately changes one claimed reason and checks whether the result changes appropriately.",why:"This is a research requirement for future models; the current learned parser failed its first gate."},
+  {id:"change",p:"intervention",title:"Change",plain:"Change means make or become different.",why:"A cause should matter when it is changed in a relevant way."},
+
+  {id:"status",p:"raly",title:"What exists today",plain:"The compiler is mature enough to read and check real .raly files; the runtime is a small first slice.",why:"The boundary matters because working code is not the same as a finished language."},
+  {id:"works",p:"status",title:"Working front end",plain:"Lexing, parsing, name resolution, type checking, diagnostics, explanations, and a browser playground work now.",why:"The same Rust front end powers the command line and WebAssembly playground."},
+  {id:"arithmetic",p:"status",title:"Working execution",plain:"Pure top-level constants, integer arithmetic, comparisons, strings, lists, and tuples execute on the CPU.",why:"This is the first time real .raly code produces values through a Raly runtime.",example:"answer = 42\nordered = true"},
+  {id:"json",p:"status",title:"Working receipts",plain:"raly run --json returns typed values, semantic roots, and ordered execution receipts.",why:"The format is versioned as raly.execution.v1 and keeps 64-bit fingerprints exact."},
+
+  {id:"limits",p:"raly",title:"What Raly is not yet",plain:"Raly is not yet a full general-purpose language or the runtime of a reasoning model.",why:"Clear limits keep a real prototype from being mistaken for a solved research problem."},
+  {id:"no-vsa-runtime",p:"limits",title:"No VSA execution yet",plain:"The compiler checks bind, bundle, permute, unbind, and cleanup, but the runtime does not yet perform them.",why:"Representing an operation in the ledger is not the same as implementing its mathematics."},
+  {id:"no-functions",p:"limits",title:"No full function runtime",plain:"Raly parses and checks functions, but the first interpreter only runs top-level pure constants.",why:"Function calls, control flow, effects, and modules need later runtime work."},
+  {id:"no-model",p:"limits",title:"No reasoning model bridge",plain:"No trained model currently produces and executes this ledger as its required internal reasoning path.",why:"That connection must pass causal tests before it earns an interpretability claim."},
+  {id:"failed-gate",p:"limits",title:"The parser gate failed",plain:"The first learned parser fit its training examples but did not generalize reliably to held-out compositions.",why:"The larger under-40M training run is blocked until a revised parser passes the causal gate."},
+  {id:"failure",p:"failed-gate",title:"Failure",plain:"Failure means a stated requirement was not met.",why:"In research, a measured failure is useful because it prevents an unjustified larger bet."}
+];
+const byId=new Map(C.map(x=>[x.id,x]));
+const children=new Map(C.map(x=>[x.id,[]]));
+for(const n of C){if(n.p)children.get(n.p).push(n.id)}
+const expanded=new Set(["raly"]);
+let selected="raly",hits=new Set(),scale=1,panX=24,panY=20,drag=null,motionAnimate=null;
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const svg=document.querySelector("#tree"),viewport=document.querySelector("#viewport"),edgeLayer=document.querySelector("#edges"),nodeLayer=document.querySelector("#nodes"),stage=document.querySelector("#stage"),detail=document.querySelector("#detail"),note=document.querySelector("#search-note");
+
+import("https://cdn.jsdelivr.net/npm/motion@12.23.24/+esm").then(m=>{motionAnimate=m.animate}).catch(()=>{});
+const color=depth=>["#d8ff52","#73d7ff","#ff6fb2","#ff9c52","#ad8cff","#61e8a7"][Math.min(depth,5)];
+const esc=s=>s.replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ancestors=id=>{const out=[];let n=byId.get(id);while(n){out.unshift(n.id);n=n.p?byId.get(n.p):null}return out};
+
+function layout(){
+  const positions=new Map();let row=0,maxDepth=0;
+  function visit(id,depth){
+    maxDepth=Math.max(maxDepth,depth);const kids=children.get(id)||[],shown=expanded.has(id)?kids:[];let y;
+    if(shown.length){const ys=shown.map(k=>visit(k,depth+1));y=(ys[0]+ys[ys.length-1])/2}else y=row++*104+62;
+    positions.set(id,{x:depth*268+34,y,depth});return y;
+  }
+  visit("raly",0);return{positions,width:(maxDepth+1)*268+250,height:Math.max(560,row*104+70)};
+}
+
+function render(){
+  const {positions,width,height}=layout();svg.dataset.w=width;svg.dataset.h=height;edgeLayer.innerHTML="";nodeLayer.innerHTML="";
+  for(const [id,pos] of positions){
+    const n=byId.get(id);if(!n.p||!positions.has(n.p))continue;const parent=positions.get(n.p),path=document.createElementNS("http://www.w3.org/2000/svg","path"),x1=parent.x+210,y1=parent.y,x2=pos.x,y2=pos.y,m=(x1+x2)/2;
+    path.setAttribute("d",`M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}`);path.setAttribute("class",`edge ${ancestors(selected).includes(id)?"hot":""}`);edgeLayer.append(path);
+  }
+  for(const [id,pos] of positions){
+    const n=byId.get(id),kids=children.get(id)||[],open=expanded.has(id),g=document.createElementNS("http://www.w3.org/2000/svg","g");
+    g.setAttribute("class",`node ${id===selected?"selected":""} ${hits.has(id)?"search-hit":""}`);g.setAttribute("transform",`translate(${pos.x} ${pos.y-35})`);g.setAttribute("role","treeitem");g.setAttribute("aria-label",`${n.title}. ${n.plain}`);g.setAttribute("aria-level",String(pos.depth+1));if(kids.length)g.setAttribute("aria-expanded",String(open));g.setAttribute("tabindex","0");g.dataset.id=id;
+    const inner=document.createElementNS("http://www.w3.org/2000/svg","g");inner.setAttribute("class","node-reactor");
+    const title=n.title.length>25?n.title.slice(0,23)+"…":n.title;
+    inner.innerHTML=`<rect class="pulse" x="-6" y="-6" width="222" height="82" rx="18"></rect><rect class="node-card" width="210" height="70" rx="14" fill="${color(pos.depth)}" stroke="#0b0d10"></rect><circle class="leaf-dot" cx="188" cy="18" r="7"></circle><text class="node-title" x="16" y="31">${esc(title)}</text><text class="node-meta" x="16" y="52">DEPTH ${pos.depth} · ${kids.length?(open?"− CLOSE":"+ "+kids.length+" IDEAS"):"PLAIN WORDS"}</text>`;
+    g.append(inner);nodeLayer.append(g);g.addEventListener("click",()=>choose(id,true));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose(id,true)}});g.addEventListener("pointermove",e=>react(inner,e,g));g.addEventListener("pointerleave",()=>settle(inner));
+  }
+  renderDetail();applyTransform();
+}
+
+function choose(id,toggle=false){selected=id;const kids=children.get(id)||[];if(toggle&&kids.length){expanded.has(id)?expanded.delete(id):expanded.add(id)}render()}
+function renderDetail(){
+  const n=byId.get(selected),path=ancestors(selected),kids=children.get(selected)||[];
+  detail.innerHTML=`<p class="crumbs">${path.map((id,i)=>`<button data-jump="${id}">${esc(byId.get(id).title)}</button>${i<path.length-1?" → ":""}`).join("")}</p><span class="depth">Layer ${path.length-1} of meaning</span><h2>${esc(n.title)}</h2><p class="plain">${esc(n.plain)}</p><p class="why">${esc(n.why)}</p>${n.example?`<pre class="example">${esc(n.example)}</pre>`:""}${kids.length?`<div class="children">${kids.map(id=>`<button data-jump="${id}">${esc(byId.get(id).title)} →</button>`).join("")}</div>`:`<p class="leaf-note">✓ This branch has reached ordinary-language ground.</p>`}`;
+  detail.querySelectorAll("[data-jump]").forEach(b=>b.addEventListener("click",()=>{const id=b.dataset.jump;ancestors(id).slice(0,-1).forEach(a=>expanded.add(a));selected=id;render()}));
+}
+function react(inner,e,g){if(reduce)return;const box=g.getBoundingClientRect(),dx=(e.clientX-box.left)/box.width-.5,dy=(e.clientY-box.top)/box.height-.5,target=`translate(${dx*7}px,${dy*5}px) rotate(${dx*2}deg)`;if(motionAnimate)motionAnimate(inner,{transform:target},{type:"spring",stiffness:420,damping:28});else inner.style.transform=target}
+function settle(inner){if(reduce)return;if(motionAnimate)motionAnimate(inner,{transform:"translate(0px,0px) rotate(0deg)"},{type:"spring",stiffness:320,damping:24});else inner.style.transform=""}
+function applyTransform(){viewport.setAttribute("transform",`translate(${panX} ${panY}) scale(${scale})`)}
+function fit(){const w=Number(svg.dataset.w)||1200,h=Number(svg.dataset.h)||700,box=stage.getBoundingClientRect();scale=Math.min(.98,Math.max(.2,Math.min((box.width-44)/w,(box.height-44)/h)));panX=22;panY=22;applyTransform()}
+
+document.querySelector("#expand").addEventListener("click",()=>{C.forEach(n=>{if((children.get(n.id)||[]).length)expanded.add(n.id)});render();requestAnimationFrame(fit)});
+document.querySelector("#collapse").addEventListener("click",()=>{expanded.clear();expanded.add("raly");selected="raly";hits.clear();document.querySelector("#search").value="";note.textContent="Back at the whole idea. Open any branch to go deeper.";render();requestAnimationFrame(fit)});
+document.querySelector("#fit").addEventListener("click",fit);
+const search=document.querySelector("#search");search.addEventListener("input",()=>{const q=search.value.trim().toLowerCase();hits.clear();if(!q){note.textContent="Tip: click a card with a + to reveal simpler ideas beneath it.";render();return}const found=C.filter(n=>(n.title+" "+n.plain+" "+n.why).toLowerCase().includes(q));found.forEach(n=>{hits.add(n.id);ancestors(n.id).slice(0,-1).forEach(a=>expanded.add(a))});if(found.length){selected=found[0].id;note.textContent=`${found.length} match${found.length===1?"":"es"}. Showing the first path.`}else note.textContent="No match yet. Try a simpler word.";render();requestAnimationFrame(fit)});
+document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==search){e.preventDefault();search.focus()}});
+stage.addEventListener("wheel",e=>{e.preventDefault();scale=Math.min(1.7,Math.max(.2,scale*(e.deltaY>0?.9:1.1)));applyTransform()},{passive:false});
+stage.addEventListener("pointerdown",e=>{if(e.target.closest?.(".node"))return;drag={x:e.clientX,y:e.clientY,panX,panY};stage.setPointerCapture(e.pointerId)});
+stage.addEventListener("pointermove",e=>{document.documentElement.style.setProperty("--mx",`${e.clientX}px`);document.documentElement.style.setProperty("--my",`${e.clientY}px`);if(drag){panX=drag.panX+e.clientX-drag.x;panY=drag.panY+e.clientY-drag.y;applyTransform()}});
+stage.addEventListener("pointerup",()=>drag=null);stage.addEventListener("pointercancel",()=>drag=null);window.addEventListener("resize",()=>requestAnimationFrame(fit));
+render();requestAnimationFrame(fit);
+</script>
+</body>
+</html>
