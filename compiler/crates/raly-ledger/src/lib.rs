@@ -14,6 +14,7 @@
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt;
+use std::fmt::Write as _;
 
 use raly_ast::{Ast, ExprId, ExprKind, ItemKind, Literal, Origin, StmtKind, VsaVariant};
 use raly_diag::Span;
@@ -228,6 +229,45 @@ pub struct Execution {
     pub receipts: Vec<Receipt>,
 }
 
+impl Execution {
+    /// Render the execution and its receipts as deterministic, typed JSON.
+    ///
+    /// Hashes are strings rather than JSON numbers because their full 64-bit
+    /// values cannot be represented exactly by JavaScript's number type.
+    pub fn json(&self) -> String {
+        let mut out = String::from("{\n  \"schema\": \"raly.execution.v1\",\n  \"constants\": [\n");
+        for (index, constant) in self.constants.iter().enumerate() {
+            let comma = if index + 1 < self.constants.len() {
+                ","
+            } else {
+                ""
+            };
+            let _ = writeln!(
+                out,
+                "    {{\"name\": {}, \"root\": \"{}\", \"value\": {}}}{comma}",
+                json_quote(&constant.name),
+                constant.root,
+                value_json(&constant.value)
+            );
+        }
+        out.push_str("  ],\n  \"receipts\": [\n");
+        for (index, receipt) in self.receipts.iter().enumerate() {
+            let comma = if index + 1 < self.receipts.len() {
+                ","
+            } else {
+                ""
+            };
+            let _ = writeln!(
+                out,
+                "    {{\"node\": \"{}\", \"before\": \"{:016x}\", \"after\": \"{:016x}\", \"value\": \"{:016x}\"}}{comma}",
+                receipt.node, receipt.before, receipt.after, receipt.value
+            );
+        }
+        out.push_str("  ]\n}\n");
+        out
+    }
+}
+
 /// A per-node execution receipt over ordered state before and after the step.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Receipt {
@@ -235,6 +275,41 @@ pub struct Receipt {
     pub before: u64,
     pub after: u64,
     pub value: u64,
+}
+
+fn value_json(value: &Value) -> String {
+    match value {
+        Value::Int(value) => format!("{{\"kind\": \"int\", \"value\": {value}}}"),
+        Value::Bool(value) => format!("{{\"kind\": \"bool\", \"value\": {value}}}"),
+        Value::Str(value) => format!("{{\"kind\": \"string\", \"value\": {}}}", json_quote(value)),
+        Value::List(items) => collection_json("list", items),
+        Value::Tuple(items) => collection_json("tuple", items),
+    }
+}
+
+fn collection_json(kind: &str, items: &[Value]) -> String {
+    let items = items.iter().map(value_json).collect::<Vec<_>>().join(", ");
+    format!("{{\"kind\": \"{kind}\", \"items\": [{items}]}}")
+}
+
+fn json_quote(text: &str) -> String {
+    let mut out = String::with_capacity(text.len() + 2);
+    out.push('"');
+    for ch in text.chars() {
+        match ch {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            ch if (ch as u32) < 0x20 => {
+                let _ = write!(out, "\\u{:04x}", ch as u32);
+            }
+            ch => out.push(ch),
+        }
+    }
+    out.push('"');
+    out
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -784,6 +859,45 @@ mod tests {
         assert!(ledger
             .verify_replay(&ast, &resolved, &execution.receipts)
             .is_ok());
+    }
+
+    #[test]
+    fn execution_json_preserves_types_hashes_and_escaping() {
+        let execution = Execution {
+            constants: vec![ConstantValue {
+                def: DefId(7),
+                name: "a\"b".to_string(),
+                value: Value::Tuple(vec![Value::Str("line\n".to_string()), Value::Bool(false)]),
+                root: SemanticId(1),
+            }],
+            receipts: vec![Receipt {
+                node: SemanticId(1),
+                before: 2,
+                after: 3,
+                value: 4,
+            }],
+        };
+
+        assert_eq!(
+            execution.json(),
+            concat!(
+                "{\n",
+                "  \"schema\": \"raly.execution.v1\",\n",
+                "  \"constants\": [\n",
+                "    {\"name\": \"a\\\"b\", \"root\": \"s0000000000000001\", ",
+                "\"value\": {\"kind\": \"tuple\", \"items\": [",
+                "{\"kind\": \"string\", \"value\": \"line\\n\"}, ",
+                "{\"kind\": \"bool\", \"value\": false}]}}\n",
+                "  ],\n",
+                "  \"receipts\": [\n",
+                "    {\"node\": \"s0000000000000001\", ",
+                "\"before\": \"0000000000000002\", ",
+                "\"after\": \"0000000000000003\", ",
+                "\"value\": \"0000000000000004\"}\n",
+                "  ]\n",
+                "}\n"
+            )
+        );
     }
 
     #[test]

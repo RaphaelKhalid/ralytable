@@ -42,7 +42,7 @@ Then, from this directory:
 
 ```
 cargo build              # zero warnings expected
-cargo test --workspace   # 208 passing, 2 ignored doctests
+cargo test --workspace   # 210 passing, 2 ignored doctests
 cargo clippy --workspace --all-targets   # clean
 cargo fmt --all --check
 ```
@@ -52,6 +52,7 @@ cargo fmt --all --check
 ```
 cargo run -p raly -- explain examples/explain-me.raly   # what the program means
 cargo run -p raly -- explain examples/explain-me.raly --json
+cargo run -p raly -- run examples/runtime.raly --json   # typed values + receipts
 cargo run -p raly -- check examples/scene.raly          # exits 0
 cargo run -p raly -- check examples/broadcast.raly      # a silent-broadcast error
 cargo run -p raly -- check examples/capacity.raly       # a capacity error
@@ -69,6 +70,7 @@ cargo run -p raly -- lex   examples/tour.raly
 | `examples/wrong-role.raly` | Unbinding a role that was never bound, and nesting two unbinds with no `cleanup` between. |
 | `examples/broadcast.raly` | The PyTorch bug, made impossible: two elementwise operands a tensor library would silently broadcast, plus the explicit `broadcast(v, S)` that says you meant it. |
 | `examples/explain-me.raly` | Demonstrates three inferred facts in `raly explain`: the value is at capacity, retrieval is approximate, and the structure is two levels deep. |
+| `examples/runtime.raly` | Pure constants that execute through `raly run`; use `--json` to inspect typed values and replay receipts. |
 | `examples/broken-syntax.raly` | One of each recoverable *syntax* error. All 13 are reported in a single run. |
 | `examples/broken.raly` | One of each recoverable *lexical* error. |
 | `examples/tour.raly` | Exercises every token class. A lexer fixture, **not** a valid program — `check` reports on it by design. |
@@ -120,13 +122,15 @@ error[RALY1002]: unterminated string literal
 | `raly parse <file>` | Parse and dump the syntax tree to stdout |
 | `raly check <file>` | Lex, parse, resolve, type-check, render all diagnostics to stderr, exit non-zero on error |
 | `raly explain <file>` | Say, in plain English, what the program represents — derived entirely from its types. `--json` for machine-readable output |
+| `raly run <file>` | Execute pure top-level constants through the typed ledger. `--json` includes typed values and replay receipts |
 
 `check` runs every phase on each invocation. Each phase returns a value plus
 diagnostics rather than stopping at its first error, so later phases can still
 run. Diagnostics are then sorted in source order.
 
 Flags: `--color` / `--no-color` (default off), `--explain` (append each code's
-registry description), `--json` (machine-readable `explain` output), `-h`, `-V`.
+registry description), `--json` (machine-readable `explain` or `run` output),
+`-h`, `-V`.
 
 `explain` also describes the portions of a file whose types are known when
 other parts contain errors. Prose goes to stdout, diagnostics to stderr, and
@@ -493,32 +497,32 @@ workspace, and the output is asserted on character for character.
 
 ## Tests
 
-208 tests pass (203 unit and integration plus 5 doctests); 2 documentation-only
+210 tests pass (205 unit and integration plus 5 doctests); 2 documentation-only
 examples remain explicitly ignored. The suite covers every compiler phase, the
 ledger runtime, CLI, golden diagnostics, and doctests.
 
 ```
 raly-diag    3 unit + 21 integration   source map, spans, rendered output
-raly-lexer  32 integration             one group per token class, comments,
+raly-lexer  33 integration             one group per token class, comments,
                                        string edge cases, recovery, totality
 raly-ast     9 unit                    arena, interner, provenance, canonical
                                        operand order, visitor walk and prune
-raly-parse  46 grammar                 one per construct, asserted on the dump
+raly-parse  48 grammar                 one per construct, asserted on the dump
             16 recovery                multiple errors per run, no cascades,
                                        error-node provenance, termination
             10 diagnostics             rendered output, character for character
 raly-resolve 3 unit                    edit distance, suggestion silence,
                                        family table round-trip
-raly-types  17 unit                    capacity anchors and monotonicity,
+raly-types  18 unit                    capacity anchors and monotonicity,
                                        dimension group laws and residuals,
                                        load intervals, row extend and restrict
 raly-explain 5 unit                    prose wrapping, JSON escaping, English
                                        list and count forms, load phrasing
-raly-ledger 5 unit                     semantic identity, replay receipts,
-                                       divergence localization, invariance
+raly-ledger 6 unit                     semantic identity, replay receipts,
+                                       JSON, divergence localization, invariance
 raly         5 unit                    the pipeline reports every phase at once,
                                        and what RALY4012 is and is not for
-            18 integration             exit codes, stdout/stderr discipline,
+            19 integration             exit codes, stdout/stderr discipline,
                                        `explain`, `run`, and `--json`
              2 UI                      28 golden files, plus a test that every
                                        3xxx/4xxx/5xxx code has one
