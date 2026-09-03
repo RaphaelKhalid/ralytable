@@ -109,6 +109,37 @@ fn colour_is_opt_in() {
     assert!(colored.stderr.contains(&0x1b));
 }
 
+#[test]
+fn run_executes_pure_constants() {
+    let path = temp_file(
+        "run.raly",
+        "let answer: Int = 1 + 2 * 3\nlet checked: Bool = answer == 7\n",
+    );
+    let output = raly().arg("run").arg(&path).output().unwrap();
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert_eq!(stdout, "answer = 7\nchecked = true\n");
+}
+
+#[test]
+fn run_fails_closed_outside_the_pure_subset() {
+    let path = temp_file("run-float.raly", "let answer: Float = 1.5 + 2.0\n");
+    let output = raly().arg("run").arg(&path).output().unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("cannot execute this Raly subset"),
+        "{stderr}"
+    );
+    assert!(stderr.contains("literal.float"), "{stderr}");
+    assert!(output.stdout.is_empty());
+}
+
 // -- parsing -----------------------------------------------------------------
 
 /// The repository's example files, resolved relative to this crate.

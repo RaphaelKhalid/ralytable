@@ -80,6 +80,7 @@ dependencies = [
  "raly-ast",
  "raly-diag",
  "raly-explain",
+ "raly-ledger",
  "raly-lexer",
  "raly-parse",
  "raly-resolve",
@@ -102,6 +103,18 @@ name = "raly-explain"
 version = "0.0.0"
 dependencies = [
  "raly-ast",
+ "raly-resolve",
+ "raly-types",
+]
+
+[[package]]
+name = "raly-ledger"
+version = "0.0.0"
+dependencies = [
+ "raly-ast",
+ "raly-diag",
+ "raly-lexer",
+ "raly-parse",
  "raly-resolve",
  "raly-types",
 ]

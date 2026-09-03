@@ -1,0 +1,16 @@
+[package]
+name = "raly-ledger"
+description = "Typed, content-addressed execution ledger for Raly."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+raly-ast.workspace = true
+raly-diag.workspace = true
+raly-resolve.workspace = true
+raly-types.workspace = true
+
+[dev-dependencies]
+raly-lexer.workspace = true
+raly-parse.workspace = true

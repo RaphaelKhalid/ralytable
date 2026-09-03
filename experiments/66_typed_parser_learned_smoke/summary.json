@@ -1,0 +1,261 @@
+{
+  "aggregate": {
+    "null": {
+      "exact_graph_recovery": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0
+      },
+      "execution_equivalent_replay": {
+        "max": 0.3411458333333333,
+        "mean": 0.2925347222222222,
+        "min": 0.24479166666666666
+      },
+      "placebo_preservation": {
+        "max": 0.8177083333333334,
+        "mean": 0.7916666666666666,
+        "min": 0.7552083333333334
+      },
+      "relevant_intervention_change": {
+        "max": 0.21614583333333334,
+        "mean": 0.171875,
+        "min": 0.14583333333333334
+      },
+      "unused_field_invariance": {
+        "max": 0.8177083333333334,
+        "mean": 0.7916666666666666,
+        "min": 0.7552083333333334
+      }
+    },
+    "structured": {
+      "exact_graph_recovery": {
+        "max": 0.1796875,
+        "mean": 0.11545138888888888,
+        "min": 0.06770833333333333
+      },
+      "execution_equivalent_replay": {
+        "max": 0.3125,
+        "mean": 0.2552083333333333,
+        "min": 0.22135416666666666
+      },
+      "placebo_preservation": {
+        "max": 0.9973958333333334,
+        "mean": 0.9574652777777778,
+        "min": 0.9322916666666666
+      },
+      "relevant_intervention_change": {
+        "max": 0.1796875,
+        "mean": 0.12152777777777779,
+        "min": 0.07291666666666667
+      },
+      "unused_field_invariance": {
+        "max": 0.9973958333333334,
+        "mean": 0.9574652777777778,
+        "min": 0.9322916666666666
+      }
+    }
+  },
+  "cuda": true,
+  "eval_rows": 384,
+  "eval_semantic_groups": 4,
+  "limitations": [
+    "synthetic two-node list-operation graphs",
+    "explicit step language rather than natural Python requirements",
+    "three seeds are exploratory and no confidence interval is claimed",
+    "no HumanEval+, code generation, 40M model, or Qwen comparison"
+  ],
+  "null": "matched graph-token cross-entropy parser",
+  "question": "Does the preregistered structured objective improve a learned typed parser over graph cross-entropy alone?",
+  "runs": [
+    {
+      "arm": "null",
+      "metrics": {
+        "exact_graph_recovery": 0.0,
+        "execution_equivalent_replay": 0.24479166666666666,
+        "placebo_preservation": 0.8020833333333334,
+        "relevant_intervention_change": 0.21614583333333334,
+        "unused_field_invariance": 0.8020833333333334
+      },
+      "seed": 11,
+      "training": {
+        "device": "cuda",
+        "final_loss_terms": {
+          "counterfactual": 0.0,
+          "graph": 0.002362324856221676,
+          "replay": 0.0,
+          "total": 0.002362324856221676,
+          "unused": 0.0
+        },
+        "parameters": 117456,
+        "seconds": 6.466704195000002,
+        "train_metrics": {
+          "exact_graph_recovery": 1.0,
+          "execution_equivalent_replay": 1.0,
+          "placebo_preservation": 0.9947916666666666,
+          "relevant_intervention_change": 0.76953125,
+          "unused_field_invariance": 0.9947916666666666
+        }
+      }
+    },
+    {
+      "arm": "structured",
+      "metrics": {
+        "exact_graph_recovery": 0.1796875,
+        "execution_equivalent_replay": 0.23177083333333334,
+        "placebo_preservation": 0.9973958333333334,
+        "relevant_intervention_change": 0.1796875,
+        "unused_field_invariance": 0.9973958333333334
+      },
+      "seed": 11,
+      "training": {
+        "device": "cuda",
+        "final_loss_terms": {
+          "counterfactual": 0.005941535346210003,
+          "graph": 0.007849153131246567,
+          "replay": 0.006238589063286781,
+          "total": 0.018948547542095184,
+          "unused": 0.020037326961755753
+        },
+        "parameters": 117456,
+        "seconds": 17.747926494999998,
+        "train_metrics": {
+          "exact_graph_recovery": 1.0,
+          "execution_equivalent_replay": 1.0,
+          "placebo_preservation": 1.0,
+          "relevant_intervention_change": 1.0,
+          "unused_field_invariance": 1.0
+        }
+      }
+    },
+    {
+      "arm": "null",
+      "metrics": {
+        "exact_graph_recovery": 0.0,
+        "execution_equivalent_replay": 0.2916666666666667,
+        "placebo_preservation": 0.7552083333333334,
+        "relevant_intervention_change": 0.15364583333333334,
+        "unused_field_invariance": 0.7552083333333334
+      },
+      "seed": 23,
+      "training": {
+        "device": "cuda",
+        "final_loss_terms": {
+          "counterfactual": 0.0,
+          "graph": 0.002232176950201392,
+          "replay": 0.0,
+          "total": 0.002232176950201392,
+          "unused": 0.0
+        },
+        "parameters": 117456,
+        "seconds": 6.928037439999997,
+        "train_metrics": {
+          "exact_graph_recovery": 1.0,
+          "execution_equivalent_replay": 1.0,
+          "placebo_preservation": 0.9856770833333334,
+          "relevant_intervention_change": 0.734375,
+          "unused_field_invariance": 0.9856770833333334
+        }
+      }
+    },
+    {
+      "arm": "structured",
+      "metrics": {
+        "exact_graph_recovery": 0.06770833333333333,
+        "execution_equivalent_replay": 0.22135416666666666,
+        "placebo_preservation": 0.9322916666666666,
+        "relevant_intervention_change": 0.07291666666666667,
+        "unused_field_invariance": 0.9322916666666666
+      },
+      "seed": 23,
+      "training": {
+        "device": "cuda",
+        "final_loss_terms": {
+          "counterfactual": 0.0506676509976387,
+          "graph": 0.05556631088256836,
+          "replay": 0.030948584899306297,
+          "total": 0.11046428233385086,
+          "unused": 0.05635945126414299
+        },
+        "parameters": 117456,
+        "seconds": 21.007416954,
+        "train_metrics": {
+          "exact_graph_recovery": 1.0,
+          "execution_equivalent_replay": 1.0,
+          "placebo_preservation": 1.0,
+          "relevant_intervention_change": 0.9244791666666666,
+          "unused_field_invariance": 1.0
+        }
+      }
+    },
+    {
+      "arm": "null",
+      "metrics": {
+        "exact_graph_recovery": 0.0,
+        "execution_equivalent_replay": 0.3411458333333333,
+        "placebo_preservation": 0.8177083333333334,
+        "relevant_intervention_change": 0.14583333333333334,
+        "unused_field_invariance": 0.8177083333333334
+      },
+      "seed": 37,
+      "training": {
+        "device": "cuda",
+        "final_loss_terms": {
+          "counterfactual": 0.0,
+          "graph": 0.027186453342437744,
+          "replay": 0.0,
+          "total": 0.027186453342437744,
+          "unused": 0.0
+        },
+        "parameters": 117456,
+        "seconds": 8.040010326,
+        "train_metrics": {
+          "exact_graph_recovery": 1.0,
+          "execution_equivalent_replay": 1.0,
+          "placebo_preservation": 1.0,
+          "relevant_intervention_change": 0.73828125,
+          "unused_field_invariance": 1.0
+        }
+      }
+    },
+    {
+      "arm": "structured",
+      "metrics": {
+        "exact_graph_recovery": 0.09895833333333333,
+        "execution_equivalent_replay": 0.3125,
+        "placebo_preservation": 0.9427083333333334,
+        "relevant_intervention_change": 0.11197916666666667,
+        "unused_field_invariance": 0.9427083333333334
+      },
+      "seed": 37,
+      "training": {
+        "device": "cuda",
+        "final_loss_terms": {
+          "counterfactual": 0.020696032792329788,
+          "graph": 0.03445988520979881,
+          "replay": 0.04091373085975647,
+          "total": 0.07474682480096817,
+          "unused": 0.03792821615934372
+        },
+        "parameters": 117456,
+        "seconds": 24.873166161,
+        "train_metrics": {
+          "exact_graph_recovery": 1.0,
+          "execution_equivalent_replay": 1.0,
+          "placebo_preservation": 1.0,
+          "relevant_intervention_change": 0.9700520833333334,
+          "unused_field_invariance": 1.0
+        }
+      }
+    }
+  ],
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "semantic_group_overlap": 0,
+  "status": "executed exploratory smoke",
+  "torch": "2.13.0+cu130",
+  "train_rows": 768,
+  "train_semantic_groups": 12
+}

@@ -37,9 +37,10 @@ The playground uses the same Rust front end as the command-line tool, compiled t
 | Grammar and parser | done, error recovery, tree total over input |
 | Browser playground | done |
 | Name resolution | done, scopes, two namespaces, suggestions |
-| Type system | done, all four properties, 198 tests, zero warnings |
+| Type system | done, all four properties, 208 tests passing, zero warnings |
+| Typed ledger | first slice: content-addressed sidecar, replay receipts, pure constant interpreter |
 | Models | a 6.4M toy plus a 29.5M TinyStories baseline and 512-code variant; none can reason |
-| IR, codegen | not built |
+| VSA IR, codegen | not built |
 | The model | not built |
 
 Here is a representative diagnostic:
@@ -120,11 +121,11 @@ experiments/   every experiment, with its findings and the code to reproduce
 
 ## Current priorities
 
-1. **Break the label/state shortcut.** Test independently specified tasks where executable state is necessary but not sufficient, with a held-out verifier and no supplied answer bit.
-2. **Test richer Python and repository-local repair.** Keep raw learned, verified full-system, symbolic, and deterministic-null results separate.
-3. **Inspect individual codes.** The current measurements show that codes carry some role information, but individual codes have not been characterized systematically.
-4. **Phase 2 properly:** more seeds, real text, a matched continuous control, and more than one architecture family.
-5. **An IR and a backend**, so Raly programs run rather than only type-check.
+1. **Repair the learned parser gate.** The first matched smoke test failed compositional replay and causal intervention; redesign it before scaling anything.
+2. **Harden the typed ledger.** Add stable declaration identities, serialized receipts, explicit effects, and executable VSA operations while preserving source-independent semantic identity.
+3. **Break the label/state shortcut.** Test independently specified tasks where executable state is necessary but not sufficient, with a held-out verifier and no supplied answer bit.
+4. **Test richer Python and repository-local repair.** Keep raw learned, verified full-system, symbolic, and deterministic-null results separate.
+5. **Keep the under-40M run gated.** Parameter-count and environment checks are allowed; training starts only after the parser's preregistered causal thresholds pass.
 
 The explicit public destination is a coding-benchmark ladder. EvalPlus HumanEval+
 is the benchmark-guided discovery scoreboard: task-level failures may be inspected
