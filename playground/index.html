@@ -522,8 +522,9 @@ footer code { font-family: var(--mono); font-size: 12px; }
   <div class="honest">
     <strong>Current scope.</strong> This page runs the same compiler front end as the command-line
     tool, compiled to WebAssembly. On every edit it runs the lexer, parser, name resolver, and type
-    checker, then displays diagnostics from the compiler's renderer. There is no code generator or
-    runtime yet, so the playground checks programs but does not execute them.
+    checker, then displays diagnostics from the compiler's renderer. This browser page checks code
+    but does not execute it yet. The command-line runtime separately executes pure constants and
+    emits replay receipts; vector-symbolic operations still have no runtime backend.
   </div>
 </header>
 
