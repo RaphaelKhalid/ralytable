@@ -45,6 +45,11 @@ impl Compilation {
         )
     }
 
+    /// Materialize the typed, content-addressed execution sidecar.
+    pub fn ledger(&self) -> Result<raly_ledger::Ledger, raly_ledger::BuildError> {
+        raly_ledger::Ledger::build(&self.ast, &self.resolved, &self.checked)
+    }
+
     /// The diagnostics as a user would see them, plus the summary line.
     ///
     /// Empty when nothing was reported, so a clean file has an empty golden

@@ -1,6 +1,6 @@
 //! The `raly` compiler driver.
 //!
-//! Four subcommands exist today:
+//! Five subcommands exist today:
 //!
 //! * `raly lex <file>` — dump the spanned token stream.
 //! * `raly parse <file>` — dump the syntax tree.
@@ -8,6 +8,8 @@
 //!   diagnostic, exit non-zero on error.
 //! * `raly explain <file>` — say, in plain English, what the program
 //!   represents, derived entirely from its types.
+//! * `raly run <file>` — execute the small, pure constant subset through the
+//!   typed ledger and emit deterministic receipts internally.
 //!
 //! Every phase recovers and every phase returns a value plus diagnostics
 //! rather than a `Result`, so **one run reports everything that is wrong** —
@@ -36,6 +38,7 @@ COMMANDS:
     parse <file>    Parse a file and print the syntax tree
     check <file>    Lex and parse a file, and report any problems found
     explain <file>  Say what the program represents, in plain English
+    run <file>      Execute pure top-level constants through the typed ledger
 
 OPTIONS:
     --color         Force ANSI colour in diagnostics
@@ -68,6 +71,7 @@ enum Command {
     Parse,
     Check,
     Explain,
+    Run,
 }
 
 fn run() -> Result<ExitCode, String> {
@@ -100,6 +104,7 @@ fn run() -> Result<ExitCode, String> {
             "parse" if command.is_none() => command = Some(Command::Parse),
             "check" if command.is_none() => command = Some(Command::Check),
             "explain" if command.is_none() => command = Some(Command::Explain),
+            "run" if command.is_none() => command = Some(Command::Run),
             other if other.starts_with('-') => {
                 return Err(format!("unknown option `{other}`"));
             }
@@ -109,7 +114,7 @@ fn run() -> Result<ExitCode, String> {
     }
 
     let command =
-        command.ok_or("no command given; expected `lex`, `parse`, `check` or `explain`")?;
+        command.ok_or("no command given; expected `lex`, `parse`, `check`, `explain` or `run`")?;
     let path = path.ok_or("no input file given")?;
 
     let text = match std::fs::read_to_string(&path) {
@@ -138,6 +143,7 @@ fn run() -> Result<ExitCode, String> {
     compiled.diagnostics.extend(extension);
     compiled.diagnostics.sort_by_position();
 
+    let mut runtime_failed = false;
     match command {
         Command::Lex => print_tokens(&compiled.sources, &compiled.tokens),
         Command::Parse => print!("{}", dump::dump(&compiled.ast)),
@@ -154,11 +160,29 @@ fn run() -> Result<ExitCode, String> {
                 print!("{}", raly_explain::render::plain(&explanation));
             }
         }
+        Command::Run if !compiled.has_errors() => match compiled.ledger() {
+            Ok(ledger) => match ledger.execute_constants(&compiled.ast, &compiled.resolved) {
+                Ok(execution) => {
+                    for constant in execution.constants {
+                        println!("{} = {}", constant.name, constant.value);
+                    }
+                }
+                Err(error) => {
+                    eprintln!("error: cannot execute this Raly subset: {error}");
+                    runtime_failed = true;
+                }
+            },
+            Err(error) => {
+                eprintln!("error: could not build the execution ledger: {error}");
+                runtime_failed = true;
+            }
+        },
+        Command::Run => {}
     }
 
     eprint!("{}", compiled.render(config));
 
-    if compiled.has_errors() {
+    if compiled.has_errors() || runtime_failed {
         Ok(ExitCode::from(1))
     } else {
         Ok(ExitCode::SUCCESS)

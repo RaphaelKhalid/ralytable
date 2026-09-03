@@ -5,6 +5,30 @@ anything. Read `CLAUDE.md` (or `AGENTS.md`, same content) first: it holds the
 methodology rules, each written after a result here turned out wrong in that
 exact way.
 
+## 2026-09-03 typed-ledger runtime and learned-parser gate
+
+Raly now has its first executable vertical slice. The new `raly-ledger` crate
+materializes a checked program as a content-addressed semantic sidecar. Node
+identity includes operation, semantic parameters, inputs, and inferred type;
+source spans and bound-name spellings remain provenance. Pure top-level
+constants execute through `raly run`, emit per-node replay receipts internally,
+and replay verification identifies the first divergent node. Unsupported
+runtime operations fail explicitly instead of being approximated.
+
+Experiment 66 ran the preregistered matched learned-parser smoke on three seeds.
+Both arms fit the training graphs, but neither generalized compositionally.
+The structured arm improved exact held-out graph recovery from 0.0% to 11.5%,
+while replay equivalence fell from 29.3% to 25.5% and relevant-intervention
+change fell from 17.2% to 12.2%. This fails the causal gate by a wide margin.
+The under-40M training run is therefore blocked; environment and parameter-count
+checks may continue, but no benchmark-guided training should start until a
+revised parser passes the preregistered thresholds.
+
+The initial Experiment 66 instrument was discarded before reporting because
+its placebo pair changed semantic wording and its evaluation required wholly
+unseen synonyms. The committed result is from the corrected paired instrument;
+the invalid trial's numbers are not evidence.
+
 ## 2026-09-02 full-site and research consolidation
 
 The public Vercel surface now uses one visual system on every shipped route:

@@ -20,4 +20,5 @@ raly-ast.workspace = true
 raly-parse.workspace = true
 raly-resolve.workspace = true
 raly-types.workspace = true
+raly-ledger.workspace = true
 raly-explain.workspace = true

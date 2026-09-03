@@ -221,13 +221,21 @@ with verifiable answers and a teacher/student protocol.
 
 Raly has a lexer, parser, resolver, type checker, diagnostics, raly explain,
 and a browser/WASM playground. Its type system tracks dimension, VSA family,
-superposition load, and role schema. It has no IR, code generation, or runtime
-backend, so it type-checks programs but does not execute them.
+superposition load, and role schema. It now also has a content-addressed typed
+ledger sidecar and a deliberately small `raly run` interpreter for pure
+top-level constants. There is still no VSA lowering, code generation, or full
+runtime backend; the VSA operations are type-checked but do not execute.
 
 The current learned model is a 29.5M-parameter TinyStories baseline and a
 512-code discrete-bottleneck variant. The discrete variant lost materially to
 the matched dense control on real text and the blind story test. It is a useful
 baseline, not evidence that the architecture is solved or impossible.
+
+The first learned typed-parser smoke test is also a negative gate result. Its
+structured objective recovered more exact held-out graphs than the matched
+cross-entropy null (11.5% versus 0%), but replay equivalence and relevant-field
+interventions were worse. Do not start the under-40M coding run until a revised
+parser clears the preregistered causal gate.
 
 The strongest immediate technical questions are:
 

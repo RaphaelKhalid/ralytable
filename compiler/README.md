@@ -4,8 +4,10 @@ Infrastructure for the **Raly** language front end. Source files use the
 `.raly` extension.
 
 It lexes, parses, resolves names, type-checks, renders diagnostics, and can
-describe a program's declared structure in plain English. It does not generate
-or execute code; see [Not implemented](#not-implemented).
+describe a program's declared structure in plain English. A typed ledger
+sidecar can also execute a small, pure constant subset with replay receipts.
+It does not yet lower or execute VSA operations; see
+[Not implemented](#not-implemented).
 
 The type system tracks four properties that tensor shapes do not express:
 **dimension**, **VSA family**, **superposition load against measured capacity**,
@@ -40,7 +42,7 @@ Then, from this directory:
 
 ```
 cargo build              # zero warnings expected
-cargo test --workspace   # 198 tests, all passing
+cargo test --workspace   # 208 passing, 2 ignored doctests
 cargo clippy --workspace --all-targets   # clean
 cargo fmt --all --check
 ```
@@ -491,7 +493,9 @@ workspace, and the output is asserted on character for character.
 
 ## Tests
 
-198 tests: 193 unit and integration, plus 5 doctests.
+208 tests pass (203 unit and integration plus 5 doctests); 2 documentation-only
+examples remain explicitly ignored. The suite covers every compiler phase, the
+ledger runtime, CLI, golden diagnostics, and doctests.
 
 ```
 raly-diag    3 unit + 21 integration   source map, spans, rendered output
@@ -510,10 +514,12 @@ raly-types  17 unit                    capacity anchors and monotonicity,
                                        load intervals, row extend and restrict
 raly-explain 5 unit                    prose wrapping, JSON escaping, English
                                        list and count forms, load phrasing
+raly-ledger 5 unit                     semantic identity, replay receipts,
+                                       divergence localization, invariance
 raly         5 unit                    the pipeline reports every phase at once,
                                        and what RALY4012 is and is not for
-            16 integration             exit codes, stdout/stderr discipline,
-                                       `explain` prose and `--json`
+            18 integration             exit codes, stdout/stderr discipline,
+                                       `explain`, `run`, and `--json`
              2 UI                      28 golden files, plus a test that every
                                        3xxx/4xxx/5xxx code has one
              6 explain                 golden prose and JSON over the example
@@ -593,10 +599,12 @@ The following features are not implemented.
 
 ### Not in the compiler at all
 
-- **IR and codegen.** No lowering, no optimisation, no backend. `raly` cannot
-  produce an executable and does not pretend to.
-- **Semantics for the operations.** `bind`, `bundle`, `permute`, `unbind` and
-  `cleanup` are type-checked. What they *compute* is not implemented anywhere.
+- **VSA IR and codegen.** The typed ledger is a sidecar over the checked AST,
+  not a lowering IR. There is no optimisation or code-generation backend.
+- **Semantics for the VSA operations.** `bind`, `bundle`, `permute`, `unbind`
+  and `cleanup` are type-checked and represented in the ledger, but what they
+  *compute* is not implemented. `raly run` currently executes only pure
+  top-level constants.
 - **`struct`, `enum`, `match`, `for`.** Reserved, and parsed to a dedicated
   "recognised but not implemented" diagnostic (`RALY2007`). `for` in particular
   waits on the checker being able to count loop iterations — the checker can

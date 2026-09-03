@@ -1,5 +1,10 @@
 # Experiment 21 — under-40M neurosymbolic Python synthesis
 
+**Status: blocked at the learned-parser gate.** Experiment 66 failed the
+preregistered compositional replay and causal-intervention thresholds. The
+commands below document the prepared pipeline, but training must not start
+until a revised parser clears that gate.
+
 This is the first real HumanEval+ pipeline in the repository. It trains a
 roughly 30M-parameter transformer to classify an explicit typed state into a
 named algorithm family, then emits Python from a constrained symbolic backend.

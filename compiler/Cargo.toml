@@ -7,6 +7,7 @@ members = [
     "crates/raly-parse",
     "crates/raly-resolve",
     "crates/raly-types",
+    "crates/raly-ledger",
     "crates/raly-explain",
     "crates/raly",
 ]
@@ -24,4 +25,5 @@ raly-ast = { path = "crates/raly-ast" }
 raly-parse = { path = "crates/raly-parse" }
 raly-resolve = { path = "crates/raly-resolve" }
 raly-types = { path = "crates/raly-types" }
+raly-ledger = { path = "crates/raly-ledger" }
 raly-explain = { path = "crates/raly-explain" }
