@@ -44,7 +44,7 @@ OPTIONS:
     --color         Force ANSI colour in diagnostics
     --no-color      Disable ANSI colour (the default)
     --explain       Print each diagnostic code's registry description
-    --json          With `explain`, emit machine-readable JSON instead of prose
+    --json          With `explain` or `run`, emit machine-readable JSON
     -h, --help      Print this message
     -V, --version   Print the version
 
@@ -163,8 +163,12 @@ fn run() -> Result<ExitCode, String> {
         Command::Run if !compiled.has_errors() => match compiled.ledger() {
             Ok(ledger) => match ledger.execute_constants(&compiled.ast, &compiled.resolved) {
                 Ok(execution) => {
-                    for constant in execution.constants {
-                        println!("{} = {}", constant.name, constant.value);
+                    if json {
+                        print!("{}", execution.json());
+                    } else {
+                        for constant in execution.constants {
+                            println!("{} = {}", constant.name, constant.value);
+                        }
                     }
                 }
                 Err(error) => {

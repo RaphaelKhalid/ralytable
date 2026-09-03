@@ -37,8 +37,8 @@ The playground uses the same Rust front end as the command-line tool, compiled t
 | Grammar and parser | done, error recovery, tree total over input |
 | Browser playground | done |
 | Name resolution | done, scopes, two namespaces, suggestions |
-| Type system | done, all four properties, 208 tests passing, zero warnings |
-| Typed ledger | first slice: content-addressed sidecar, replay receipts, pure constant interpreter |
+| Type system | done, all four properties, 210 tests passing, zero warnings |
+| Typed ledger | first slice: content-addressed sidecar, typed JSON replay receipts, pure constant interpreter |
 | Models | a 6.4M toy plus a 29.5M TinyStories baseline and 512-code variant; none can reason |
 | VSA IR, codegen | not built |
 | The model | not built |

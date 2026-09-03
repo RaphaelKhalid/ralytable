@@ -127,6 +127,34 @@ fn run_executes_pure_constants() {
 }
 
 #[test]
+fn run_json_exposes_typed_values_and_replay_receipts() {
+    let path = temp_file(
+        "run-json.raly",
+        "let answer: Int = 40 + 2\nlet values = [answer, 43]\n",
+    );
+    let first = raly().args(["run", "--json"]).arg(&path).output().unwrap();
+    let second = raly().args(["run", "--json"]).arg(&path).output().unwrap();
+    assert_eq!(first.status.code(), Some(0));
+    assert_eq!(first.stdout, second.stdout, "receipt output must be stable");
+    assert!(first.stderr.is_empty());
+
+    let stdout = String::from_utf8_lossy(&first.stdout);
+    assert!(stdout.starts_with("{\n"), "{stdout}");
+    assert!(
+        stdout.contains("\"schema\": \"raly.execution.v1\""),
+        "{stdout}"
+    );
+    assert!(
+        stdout.contains("\"kind\": \"int\", \"value\": 42"),
+        "{stdout}"
+    );
+    assert!(stdout.contains("\"kind\": \"list\""), "{stdout}");
+    assert!(stdout.contains("\"receipts\": ["), "{stdout}");
+    assert!(stdout.contains("\"node\": \"s"), "{stdout}");
+    assert!(stdout.trim_end().ends_with('}'), "{stdout}");
+}
+
+#[test]
 fn run_fails_closed_outside_the_pure_subset() {
     let path = temp_file("run-float.raly", "let answer: Float = 1.5 + 2.0\n");
     let output = raly().arg("run").arg(&path).output().unwrap();

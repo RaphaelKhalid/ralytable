@@ -14,6 +14,9 @@ source spans and bound-name spellings remain provenance. Pure top-level
 constants execute through `raly run`, emit per-node replay receipts internally,
 and replay verification identifies the first divergent node. Unsupported
 runtime operations fail explicitly instead of being approximated.
+`raly run --json` exposes those typed values, semantic roots, and receipts under
+the versioned `raly.execution.v1` schema. Its 64-bit hashes are encoded as
+fixed-width strings so browser consumers preserve them exactly.
 
 Experiment 66 ran the preregistered matched learned-parser smoke on three seeds.
 Both arms fit the training graphs, but neither generalized compositionally.

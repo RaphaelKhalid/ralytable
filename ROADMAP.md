@@ -92,7 +92,7 @@ A typed VSA DSL that catches what PyTorch can't see.
 - [x] Capacity types, so `Vec[Concepts; load 3]` and overstuffing is a compile error
 - [x] Role schema types, so the type knows which roles are bound in even though the values are runtime; unbinding a role the vector doesn't carry won't compile
 - [x] Static nesting depth checks that force a `cleanup` before retrieval degrades
-- [x] First content-addressed typed-ledger sidecar, replay receipts, and pure constant interpreter
+- [x] First content-addressed typed-ledger sidecar, machine-readable replay receipts, and pure constant interpreter
 - [ ] Differentiable end to end (needs the IR and a backend)
 - [x] Error messages good enough to be the reason people use it (rustc-style UI tests)
 - [x] Browser playground (`playground/`), the compiler as wasm
