@@ -58,7 +58,7 @@ model reached 4.39 BLEU on WMT'14. Experiment 06 was the outlier.
 Perplexity is a proxy, so `experiments/09_story_quality` judged the generated text
 blind against a threshold committed before any text existed. It failed on both
 criteria: grammar 7.00 [6.78, 7.22] against 4.54 [4.27, 4.82], consistency 5.83
-[5.58, 6.08] against 3.08 [2.86, 3.30], and dense won 85.4% of 179 pairwise
+[5.58, 6.08] against 3.08 [2.86, 3.30], and dense won 85.4% of the 178 decisive pairwise
 comparisons.
 
 The failure mode is specific and is not grammar. The discrete model writes

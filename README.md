@@ -102,7 +102,7 @@ contain zero for grammar and consistency. It did not.
 | Consistency | 5.83 [5.58, 6.08] | 3.08 [2.86, 3.30] | 2.72 [2.38, 3.06] |
 | Creativity | 4.83 [4.65, 5.02] | 3.61 [3.44, 3.77] | 1.22 [0.97, 1.46] |
 
-The judge preferred the dense completion in 85.4% of 179 pairwise comparisons.
+The judge preferred the dense completion in 85.4% of the 178 decisive pairwise comparisons (one tie).
 A real-human-text control beat the dense model 93% of the time, while a
 dense-vs-dense null returned 0.517 [0.393, 0.638]. The visible failure was
 usually referential drift: a kite became a balloon, flag, drum, or trumpet.

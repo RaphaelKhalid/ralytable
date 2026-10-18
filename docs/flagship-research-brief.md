@@ -46,7 +46,7 @@ general-purpose language model.
 
 | Question | Credible null or failure control | Measured result | What it supports |
 |---|---|---|---|
-| Does a readable discrete bottleneck preserve capability? | Matched dense model | Dense preferred in 85.4% of 179 blind comparisons; discrete model also lost 0.63 cross-entropy and 9.9 accuracy points | Readability can impose a substantial capability cost |
+| Does a readable discrete bottleneck preserve capability? | Matched dense model | Dense preferred in 85.4% of the 178 decisive blind comparisons (one tie); discrete model also lost 0.63 cross-entropy and 9.9 accuracy points | Readability can impose a substantial capability cost |
 | Can a displayed trace be decorative? | Raw-shortcut and decorative-trace renderers | Both scored 0% on the combined causal gate; a ledger-only synthetic control scored 100% across five seeds | The audit detects known bypasses; it does not prove a learned model is bypass-free |
 | Can unused fields hide the answer? | Renderers routing through metadata, provenance, or confidence | Metadata shortcut scored 0% on the field-level gate; semantic renderer scored 100% | Every nominally unused field needs its own intervention |
 | Can explicit identity survive repeated names? | Position sequence and flat name map | Scoped name map and scoped typed ledger passed 25/25 checks; flat controls failed original, reorder, and placebo checks | Lexical scope and binder identity are required; extra ledger fields still need justification |
