@@ -40,3 +40,12 @@ experiments/08_tinystories/stdout.log
 experiments/08_tinystories/stderr.log
 experiments/08_tinystories/generations/
 experiments/08_tinystories/results.jsonl
+
+# local agent notes (kept out of the repo)
+/.claude
+/.codex
+/AGENTS.md
+/CLAUDE.md
+/HANDOFF.md
+/PROJECT_GUIDE.md
+/reviews/openrouter-tournament-2026-08-27/POSTMORTEM.md
